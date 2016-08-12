@@ -38,4 +38,21 @@
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="59dp"/>
 
-    </RelativeLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Medium Text"
+        android:id="@+id/txt_mytext"
+        android:layout_below="@+id/btn_One"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Button"
+        android:id="@+id/btn_button2"
+        android:layout_below="@+id/txt_mytext"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>
