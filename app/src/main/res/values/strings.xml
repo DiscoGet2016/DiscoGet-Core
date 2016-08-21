@@ -2,4 +2,9 @@
     <string name="app_name">DiscoGet-Core</string>
     <string name="logout_success">You have been successfully logged out</string>
     <string name="btn_text_backToLogin">Back to Login</string>
+    <string name="search_prompt">Search for an artist or album</string>
+    <string name="search_tap">Tap to scan barcode</string>
+    <string name="toolbar_search_title">Search</string>
+    <string name="searchable">Searchable</string>
+    <string name="menu_search">Search</string>
 </resources>
