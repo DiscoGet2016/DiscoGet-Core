@@ -64,6 +64,7 @@
         android:layout_height="wrap_content"
         android:text="Layout Switcher"
         android:id="@+id/btn_startLayoutSwitcher"
+        android:layout_below="@+id/btn_searchActivity"
         android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
