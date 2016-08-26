@@ -29,6 +29,22 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(searchIntent);
             }
         });
+
+        // Find the button that starts LayoutSwitcher
+        Button button_layoutSwitcher = (Button) findViewById(R.id.btn_startLayoutSwitcher);
+
+        // Set a clickListener on that
+        button_layoutSwitcher.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // Create a new intent to open the {@link SearchActivity}
+                Intent layoutIntent = new Intent(MainActivity.this, LayoutSwitcher.class);
+
+                // Start the new activity
+                startActivity(layoutIntent);
+            }
+        });
     }
 
     public void AddMessage(View view) {

@@ -69,4 +69,12 @@
         android:backgroundTint="@color/colorAccent"
         android:text="Search" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Layout Switcher"
+        android:id="@+id/btn_startLayoutSwitcher"
+        android:layout_alignTop="@+id/txt_msgOne"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>

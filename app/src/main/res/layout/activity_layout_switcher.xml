@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ViewFlipper xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/myViewFlipper"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/firstLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="This is Layout 1" />
+
+        <Button
+            android:id="@+id/btn_changeTo_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Layout 2"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/secondLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="This is Layout 2" />
+
+        <Button
+            android:id="@+id/btn_changeTo_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Layout 3"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/thirdLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="This is Layout 3" />
+
+        <Button
+            android:id="@+id/btn_changeTo_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Layout 1"/>
+    </LinearLayout>
+
+</ViewFlipper>
