@@ -40,31 +40,23 @@
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <Button
-        android:id="@+id/btn_button2"
+        android:id="@+id/btn_searchActivity"
         style="@style/AppTheme"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/txt_mytext"
         android:layout_centerHorizontal="true"
         android:backgroundTint="@color/colorAccent"
-        android:text="New Button" />
-
-    <Button
-        android:id="@+id/btn_searchActivity"
-        style="@style/AppTheme"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btn_button2"
-        android:layout_centerHorizontal="true"
-        android:backgroundTint="@color/colorAccent"
         android:text="Search" />
 
     <Button
+        android:id="@+id/btn_startLayoutSwitcher"
+        style="@style/AppTheme"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Layout Switcher"
-        android:id="@+id/btn_startLayoutSwitcher"
         android:layout_below="@+id/btn_searchActivity"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:backgroundTint="@color/colorAccent"
+        android:text="Layout Switcher" />
 
 </RelativeLayout>
