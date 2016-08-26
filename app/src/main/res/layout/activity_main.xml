@@ -31,16 +31,6 @@
         android:text="Click Me!" />
 
     <TextView
-        android:id="@+id/txt_msgOne"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="59dp"
-        android:text=""
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
         android:id="@+id/txt_mytext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -74,7 +64,6 @@
         android:layout_height="wrap_content"
         android:text="Layout Switcher"
         android:id="@+id/btn_startLayoutSwitcher"
-        android:layout_alignTop="@+id/txt_msgOne"
         android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
