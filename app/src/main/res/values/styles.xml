@@ -6,6 +6,13 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="android:popupMenuStyle">@style/MyPopUpMenu</item>
+    </style>
+
+    <style name="MyPopUpMenu"
+        parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="android:popupMenuStyle">@color/colorPrimary</item>
     </style>
 
 </resources>

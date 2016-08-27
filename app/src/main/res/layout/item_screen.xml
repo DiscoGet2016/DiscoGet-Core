@@ -5,6 +5,9 @@
     android:weightSum="1"
     style="@style/AppTheme">
 
+    <include
+        android:id="@+id/my_toolbar"
+        layout="@layout/toolbar" />
     <ImageView
         android:layout_width="246dp"
         android:layout_height="wrap_content"
