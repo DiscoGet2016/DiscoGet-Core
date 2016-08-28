@@ -25,7 +25,7 @@ public class ScanActivity extends AppCompatActivity {
         final SurfaceView cameraView = (SurfaceView)findViewById(R.id.camera_view);
         final TextView barcodeInfo = (TextView)findViewById(R.id.code_info);
 
-        BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(this).setBarcodeFormats(Barcode.UPC_A | Barcode.UPC_E).build();
+        BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(this).setBarcodeFormats(Barcode.UPC_A).build();
 
         if(!barcodeDetector.isOperational()) {
             barcodeInfo.setText("Could not set up the detector!");
@@ -33,7 +33,7 @@ public class ScanActivity extends AppCompatActivity {
         }
 
         final CameraSource cameraSource = new CameraSource.Builder(this, barcodeDetector)
-                .setRequestedPreviewSize(640, 480).build();
+                .setAutoFocusEnabled(true).build();
 
         cameraView.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
