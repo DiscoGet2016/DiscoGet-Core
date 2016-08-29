@@ -35,7 +35,7 @@ class MyAdapter2 extends ArrayAdapter<String> {
 
         // inflate takes the resource to load, the parent that the resource may be
         // loaded into and true or false if we are loading into a parent view.
-        View theView = theInflater.inflate(R.layout.row_layout_2, parent, false);
+        View theView = theInflater.inflate(R.layout.row_layout_collection, parent, false);
 
         String gravatarHome = "https://www.gravatar.com/avatar/";
         String defaultAvatar = "http://www.digitalqatar.qa/wp-content/uploads/sites/2/2011/12/android.jpg";
@@ -73,7 +73,7 @@ class MyAdapter2 extends ArrayAdapter<String> {
         /*new DownloadImageFromInternet(theImageView)//findViewById(R.id.image_view))
                 .execute(friendsURLArray[position]); //("https://pbs.twimg.com/profile_images/630285593268752384/iD1MkFQ0.png");
 */
-        //theImageView.setImageResource(imageURL);
+        //theImageView.setImageResource();
 
         return theView;
 

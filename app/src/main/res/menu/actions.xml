@@ -4,7 +4,7 @@
 <!-- menu group -->
     <item android:id="@+id/menu_profile"
         android:icon="@drawable/menu_hamburger_40x"
-        android:title="Profile" />
+        android:title="Home" />
     <item android:id="@+id/menu_search"
         android:title="Search" />
     <item android:id="@+id/menu_collection"

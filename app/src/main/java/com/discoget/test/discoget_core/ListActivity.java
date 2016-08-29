@@ -16,6 +16,11 @@ import android.widget.Toast;
  * Created by steve on 8/17/2016.
  */
 public class ListActivity extends Activity {
+
+    String username = "";
+    String password = "";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,9 +29,9 @@ public class ListActivity extends Activity {
 
        // String array for menu items
         String [] myListOfFriends =  {"Enrique", "Gursewak", "Steve", "Friend1", "Friend2"};;
-
+        String [] userID = {username,password};
         // create list adapter
-        ListAdapter theAdapter = new MyAdapter(this,myListOfFriends);
+        ListAdapter theAdapter = new MyAdapter(this,myListOfFriends, userID);
 
         // get list view in xml screen
         ListView theListView = (ListView) findViewById(R.id.list_view);

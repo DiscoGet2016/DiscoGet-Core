@@ -12,10 +12,28 @@ import android.widget.Button;
 
 public class SearchActivity extends AppCompatActivity {
 
+    String username = "";
+    String password = "";
+    String listType = "";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+
+        // get Extra info passed from calling screen
+        Intent iin= getIntent();
+        Bundle b = iin.getExtras();
+
+        if(b!=null)
+        {
+            username =(String) b.get("username");
+            password = (String) b.get("password");
+           // listType =(String) b.get("listType");
+
+        }
+
 
         Toolbar my_toolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(my_toolbar);
@@ -31,8 +49,6 @@ public class SearchActivity extends AppCompatActivity {
 
                 // This activity implements OnMenuItemClickListener
 
-
-
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener(){
                     public boolean onMenuItemClick(MenuItem item) {
 
@@ -43,27 +59,43 @@ public class SearchActivity extends AppCompatActivity {
                         switch (item.getItemId()) {
                             case R.id.menu_profile:
                                 goToNextScreen = new Intent (SearchActivity.this,UserProfile.class);
+                                goToNextScreen.putExtra("username",username);
+                                goToNextScreen.putExtra("password",password);
+                                //goToNextScreen.putExtra("listType","Collection");
+
                                 startActivity(goToNextScreen);
 
                                 return true;
                             case R.id.menu_search:
                                 goToNextScreen = new Intent (SearchActivity.this,SearchActivity.class);
+                                goToNextScreen.putExtra("username",username);
+                                goToNextScreen.putExtra("password",password);
+                               // goToNextScreen.putExtra("listType","Collection");
                                 startActivity(goToNextScreen);
 
                                 return true;
                             case R.id.menu_collection:
                                 goToNextScreen = new Intent (SearchActivity.this,WantList.class);
+                                goToNextScreen.putExtra("username",username);
+                                goToNextScreen.putExtra("password",password);
+                                goToNextScreen.putExtra("listType","Collection");
+
                                 startActivity(goToNextScreen);
 
                                 return true;
                             case R.id.menu_wantlist:
                                 goToNextScreen = new Intent (SearchActivity.this,WantList.class);
+                                goToNextScreen.putExtra("username",username);
+                                goToNextScreen.putExtra("password",password);
+                                goToNextScreen.putExtra("listType","Want-List");
                                 startActivity(goToNextScreen);
 
                                 return true;
                             case R.id.menu_friends:
-
                                 goToNextScreen = new Intent (SearchActivity.this,Friends.class);
+                                goToNextScreen.putExtra("username",username);
+                                goToNextScreen.putExtra("password",password);
+                                // goToNextScreen.putExtra("listType","Collection");
                                 startActivity(goToNextScreen);
 
                                 return true;

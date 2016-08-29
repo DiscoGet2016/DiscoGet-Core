@@ -31,8 +31,11 @@ public class UserProfile extends AppCompatActivity {
 // How to Load Image From URL (Internet) in Android ImageView
 
     TextView userName;
-    TextView userEmail;
+    TextView userFullName;
     TextView userBio;
+
+    String username = "";
+    String password = "";
 
 
     @Override
@@ -40,8 +43,23 @@ public class UserProfile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_profile);
 
+        // get extras passed from calling page...
+        Intent iin= getIntent();
+        Bundle b = iin.getExtras();
+
+        if(b!=null)
+        {
+            username =(String) b.get("username");
+            password =(String) b.get("password");
+        }
+
+        // for testing...
+        // TextView namePassed = (TextView) findViewById(R.id.txt_profile_namePassed);
+        // namePassed.setText(username);
+
+
         // add toolbar...
-        String paneTitle = "User Profile";
+        String paneTitle = "My Profile/Home";
 
         Toolbar my_toolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(my_toolbar);
@@ -57,8 +75,6 @@ public class UserProfile extends AppCompatActivity {
 
                 // This activity implements OnMenuItemClickListener
 
-
-
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener(){
                     public boolean onMenuItemClick(MenuItem item) {
 
@@ -69,32 +85,48 @@ public class UserProfile extends AppCompatActivity {
                         switch (item.getItemId()) {
                             case R.id.menu_profile:
                                 goToNextScreen = new Intent (UserProfile.this,UserProfile.class);
+                                goToNextScreen.putExtra("username",username);
+                                goToNextScreen.putExtra("password",password);
+
                                 startActivity(goToNextScreen);
 
                                 return true;
                             case R.id.menu_search:
                                 goToNextScreen = new Intent (UserProfile.this,SearchActivity.class);
+                                goToNextScreen.putExtra("username",username);
+                                goToNextScreen.putExtra("password",password);
+
                                 startActivity(goToNextScreen);
 
                                 return true;
                             case R.id.menu_collection:
                                 goToNextScreen = new Intent (UserProfile.this,WantList.class);
+                                goToNextScreen.putExtra("username",username);
+                                goToNextScreen.putExtra("password",password);
+                                goToNextScreen.putExtra("listType","Collection");
+
                                 startActivity(goToNextScreen);
 
                                 return true;
                             case R.id.menu_wantlist:
                                 goToNextScreen = new Intent (UserProfile.this,WantList.class);
+                                goToNextScreen.putExtra("username",username);
+                                goToNextScreen.putExtra("password",password);
+                                goToNextScreen.putExtra("listType","Want-List");
                                 startActivity(goToNextScreen);
 
                                 return true;
                             case R.id.menu_friends:
-
                                 goToNextScreen = new Intent (UserProfile.this,Friends.class);
+                                goToNextScreen.putExtra("username",username);
+                                goToNextScreen.putExtra("password",password);
+
                                 startActivity(goToNextScreen);
 
                                 return true;
                             case R.id.menu_logout:
-                                goToNextScreen = new Intent (UserProfile.this,ActivityHome.class);
+                                finish();
+                                goToNextScreen = new Intent (UserProfile.this,AccountAccess.class);
                                 startActivity(goToNextScreen);
 
                                 return true;
@@ -128,6 +160,7 @@ public class UserProfile extends AppCompatActivity {
 
 
 
+
         // Get image from Internet...
         //------------------------------------------------------------------------------
         String gravatarHome = "https://www.gravatar.com/avatar/";
@@ -146,16 +179,19 @@ public class UserProfile extends AppCompatActivity {
 
 
         try {
-            getJSONdata();
+            getJSONdata(username);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
 
         // Image link from internet
-        new DownloadImageFromInternet((ImageView) findViewById(R.id.image_view))
+        new DownloadImageFromInternet((ImageView) findViewById(R.id.iv_profile_userPhoto))
                 .execute(friendsURLArray[4]);
         //.execute("https://pbs.twimg.com/profile_images/630285593268752384/iD1MkFQ0.png");
+
+
+       // finish();
     }
 
 
@@ -272,43 +308,55 @@ public class UserProfile extends AppCompatActivity {
 
     public void goCollection(View view) {
 
+        String listType = "Collection";
+
         //TODO need to finish
-        String toastString = "go Collection...";
-        Toast.makeText(UserProfile.this, toastString, Toast.LENGTH_SHORT).show();
+        //String toastString = "go Collection...";
+        //Toast.makeText(UserProfile.this, toastString, Toast.LENGTH_SHORT).show();
+
+        TextView uid = (TextView) findViewById(R.id.txt_profile_userName);
 
         //TODO
         // go to list screen....
         Intent goToNextScreen = new Intent(this, WantList.class);
-        final int result = 1;
-        //startActivity(goToNextScreen);
-    }
-
-    public void goWantList(View view) {
-        //TODO need to finish
-        String toastString = "go Want-List...";
-        Toast.makeText(UserProfile.this, toastString, Toast.LENGTH_SHORT).show();
-
-        //TODO
-        // go to list screen....
-        Intent goToNextScreen = new Intent(this, WantList.class);
-        final int result = 1;
-       // startActivity(goToNextScreen);
-    }
-
-    public void goFriends(View view) {
-        //TODO need to finish
-        String toastString = "go Want-List...";
-        Toast.makeText(UserProfile.this, toastString, Toast.LENGTH_SHORT).show();
-
-        //TODO
-        // go to list screen....
-        Intent goToNextScreen = new Intent(this, Friends.class);
+        goToNextScreen.putExtra("username",username );
+        goToNextScreen.putExtra("listType", listType);
         final int result = 1;
         startActivity(goToNextScreen);
     }
 
+    public void goWantList(View view) {
 
-    private void getJSONdata() throws JSONException {
+        String listType = "Want-List";
+        TextView uid = (TextView) findViewById(R.id.txt_profile_userName);
+
+        //TODO need to finish
+        //String toastString = "go Want-List...";
+        //Toast.makeText(UserProfile.this, toastString, Toast.LENGTH_SHORT).show();
+
+        //TODO
+        // go to list screen....
+        Intent goToNextScreen = new Intent(this, WantList.class);
+        final int result = 1;
+        goToNextScreen.putExtra("username", username );
+        goToNextScreen.putExtra("listType", listType);
+        startActivity(goToNextScreen);
+        finish();
+    }
+
+    public void goSearch(View view) {
+        //TODO need to finish
+        //String toastString = "go to search screen";
+        // Toast.makeText(UserProfile.this, toastString, Toast.LENGTH_SHORT).show();
+
+        //TODO
+        // go to list screen....
+        Intent goToNextScreen = new Intent(this, SearchActivity.class);
+        final int result = 1;
+        startActivity(goToNextScreen);
+    }
+
+    private void getJSONdata(String username) throws JSONException {
 
         // Save the results in a String
         String djens = "{'username': 'djens', 'profile': '', 'num_collection': 242, 'collection_fields_url': 'https://api.discogs.com/users/djens/collection/fields'," +
@@ -321,7 +369,7 @@ public class UserProfile extends AppCompatActivity {
                 " 'location': 'San Diego, CA', 'collection_folders_url': 'https://api.discogs.com/users/djens/collection/folders'," +
                 " 'seller_rating': 0.0,'email':'djens@gmail.com'}"; //sb.toString();
 
-        String swerdeman55 = "{'username': 'sawerdeman55', 'profile': 'Music Listener/ app developer / avid vinyl record collector, ok really just getting started... lol'," +
+        String sawerdeman55 = "{'username': 'sawerdeman55', 'profile': 'Music Listener/ app developer / avid vinyl record collector, ok really just getting started... lol'," +
                 "'num_collection': 2, 'collection_fields_url': 'https://api.discogs.com/users/sawerdeman55/collection/fields', 'releases_contributed': 0," +
                 " 'rating_avg': 0.0, 'registered': '2016-07-14T09:26:27-07:00', 'wantlist_url': 'https://api.discogs.com/users/sawerdeman55/wants'," +
                 " 'seller_num_ratings': 0, 'rank': 0.0, 'releases_rated': 0, 'buyer_rating': 0.0, 'num_pending': 0, 'seller_rating_stars': 0.0, " +
@@ -341,8 +389,23 @@ public class UserProfile extends AppCompatActivity {
                 "'collection_folders_url': 'https://api.discogs.com/users/MrSangha/collection/folders', 'seller_rating': 0.0,'email':'sangha@gmail.com'}";
 
 
+        JSONObject jObject = new JSONObject();
+
+        if (username.equals("sawerdeman55")) {
+            jObject = new JSONObject(sawerdeman55);
+        }
+        if (username.equals("djens")) {
+            jObject = new JSONObject(djens);
+        }
+        if (username.equals("mrSangha")) {
+            jObject = new JSONObject(mrSangha);
+        }
+
+
+        //JSONObject jObject = new JSONObject(sawerdeman55);
+
         // Create a JSONObject by passing the JSON data
-        JSONObject jObject = new JSONObject(mrSangha);
+        //JSONObject jObject = new JSONObject();
 
         // Get the Array named translations that contains all the translations
         // JSONArray jArray = jObject.getJSONArray("");
@@ -354,9 +417,9 @@ public class UserProfile extends AppCompatActivity {
 
         // add data to profile info
         //ImageView userPhoto = (ImageView) findViewById(R.id.img_userPhoto);
-        userName = (TextView) findViewById(R.id.txt_userName2);
-        userEmail = (TextView) findViewById(R.id.txt_userEmail2);
-        userBio = (TextView) findViewById(R.id.txt_userBio2);
+        userName = (TextView) findViewById(R.id.txt_profile_userName);
+        userFullName = (TextView) findViewById(R.id.txt_profile_userFullName);
+        userBio = (TextView) findViewById(R.id.txt_profile_userBio);
 
         //String buildDisplay = "Display of JSON data\n\n";
 
@@ -369,7 +432,7 @@ public class UserProfile extends AppCompatActivity {
 
         //set text data from JSON object);
         userName.setText(jObject.optString("username"));
-        userEmail.setText(jObject.optString("email"));
+        userFullName.setText(jObject.optString("name"));
         userBio.setText(jObject.optString("profile"));
 
 
@@ -377,7 +440,7 @@ public class UserProfile extends AppCompatActivity {
         //        new LoadImage().execute(friendsURLArray[2]);
 
 
-        // buildDisplay += "Proifle : " + jsonObject.optString("profile").toString()+"\n";
+        // buildDisplay += "Profile : " + jsonObject.optString("profile").toString()+"\n";
         // buildDisplay += "AvatarURL : " + jsonObject.optString("avatar_url").toString()+"\n";
         // buildDisplay += "Location: " + jsonObject.optString("location").toString()+"\n";
 

@@ -7,6 +7,36 @@
         android:id="@+id/my_toolbar"
         layout="@layout/toolbar" />
 
+    <!-- <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/ll_wantlist"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txt_wantlist_username"
+            android:text="@string/wantlist_username"
+            android:textSize="20sp"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="10dp"
+            android:textStyle="bold|italic"
+            android:textColor="#1b2e5a" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txt_wantlist_listtype"
+            android:text="@string/wantlist_list_type"
+            android:textSize="20sp"
+            android:textStyle="bold|italic"
+            android:textColor="#1b2e5a" />
+    </LinearLayout>
+
+    -->
+
 
     <ListView
         android:layout_width="match_parent"

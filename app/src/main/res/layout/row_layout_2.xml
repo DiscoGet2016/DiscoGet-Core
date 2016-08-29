@@ -33,6 +33,8 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:tag="Friend's UID"
+                android:id="@+id/tag_collection"
                 android:text="View Collection"
                 android:onClick="goCollection"
                 />
@@ -40,6 +42,8 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:tag="Friend's UID"
+                android:id="@+id/tag_wantlist"
                 android:text="View Want-List"
                 android:onClick="goWantList"/>
 

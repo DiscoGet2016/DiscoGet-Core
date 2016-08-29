@@ -7,4 +7,6 @@
     <string name="toolbar_search_title">Search</string>
     <string name="searchable">Searchable</string>
     <string name="menu_search">Search</string>
+    <string name="wantlist_list_type">List Type</string>
+    <string name="wantlist_username">Username\'s:</string>
 </resources>

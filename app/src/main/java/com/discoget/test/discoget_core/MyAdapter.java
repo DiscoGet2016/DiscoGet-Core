@@ -5,6 +5,7 @@ package com.discoget.test.discoget_core;
         import android.view.View;
         import android.view.ViewGroup;
         import android.widget.ArrayAdapter;
+        import android.widget.Button;
         import android.widget.ImageView;
         import android.widget.TextView;
         import android.widget.Toast;
@@ -23,7 +24,7 @@ package com.discoget.test.discoget_core;
 class MyAdapter extends ArrayAdapter<String> {
 
 
-    public MyAdapter(Context context, String[] values){
+    public MyAdapter(Context context, String[] values,String[] userid){
 
         super(context, R.layout.row_layout_2, values);
 
@@ -67,9 +68,16 @@ int posNumber = position;
 
         // Get the TextView we want to edit
         TextView theTextView = (TextView) theView.findViewById(R.id.txt_friendID);
+        Button collectionBtn = (Button) theView.findViewById(R.id.tag_collection);
+        Button wantlistBtn = (Button) theView.findViewById(R.id.tag_wantlist);
+
 
         // Put the next TV Show into the TextView
         theTextView.setText(myFriend);
+        collectionBtn.setTag(myFriend);
+        //collectionBtn.setText(myFriend);
+        wantlistBtn.setTag(myFriend);
+
 
         // Get the ImageView in the layout
         ImageView theImageView = (ImageView) theView.findViewById(R.id.img_friend);
