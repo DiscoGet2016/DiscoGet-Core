@@ -9,6 +9,24 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
 
+    <ImageView
+        android:id="@+id/img_scan_frame"
+        android:layout_width="350dp"
+        android:layout_height="200dp"
+        android:background="@drawable/scan_frame"
+        android:layout_centerInParent="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/scan_prompt"
+        android:textSize="20sp"
+        android:text="Scan barcode"
+        android:textColor="@color/colorAppBarText"
+        android:layout_above="@id/img_scan_frame"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -16,7 +34,7 @@
         android:textSize="20sp"
         android:text="Nothing to read"
         android:textColor="@color/colorAppBarText"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@id/img_scan_frame"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="16dp" />
 
