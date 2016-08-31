@@ -14,6 +14,8 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 
 //import static com.discoget.test.outtestproject.R.id.the_list_view;
 
@@ -157,25 +159,66 @@ public class WantList extends AppCompatActivity{
         });
         //=======================================================================================
 
-
+        String itemURL = "";
         // String array for menu items
-        String [] myListOfFriends =  {"Beatles", "Madonna", "ABBA", "Prince", "R&B", "Rock"};;
-
+        //SAW//String [] myListOfItems =  {"Beatles", "Madonna", "ABBA", "Prince", "R&B", "Rock"};;
+        // Construct the data source
+        ArrayList<CollectionItems> arrayOfItems = new ArrayList<CollectionItems>();
         // create list adapter
-        ListAdapter theAdapter = new MyAdapter2(this,myListOfFriends);
 
+
+        //SAW//ListAdapter theAdapter = new MyAdapter2(this,myListOfItems);
+        // Create the adapter to convert the array to views
+        final CollectionListAdapter adapter = new CollectionListAdapter(this, arrayOfItems);
+
+        // Add item to adapter
+        CollectionItems newItem;
+
+        if ( listType.equals("Collection")) {
+            itemURL = "http://1.bp.blogspot.com/-7k2Jnvoaigw/T9kzBww-rXI/AAAAAAAAC3M/c0xk-sgU7wM/s1600/The+Beatles+-+Beatles+for+Sale.jpg";
+            newItem = new CollectionItems("Beatles", "Columbia", "1962", itemURL);
+            adapter.add(newItem);
+
+            itemURL = "https://s.yimg.com/fz/api/res/1.2/7GzBaZrJQJMNhFfKJmMY8A--/YXBwaWQ9c3JjaGRkO2g9NTAwO3E9OTU7dz01MDA-/http://www.amiright.com/album-covers/images/album-Kiss-Destroyer.jpg";
+            newItem = new CollectionItems("ABBA", "Apple Records", "1968", itemURL);
+            adapter.add(newItem);
+
+        }
+
+        if ( listType.equals("Want-List")) {
+            itemURL = "http://cps-static.rovicorp.com/3/JPG_400/MI0002/285/MI0002285831.jpg?partner=allrovi.com";
+            newItem = new CollectionItems("R&B", "Alantic Records", "1972", itemURL);
+            adapter.add(newItem);
+        }
+
+        //-------------------------------------------------------------------
+       // Attach the adapter to a ListView
+        ListView listView = (ListView) findViewById(R.id.list_view2);
+        listView.setAdapter(adapter);
+
+
+
+        //-------------------------------------------------------------------
         // get list view in xml screen
-        ListView theListView = (ListView) findViewById(R.id.list_view2);
+        //SAW//ListView theListView = (ListView) findViewById(R.id.list_view2);
+        //SAW//theListView.setAdapter(theAdapter);
 
-        theListView.setAdapter(theAdapter);
-
-        theListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int menuSelected, long l) {
 
-                String menuItemSelected = "Menu Selected was" + String.valueOf(adapterView.getItemAtPosition(menuSelected));
+                //String menuItemSelected = "Menu item selected was at position: " + menuSelected + "--> " + adapter.getItem(menuSelected).itemArtist;
 
-                Toast.makeText(WantList.this,menuItemSelected, Toast.LENGTH_SHORT).show();
+                Intent goToNextScreen;
+                // to to selected item screen
+                goToNextScreen = new Intent (WantList.this,ItemScreen.class);
+                goToNextScreen.putExtra("artist",adapter.getItem(menuSelected).itemArtist);
+                goToNextScreen.putExtra("label",adapter.getItem(menuSelected).itemLabel);
+                goToNextScreen.putExtra("year",adapter.getItem(menuSelected).itemYear);
+                goToNextScreen.putExtra("URL",adapter.getItem(menuSelected).itemCoverURL);
+                startActivity(goToNextScreen);
+
+               // Toast.makeText(WantList.this,menuItemSelected, Toast.LENGTH_SHORT).show();
 
             }
         });

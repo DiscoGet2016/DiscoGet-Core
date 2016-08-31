@@ -17,6 +17,8 @@ import android.widget.Toast;
 public class AccountAccess extends AppCompatActivity {
 
    private int msgCounter = 0;
+   private Boolean debugFlag = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,9 +62,10 @@ public class AccountAccess extends AppCompatActivity {
         startActivity(goToNextScreen);
         */
         //TODO
-        String toastString = "go Login...";
-        Toast.makeText(AccountAccess.this,toastString, Toast.LENGTH_SHORT).show();
-
+        if (debugFlag) {
+            String toastString = "go Login...";
+            Toast.makeText(AccountAccess.this, toastString, Toast.LENGTH_SHORT).show();
+        }
         // Get username and password from screen
         TextView username = (TextView) findViewById(R.id.etxt_username);
         TextView password = (TextView) findViewById(R.id.etxt_password);
