@@ -41,6 +41,19 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(layoutIntent);
             }
         });
+
+        Button btn_webpage = (Button) findViewById(R.id.btn_web_test);
+
+        // Set a clickListener on that
+        btn_webpage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Create a new intent to open the {@link SearchActivity}
+                Intent searchIntent = new Intent(MainActivity.this, WebAccount.class);
+                // Start the new activity
+                startActivity(searchIntent);
+            }
+        });
     }
 
     public void AddMessage(View view) {
@@ -48,4 +61,6 @@ public class MainActivity extends AppCompatActivity {
         String msgOne = "Hi Team!!!";
         txt_mytext.setText(msgOne);
     }
+
+
 }
