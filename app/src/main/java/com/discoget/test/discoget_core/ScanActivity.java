@@ -1,5 +1,7 @@
 package com.discoget.test.discoget_core;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -25,7 +27,7 @@ public class ScanActivity extends AppCompatActivity {
         final SurfaceView cameraView = (SurfaceView)findViewById(R.id.camera_view);
         final TextView barcodeInfo = (TextView)findViewById(R.id.code_info);
 
-        BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(this).setBarcodeFormats(Barcode.UPC_A).build();
+        BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(this).build();
 
         if(!barcodeDetector.isOperational()) {
             barcodeInfo.setText("Could not set up the detector!");
@@ -65,13 +67,20 @@ public class ScanActivity extends AppCompatActivity {
                 final SparseArray<Barcode> barcodes = detections.getDetectedItems();
 
                 if (barcodes.size() != 0) {
-                    barcodeInfo.post(new Runnable() {    // Use the post method of the TextView
+                    // Use the post method of the TextView
+                    barcodeInfo.post(new Runnable() {
                         public void run() {
-                            barcodeInfo.setText(    // Update the TextView
+                            // Update the TextView
+                            barcodeInfo.setText(
                                     barcodes.valueAt(0).displayValue
                             );
                         }
                     });
+
+                    Intent returnIntent = new Intent();
+                    returnIntent.putExtra("scanned_barcode", barcodeInfo.getText());
+                    setResult(Activity.RESULT_OK,returnIntent);
+                    finish();
                 }
             }
         });
