@@ -59,4 +59,14 @@
         android:backgroundTint="@color/colorAccent"
         android:text="Layout Switcher" />
 
+    <Button
+        style="@style/AppTheme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Web Test"
+        android:id="@+id/btn_web_test"
+        android:backgroundTint="@color/colorAccent"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/btn_startLayoutSwitcher" />
+
 </RelativeLayout>

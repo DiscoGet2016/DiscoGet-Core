@@ -1,5 +1,6 @@
 package com.discoget.test.discoget_core;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class SearchActivity extends AppCompatActivity {
 
@@ -147,10 +149,24 @@ public class SearchActivity extends AppCompatActivity {
                 Intent scanIntent = new Intent(SearchActivity.this, ScanActivity.class);
 
                 // Start the new activity
-                startActivity(scanIntent);
+                startActivityForResult(scanIntent, 1);
             }
         });
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == 1) {
+            if(resultCode == Activity.RESULT_OK){
+                String result = data.getStringExtra("scanned_barcode");
+                Toast.makeText(SearchActivity.this, result, Toast.LENGTH_SHORT).show();
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
+        }
+    }//onActivityResult
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

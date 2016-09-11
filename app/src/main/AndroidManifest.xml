@@ -91,6 +91,9 @@
         <activity android:name=".WebAccount"></activity>
 
 
+        <activity android:name=".ScanActivity" />
+        <activity android:name=".LayoutSwitcher" />
+        <activity android:name=".WebAccount"></activity>
     </application>
 
 </manifest>
