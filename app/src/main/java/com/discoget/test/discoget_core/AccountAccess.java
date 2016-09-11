@@ -87,7 +87,7 @@ public class AccountAccess extends AppCompatActivity {
         String toastString = "go Register...";
         Toast.makeText(AccountAccess.this,toastString, Toast.LENGTH_SHORT).show();
 
-        Intent goToNextScreen = new Intent (this, AccountCreation.class);
+        Intent goToNextScreen = new Intent (this, WebAccount.class);
 
         final int result = 1;
 

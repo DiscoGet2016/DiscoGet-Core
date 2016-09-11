@@ -21,6 +21,9 @@ import java.io.File;
  */
 public class AgreementScreen extends Activity {
 
+    private static final String DISCOGET_CONSUMER_KEY = "zdpSaKQxYWoJxgEdyxGI";
+    private static final String DISCOGET_CONSUMER_SECRET = "qDNFIuGPiidyrRqopTyIcgGzOuuGHGhU";
+
     //SQLiteDatabase discogetDB = null;
 
     private SQLiteDatabase discogetDB;
@@ -114,17 +117,40 @@ public class AgreementScreen extends Activity {
          //   discogetDB = this.openOrCreateDatabase("DiscoGetDB", MODE_PRIVATE, null);
             discogetDB = dbHelper.getWritableDatabase();
 
-            // Execute an SQL statement that isn't select
-
+            // Create DB tables
+            // Agreement table  -- store agreement info and ...?
             discogetDB.execSQL("CREATE TABLE IF NOT EXISTS agreement " +
                    "(id integer primary key, approved VARCHAR, agreementdate VARCHAR);");
-           // discogetDB.ex
 
-            discogetDB.execSQL("INSERT INTO agreement (approved, agreementdate) VALUES ('yes!!!', 'today')");
+                // add data to this table
+                discogetDB.execSQL("INSERT INTO agreement (approved, agreementdate) VALUES ('yes!!!', 'today')");
+
+
+           // DiscoGet App table  -- stores secret vendor key
+            discogetDB.execSQL("CREATE TABLE IF NOT EXISTS discogetapp " +
+                    "(id integer primary key, consumerkey VARCHAR, consumersecret VARCHAR);");
+
+                // add data to this table
+                discogetDB.execSQL("INSERT INTO discogetapp (consumerkey, consumersecret ) VALUES ('" +
+                        DISCOGET_CONSUMER_KEY + "', '" + DISCOGET_CONSUMER_SECRET + "')");
+
+           // User table  -- store user data and user authication token with Discogs
+            discogetDB.execSQL("CREATE TABLE IF NOT EXISTS user " +
+                    "(id integer primary key, uid VARCHAR, usertype VARCHAR, username VARCHAR," +
+                    "password VARCHAR, firstname VARCHAR, lastname VARCHAR, emailaddress VARCHAR," +
+                    "mobilenumber VARCHAR, imageurl VARCHAR, discogstoken VARCHAR, discogskey VARCHAR,);");
+
+           // Items -- store all items for user and friends
+            discogetDB.execSQL("CREATE TABLE IF NOT EXISTS items " +
+                    "(id integer primary key autoincrement , owner VARCHAR, discogsitemurl VARCHAR," +
+                    "imageurl VARCHAR, barcode VARCHAR, shortdescription VARCHAR," +
+                    "whichlist VARCHAR, artist VARCHAR, album VARCHAR, year VARCHAR," +
+                    "catalognumber VARCHAR, deleteflag VARCHAR);");
 
          //   discogetDB.close();
 
             dbHelper.close();
+
 
             // The database on the file system
             File database = this.getDatabasePath("DiscoGetDB.db");

@@ -1,7 +1,10 @@
 package com.discoget.test.discoget_core;
 
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -22,7 +25,13 @@ import java.util.ArrayList;
 /**
  * Created by steve on 8/17/2016.
  */
-public class WantList extends AppCompatActivity{
+public class WantList extends AppCompatActivity {
+
+
+    private static final String WANT_LIST = "Want-List";
+    private static final String COLLECTION_LIST = "Collection";
+
+    CollectionItems newItem;   // declsre globally..
 
     String username = "";
     String password = "";
@@ -36,14 +45,13 @@ public class WantList extends AppCompatActivity{
 
 
         // get Extra info passed from calling screen
-        Intent iin= getIntent();
+        Intent iin = getIntent();
         Bundle b = iin.getExtras();
 
-        if(b!=null)
-        {
-            username =(String) b.get("username");
+        if (b != null) {
+            username = (String) b.get("username");
             password = (String) b.get("password");
-            listType =(String) b.get("listType");
+            listType = (String) b.get("listType");
 
         }
 
@@ -55,10 +63,9 @@ public class WantList extends AppCompatActivity{
         //tvListtype.setText(listtype);
 
 
-
         // add toolbar... --------------------------------------------------------------
 
-        String paneTitle = username+"'s" + " " + listType;
+        String paneTitle = username + "'s" + " " + listType;
         //String paneTitle = "My collections";
 
         Toolbar my_toolbar = (Toolbar) findViewById(R.id.my_toolbar);
@@ -69,13 +76,12 @@ public class WantList extends AppCompatActivity{
 
         my_toolbar.findViewById(R.id.my_toolbar).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 PopupMenu popup = new PopupMenu(WantList.this, v);
 
                 // This activity implements OnMenuItemClickListener
 
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener(){
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
 
                         final int result = 1;
@@ -83,49 +89,49 @@ public class WantList extends AppCompatActivity{
 
                         switch (item.getItemId()) {
                             case R.id.menu_profile:
-                                goToNextScreen = new Intent (WantList.this,UserProfile.class);
-                                goToNextScreen.putExtra("username",username);
-                                goToNextScreen.putExtra("password",password);
+                                goToNextScreen = new Intent(WantList.this, UserProfile.class);
+                                goToNextScreen.putExtra("username", username);
+                                goToNextScreen.putExtra("password", password);
 
                                 startActivity(goToNextScreen);
 
                                 return true;
                             case R.id.menu_search:
-                                goToNextScreen = new Intent (WantList.this,SearchActivity.class);
-                                goToNextScreen.putExtra("username",username);
-                                goToNextScreen.putExtra("password",password);
+                                goToNextScreen = new Intent(WantList.this, SearchActivity.class);
+                                goToNextScreen.putExtra("username", username);
+                                goToNextScreen.putExtra("password", password);
 
                                 startActivity(goToNextScreen);
 
                                 return true;
                             case R.id.menu_collection:
-                                goToNextScreen = new Intent (WantList.this,WantList.class);
-                                goToNextScreen.putExtra("username",username);
-                                goToNextScreen.putExtra("password",password);
-                                goToNextScreen.putExtra("listType","Collection");
+                                goToNextScreen = new Intent(WantList.this, WantList.class);
+                                goToNextScreen.putExtra("username", username);
+                                goToNextScreen.putExtra("password", password);
+                                goToNextScreen.putExtra("listType", "Collection");
 
                                 startActivity(goToNextScreen);
 
                                 return true;
                             case R.id.menu_wantlist:
-                                goToNextScreen = new Intent (WantList.this,WantList.class);
-                                goToNextScreen.putExtra("username",username);
-                                goToNextScreen.putExtra("password",password);
-                                goToNextScreen.putExtra("listType","Want-List");
+                                goToNextScreen = new Intent(WantList.this, WantList.class);
+                                goToNextScreen.putExtra("username", username);
+                                goToNextScreen.putExtra("password", password);
+                                goToNextScreen.putExtra("listType", "Want-List");
                                 startActivity(goToNextScreen);
 
                                 return true;
                             case R.id.menu_friends:
-                                goToNextScreen = new Intent (WantList.this,Friends.class);
-                                goToNextScreen.putExtra("username",username);
-                                goToNextScreen.putExtra("password",password);
+                                goToNextScreen = new Intent(WantList.this, Friends.class);
+                                goToNextScreen.putExtra("username", username);
+                                goToNextScreen.putExtra("password", password);
                                 //goToNextScreen.putExtra("listType","Collection");
 
                                 startActivity(goToNextScreen);
 
                                 return true;
                             case R.id.menu_logout:
-                                goToNextScreen = new Intent (WantList.this,AccountAccess.class);
+                                goToNextScreen = new Intent(WantList.this, AccountAccess.class);
                                 startActivity(goToNextScreen);
 
                                 return true;
@@ -143,7 +149,7 @@ public class WantList extends AppCompatActivity{
                                 "Clicked popup menu item " + item.getTitle(),
                                 Toast.LENGTH_SHORT).show();
                        */
-                                goToNextScreen = new Intent (WantList.this,ActivityHome.class);
+                                goToNextScreen = new Intent(WantList.this, ActivityHome.class);
                                 startActivity(goToNextScreen);
 
                                 return false;
@@ -167,6 +173,24 @@ public class WantList extends AppCompatActivity{
         // create list adapter
 
 
+        // add item to DB
+        // public BuildItemList(String owner, String imageurl, String whichlist, String artist, String album, String year) {
+
+
+        //BuildItemList itemDB = new BuildItemList(this);
+
+
+        itemURL = "http://1.bp.blogspot.com/-7k2Jnvoaigw/T9kzBww-rXI/AAAAAAAAC3M/c0xk-sgU7wM/s1600/The+Beatles+-+Beatles+for+Sale.jpg";
+        //AddItemToDb("Steve",itemURL, WANT_LIST, "Beatles", "Columbia", "1962");
+
+        // add item to DB
+        //Toast.makeText(WantList.this, AddItemToDb("Steve", itemURL, WANT_LIST, "Beatles", "Columbia", "1962"), Toast.LENGTH_SHORT).show();
+
+        // read DB
+
+        //Toast.makeText(WantList.this, readFromDB(),Toast.LENGTH_LONG).show();
+
+
         //SAW//ListAdapter theAdapter = new MyAdapter2(this,myListOfItems);
         // Create the adapter to convert the array to views
         final CollectionListAdapter adapter = new CollectionListAdapter(this, arrayOfItems);
@@ -174,7 +198,9 @@ public class WantList extends AppCompatActivity{
         // Add item to adapter
         CollectionItems newItem;
 
-        if ( listType.equals("Collection")) {
+        if (listType.equals("Collection")) {
+
+            callGetCollection();
             itemURL = "http://1.bp.blogspot.com/-7k2Jnvoaigw/T9kzBww-rXI/AAAAAAAAC3M/c0xk-sgU7wM/s1600/The+Beatles+-+Beatles+for+Sale.jpg";
             newItem = new CollectionItems("Beatles", "Columbia", "1962", itemURL);
             adapter.add(newItem);
@@ -185,17 +211,16 @@ public class WantList extends AppCompatActivity{
 
         }
 
-        if ( listType.equals("Want-List")) {
-            itemURL = "http://cps-static.rovicorp.com/3/JPG_400/MI0002/285/MI0002285831.jpg?partner=allrovi.com";
+        if (listType.equals("Want-List")) {
+            itemURL = "https://api-img.discogs.com/geB50ZYvOZV0Rr1WGKLaQebURkE=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-3958459-1459319302-8511.jpeg.jpg?token=PwmXNjrBWHFcWsiqSfLKlouUaCGHPTVWrjZRpGHC";  //"http://cps-static.rovicorp.com/3/JPG_400/MI0002/285/MI0002285831.jpg?partner=allrovi.com";
             newItem = new CollectionItems("R&B", "Alantic Records", "1972", itemURL);
             adapter.add(newItem);
         }
 
         //-------------------------------------------------------------------
-       // Attach the adapter to a ListView
+        // Attach the adapter to a ListView
         ListView listView = (ListView) findViewById(R.id.list_view2);
         listView.setAdapter(adapter);
-
 
 
         //-------------------------------------------------------------------
@@ -211,18 +236,181 @@ public class WantList extends AppCompatActivity{
 
                 Intent goToNextScreen;
                 // to to selected item screen
-                goToNextScreen = new Intent (WantList.this,ItemScreen.class);
-                goToNextScreen.putExtra("artist",adapter.getItem(menuSelected).itemArtist);
-                goToNextScreen.putExtra("label",adapter.getItem(menuSelected).itemLabel);
-                goToNextScreen.putExtra("year",adapter.getItem(menuSelected).itemYear);
-                goToNextScreen.putExtra("URL",adapter.getItem(menuSelected).itemCoverURL);
+                goToNextScreen = new Intent(WantList.this, ItemScreen.class);
+                goToNextScreen.putExtra("artist", adapter.getItem(menuSelected).itemArtist);
+                goToNextScreen.putExtra("label", adapter.getItem(menuSelected).itemLabel);
+                goToNextScreen.putExtra("year", adapter.getItem(menuSelected).itemYear);
+                goToNextScreen.putExtra("URL", adapter.getItem(menuSelected).itemCoverURL);
                 startActivity(goToNextScreen);
 
-               // Toast.makeText(WantList.this,menuItemSelected, Toast.LENGTH_SHORT).show();
+                // Toast.makeText(WantList.this,menuItemSelected, Toast.LENGTH_SHORT).show();
 
             }
         });
     }
+
+    public void callGetCollection() {
+
+        // Add item to adapter
+        CollectionItems newItem;
+
+        // get json file...
+
+/*
+        // process json file...
+        if (listType.equals("Collection")) {
+
+            callGetCollection();
+            itemURL = "http://1.bp.blogspot.com/-7k2Jnvoaigw/T9kzBww-rXI/AAAAAAAAC3M/c0xk-sgU7wM/s1600/The+Beatles+-+Beatles+for+Sale.jpg";
+            newItem = new CollectionItems("Beatles", "Columbia", "1962", itemURL);
+            adapter.add(newItem);
+
+            itemURL = "https://s.yimg.com/fz/api/res/1.2/7GzBaZrJQJMNhFfKJmMY8A--/YXBwaWQ9c3JjaGRkO2g9NTAwO3E9OTU7dz01MDA-/http://www.amiright.com/album-covers/images/album-Kiss-Destroyer.jpg";
+            newItem = new CollectionItems("ABBA", "Apple Records", "1968", itemURL);
+            adapter.add(newItem);
+
+        }
+
+        if (listType.equals("Want-List")) {
+            itemURL = "http://cps-static.rovicorp.com/3/JPG_400/MI0002/285/MI0002285831.jpg?partner=allrovi.com";
+            newItem = new CollectionItems("R&B", "Alantic Records", "1972", itemURL);
+            adapter.add(newItem);
+        }
+        */
+
+    }
+
+    public String AddItemToDb(String owner, String imageurl, String whichlist, String artist, String album, String year) {
+
+        String theResult;
+
+        //===========================================================
+        SQLiteDatabase discogetDB;
+        //MySQLiteHelper dbHelper;
+        MySQLiteHelper dbHelper = new MySQLiteHelper(getApplicationContext());
+
+        // Gets the data repository in write mode
+
+        discogetDB = dbHelper.getWritableDatabase();
+
+        // Records to DB - items table
+
+        String tempURL = "http://software55.net/images/integrationLogo2.gif";
+
+        // Create a new map of values, where column names are the keys
+        ContentValues values = new ContentValues();
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_OWNER, owner);
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ITEMURL, tempURL);
+
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_IMAGEURL, imageurl);
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_WHICHLIST, whichlist);
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ARTIST, artist);
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUM, album);
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_YEAR, year);
+
+        //values.put(FeedEntry.COLUMN_NAME_SUBTITLE, subtitle);
+
+        // Insert the new row, returning the primary key value of the new row
+        long newRowId = discogetDB.insert(ItemReaderContract.ItemEntry.TABLE_NAME, null, values);
+
+        theResult = "New Record Added " + newRowId;
+
+        //Toast.makeText(this, theResult, Toast.LENGTH_SHORT).show();
+        return theResult;
+        //================================================
+
+    }
+
+
+    public String readFromDB() {
+
+        //MySQLiteHelper dbHelper;
+        MySQLiteHelper dbHelper = new MySQLiteHelper(getApplicationContext());
+
+        SQLiteDatabase discogetdb = dbHelper.getReadableDatabase();
+
+        // Define a projection that specifies which columns from the database
+        // you will actually use after this query.
+        String[] projection = {
+                ItemReaderContract.ItemEntry._ID,
+                ItemReaderContract.ItemEntry.COLUMN_NAME_ARTIST,
+                ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUM,
+                ItemReaderContract.ItemEntry.COLUMN_NAME_YEAR,
+                ItemReaderContract.ItemEntry.COLUMN_NAME_IMAGEURL
+        };
+
+        // Filter results WHERE "owner" = 'username'
+        String selection = ItemReaderContract.ItemEntry.COLUMN_NAME_OWNER + " = ?";
+        String[] selectionArgs = {"All Owner Items"};
+
+        // How you want the results sorted in the resulting Cursor
+        String sortOrder =
+                ItemReaderContract.ItemEntry.COLUMN_NAME_OWNER;
+
+        /*Cursor c = discogetdb.query(
+                ItemReaderContract.ItemEntry.TABLE_NAME,                     // The table to query
+                projection,                               // The columns to return
+                selection,                                // The columns for the WHERE clause
+                selectionArgs,                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                sortOrder                                 // The sort order
+        );
+        */
+
+        Cursor cursor = discogetdb.rawQuery("Select * FROM items",null);
+
+        int artistColumn = cursor.getColumnIndex("artist");
+        int albumColummn = cursor.getColumnIndex("album");
+
+        cursor.moveToFirst();
+
+        String dataList = "";
+
+        // check for data
+        if (cursor != null && cursor.getCount() > 0){
+
+            int ctr = 0;
+            do {
+
+                dataList += "row "+ ctr++ + ":  "+ cursor.getString(artistColumn) +" -- " + cursor.getString(albumColummn)+ "\n";
+
+            } while (cursor.moveToNext());
+
+
+
+            cursor.close();
+
+            return dataList;
+
+
+        }
+
+
+
+
+
+       // c.moveToFirst();
+        //long itemId = c.getLong(c.getColumnIndexOrThrow(ItemReaderContract.ItemEntry._ID));
+       // String itemArtist =  c.getString(c.getColumnIndex("artist"));
+        //c.getString(c.getColumnIndexOrThrow(ItemReaderContract.ItemEntry.COLUMN_NAME_ARTIST));
+
+       /* if (cursor.moveToFirst()){
+            Toast.makeText(this,"move to first",Toast.LENGTH_LONG).show();
+            do{
+                String data = c.getString(c.getColumnIndex("data"));
+                // do what ever you want here
+            }while(c.moveToNext());
+        }
+
+        */
+        cursor.close();
+
+        return "hi steve";
+
+    }
+
+
 
     public void goHome(View view) {
 

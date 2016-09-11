@@ -88,6 +88,8 @@
 
         <activity android:name=".ScanActivity"></activity>
         <activity android:name=".LayoutSwitcher"></activity>
+        <activity android:name=".WebAccount"></activity>
+
 
     </application>
 
