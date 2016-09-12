@@ -1,16 +1,22 @@
 package com.discoget.test.discoget_core;
 
 import android.app.Activity;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
+
 
 public class SearchActivity extends AppCompatActivity {
 
@@ -18,6 +24,7 @@ public class SearchActivity extends AppCompatActivity {
     String password = "";
     String listType = "";
 
+    static final int SCAN_BARCODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +57,6 @@ public class SearchActivity extends AppCompatActivity {
                 PopupMenu popup = new PopupMenu(SearchActivity.this, v);
 
                 // This activity implements OnMenuItemClickListener
-
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener(){
                     public boolean onMenuItemClick(MenuItem item) {
 
@@ -149,7 +155,7 @@ public class SearchActivity extends AppCompatActivity {
                 Intent scanIntent = new Intent(SearchActivity.this, ScanActivity.class);
 
                 // Start the new activity
-                startActivityForResult(scanIntent, 1);
+                startActivityForResult(scanIntent, SCAN_BARCODE);
             }
         });
     }
@@ -157,21 +163,53 @@ public class SearchActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if (requestCode == 1) {
-            if(resultCode == Activity.RESULT_OK){
+        if (requestCode == SCAN_BARCODE) {
+            if(resultCode == Activity.RESULT_OK) {
                 String result = data.getStringExtra("scanned_barcode");
                 Toast.makeText(SearchActivity.this, result, Toast.LENGTH_SHORT).show();
             }
             if (resultCode == Activity.RESULT_CANCELED) {
-                //Write your code if there's no result
+                String result = "Nothing scanned";
+                Toast.makeText(SearchActivity.this, result, Toast.LENGTH_SHORT).show();
             }
         }
     }//onActivityResult
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.search_menu, menu);
 
-        return super.onCreateOptionsMenu(menu);
+        // Inflate the menu from XML
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_search, menu);
+
+        // Get the SearchView and set the searchable configuration
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        final SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+
+        // Assumes current activity is the searchable activity
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        // Do not iconify the widget; expand it by default
+        searchView.setIconifiedByDefault(false);
+
+        //searchView.setSubmitButtonEnabled(true);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                TextView searched = (TextView) findViewById(R.id.searchbar_query);
+                searched.setText(searchView.getQuery());
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
+
+        return true;
     }
 }

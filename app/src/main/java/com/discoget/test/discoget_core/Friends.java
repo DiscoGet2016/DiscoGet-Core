@@ -9,11 +9,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.PopupMenu;
 
@@ -184,7 +181,7 @@ public class Friends extends AppCompatActivity{
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.search_menu, menu);
+        getMenuInflater().inflate(R.menu.menu_search, menu);
 
         return super.onCreateOptionsMenu(menu);
     }

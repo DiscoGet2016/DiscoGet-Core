@@ -5,8 +5,10 @@
     <string name="search_prompt">Search for an artist or album</string>
     <string name="search_tap">Tap to scan barcode</string>
     <string name="toolbar_search_title">Search</string>
-    <string name="searchable">Searchable</string>
     <string name="menu_search">Search</string>
     <string name="wantlist_list_type">List Type</string>
     <string name="wantlist_username">Username\'s:</string>
+    <string name="app_label">DiscoGet</string>
+    <string name="search_search_hint">Search</string>
+    <string name="search_collection_hint">Search Collection</string>
 </resources>

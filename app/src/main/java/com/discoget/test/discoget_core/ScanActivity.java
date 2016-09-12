@@ -66,14 +66,13 @@ public class ScanActivity extends AppCompatActivity {
             public void receiveDetections(Detector.Detections<Barcode> detections) {
                 final SparseArray<Barcode> barcodes = detections.getDetectedItems();
 
-                if (barcodes.size() != 0) {
+
+                if (barcodes.size() > 0) {
                     // Use the post method of the TextView
                     barcodeInfo.post(new Runnable() {
                         public void run() {
                             // Update the TextView
-                            barcodeInfo.setText(
-                                    barcodes.valueAt(0).displayValue
-                            );
+                            barcodeInfo.setText(barcodes.valueAt(0).displayValue);
                         }
                     });
 
