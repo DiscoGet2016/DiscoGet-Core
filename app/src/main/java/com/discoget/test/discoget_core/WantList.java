@@ -27,6 +27,11 @@ import java.util.ArrayList;
  */
 public class WantList extends AppCompatActivity {
 
+    private SQLiteDatabase discogetDB;
+    private MySQLiteHelper dbHelper;
+
+
+
 
     private static final String WANT_LIST = "Want-List";
     private static final String COLLECTION_LIST = "Collection";
@@ -44,6 +49,10 @@ public class WantList extends AppCompatActivity {
         setContentView(R.layout.the_list_view2);
 
 
+        // create database helper object...
+        dbHelper = new MySQLiteHelper(this);
+
+
         // get Extra info passed from calling screen
         Intent iin = getIntent();
         Bundle b = iin.getExtras();
@@ -52,7 +61,6 @@ public class WantList extends AppCompatActivity {
             username = (String) b.get("username");
             password = (String) b.get("password");
             listType = (String) b.get("listType");
-
         }
 
 
@@ -165,57 +173,13 @@ public class WantList extends AppCompatActivity {
         });
         //=======================================================================================
 
-        String itemURL = "";
-        // String array for menu items
-        //SAW//String [] myListOfItems =  {"Beatles", "Madonna", "ABBA", "Prince", "R&B", "Rock"};;
-        // Construct the data source
+
         ArrayList<CollectionItems> arrayOfItems = new ArrayList<CollectionItems>();
-        // create list adapter
-
-
-        // add item to DB
-        // public BuildItemList(String owner, String imageurl, String whichlist, String artist, String album, String year) {
-
-
-        //BuildItemList itemDB = new BuildItemList(this);
-
-
-        itemURL = "http://1.bp.blogspot.com/-7k2Jnvoaigw/T9kzBww-rXI/AAAAAAAAC3M/c0xk-sgU7wM/s1600/The+Beatles+-+Beatles+for+Sale.jpg";
-        //AddItemToDb("Steve",itemURL, WANT_LIST, "Beatles", "Columbia", "1962");
-
-        // add item to DB
-        //Toast.makeText(WantList.this, AddItemToDb("Steve", itemURL, WANT_LIST, "Beatles", "Columbia", "1962"), Toast.LENGTH_SHORT).show();
-
-        // read DB
-
-        //Toast.makeText(WantList.this, readFromDB(),Toast.LENGTH_LONG).show();
-
-
-        //SAW//ListAdapter theAdapter = new MyAdapter2(this,myListOfItems);
-        // Create the adapter to convert the array to views
         final CollectionListAdapter adapter = new CollectionListAdapter(this, arrayOfItems);
+        // get lists
 
-        // Add item to adapter
-        CollectionItems newItem;
-
-        if (listType.equals("Collection")) {
-
-            callGetCollection();
-            itemURL = "http://1.bp.blogspot.com/-7k2Jnvoaigw/T9kzBww-rXI/AAAAAAAAC3M/c0xk-sgU7wM/s1600/The+Beatles+-+Beatles+for+Sale.jpg";
-            newItem = new CollectionItems("Beatles", "Columbia", "1962", itemURL);
-            adapter.add(newItem);
-
-            itemURL = "https://s.yimg.com/fz/api/res/1.2/7GzBaZrJQJMNhFfKJmMY8A--/YXBwaWQ9c3JjaGRkO2g9NTAwO3E9OTU7dz01MDA-/http://www.amiright.com/album-covers/images/album-Kiss-Destroyer.jpg";
-            newItem = new CollectionItems("ABBA", "Apple Records", "1968", itemURL);
-            adapter.add(newItem);
-
-        }
-
-        if (listType.equals("Want-List")) {
-            itemURL = "https://api-img.discogs.com/geB50ZYvOZV0Rr1WGKLaQebURkE=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-3958459-1459319302-8511.jpeg.jpg?token=PwmXNjrBWHFcWsiqSfLKlouUaCGHPTVWrjZRpGHC";  //"http://cps-static.rovicorp.com/3/JPG_400/MI0002/285/MI0002285831.jpg?partner=allrovi.com";
-            newItem = new CollectionItems("R&B", "Alantic Records", "1972", itemURL);
-            adapter.add(newItem);
-        }
+        //makeBasiclist(adapter);
+        readFromDataBase(adapter);
 
         //-------------------------------------------------------------------
         // Attach the adapter to a ListView
@@ -247,6 +211,94 @@ public class WantList extends AppCompatActivity {
 
             }
         });
+
+    }
+
+    public void makeBasiclist(CollectionListAdapter adapter) {
+
+        String itemURL = "";
+        // String array for menu items
+        //SAW//String [] myListOfItems =  {"Beatles", "Madonna", "ABBA", "Prince", "R&B", "Rock"};;
+        // Construct the data source
+        //    ArrayList<CollectionItems> arrayOfItems = new ArrayList<CollectionItems>();
+        // create list adapter
+
+
+        // add item to DB
+        // public BuildItemList(String owner, String imageurl, String whichlist, String artist, String album, String year) {
+
+
+        //BuildItemList itemDB = new BuildItemList(this);
+
+
+        itemURL = "http://1.bp.blogspot.com/-7k2Jnvoaigw/T9kzBww-rXI/AAAAAAAAC3M/c0xk-sgU7wM/s1600/The+Beatles+-+Beatles+for+Sale.jpg";
+        //AddItemToDb("Steve",itemURL, WANT_LIST, "Beatles", "Columbia", "1962");
+
+        // add item to DB
+        //Toast.makeText(WantList.this, AddItemToDb("Steve", itemURL, WANT_LIST, "Beatles", "Columbia", "1962"), Toast.LENGTH_SHORT).show();
+
+        // read DB
+
+        //Toast.makeText(WantList.this, readFromDB(),Toast.LENGTH_LONG).show();
+
+
+        //SAW//ListAdapter theAdapter = new MyAdapter2(this,myListOfItems);
+        // Create the adapter to convert the array to views
+        //   final CollectionListAdapter adapter = new CollectionListAdapter(this, arrayOfItems);
+
+        // Add item to adapter
+        CollectionItems newItem;
+
+        if (listType.equals("Collection")) {
+
+            callGetCollection();
+            itemURL = "http://1.bp.blogspot.com/-7k2Jnvoaigw/T9kzBww-rXI/AAAAAAAAC3M/c0xk-sgU7wM/s1600/The+Beatles+-+Beatles+for+Sale.jpg";
+            newItem = new CollectionItems("Beatles", "Columbia", "1962", itemURL);
+            adapter.add(newItem);
+
+            itemURL = "https://s.yimg.com/fz/api/res/1.2/7GzBaZrJQJMNhFfKJmMY8A--/YXBwaWQ9c3JjaGRkO2g9NTAwO3E9OTU7dz01MDA-/http://www.amiright.com/album-covers/images/album-Kiss-Destroyer.jpg";
+            newItem = new CollectionItems("ABBA", "Apple Records", "1968", itemURL);
+            adapter.add(newItem);
+
+        }
+
+        if (listType.equals("Want-List")) {
+            itemURL = "https://api-img.discogs.com/geB50ZYvOZV0Rr1WGKLaQebURkE=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-3958459-1459319302-8511.jpeg.jpg?token=PwmXNjrBWHFcWsiqSfLKlouUaCGHPTVWrjZRpGHC";  //"http://cps-static.rovicorp.com/3/JPG_400/MI0002/285/MI0002285831.jpg?partner=allrovi.com";
+            newItem = new CollectionItems("R&B", "Alantic Records", "1972", itemURL);
+            adapter.add(newItem);
+        }
+
+        /*//-------------------------------------------------------------------
+        // Attach the adapter to a ListView
+        ListView listView = (ListView) findViewById(R.id.list_view2);
+        listView.setAdapter(adapter);
+
+
+        //-------------------------------------------------------------------
+        // get list view in xml screen
+        //SAW//ListView theListView = (ListView) findViewById(R.id.list_view2);
+        //SAW//theListView.setAdapter(theAdapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int menuSelected, long l) {
+
+                //String menuItemSelected = "Menu item selected was at position: " + menuSelected + "--> " + adapter.getItem(menuSelected).itemArtist;
+
+                Intent goToNextScreen;
+                // to to selected item screen
+                goToNextScreen = new Intent(WantList.this, ItemScreen.class);
+                goToNextScreen.putExtra("artist", adapter.getItem(menuSelected).itemArtist);
+                goToNextScreen.putExtra("label", adapter.getItem(menuSelected).itemLabel);
+                goToNextScreen.putExtra("year", adapter.getItem(menuSelected).itemYear);
+                goToNextScreen.putExtra("URL", adapter.getItem(menuSelected).itemCoverURL);
+                startActivity(goToNextScreen);
+
+                // Toast.makeText(WantList.this,menuItemSelected, Toast.LENGTH_SHORT).show();
+
+            }
+        });
+        */
     }
 
     public void callGetCollection() {
@@ -306,7 +358,7 @@ public class WantList extends AppCompatActivity {
         values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_WHICHLIST, whichlist);
         values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ARTIST, artist);
         values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUM, album);
-        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_YEAR, year);
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUMYEAR, year);
 
         //values.put(FeedEntry.COLUMN_NAME_SUBTITLE, subtitle);
 
@@ -318,6 +370,75 @@ public class WantList extends AppCompatActivity {
         //Toast.makeText(this, theResult, Toast.LENGTH_SHORT).show();
         return theResult;
         //================================================
+
+    }
+
+    public void readFromDataBase(CollectionListAdapter adapter) {
+
+        String itemArtist = ""; // resultSet.getString(0);
+        String itemAlbumLabel = ""; //  resultSet.getString(1);
+        String itemAlbumYear = ""; //  resultSet.getString(2);
+        String itemAlbumCoverURL = ""; //  resultSet.getString(3);
+
+        String tokenString = "?token=PwmXNjrBWHFcWsiqSfLKlouUaCGHPTVWrjZRpGHC";
+
+        // open database
+        // add data to text fields...
+        discogetDB = dbHelper.getWritableDatabase();
+
+        // get user data...
+        /*
+        Cursor resultSet = mydatbase.rawQuery("Select * from TutorialsPoint",null);
+        resultSet.moveToFirst();
+        String username = resultSet.getString(1);
+        String password = resultSet.getString(2);
+         */
+        Cursor resultSet = discogetDB.rawQuery("SELECT artist, album, albumyear, imageurl FROM items WHERE owner= '" + username +"'", null);
+        resultSet.moveToFirst();
+
+
+        /*  cursor loop example
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            array[i] = cursor.getString(0);
+            i++;
+            cursor.moveToNext();
+
+         */
+
+        //uid = resultSet.getString(0);
+        //pw  = resultSet.getString(1);
+        //token  = resultSet.getString(2);
+
+        // loop through database...
+        while (!resultSet.isAfterLast()) {
+
+            // get files
+            itemArtist = resultSet.getString(0);
+            itemAlbumLabel = resultSet.getString(1);
+            itemAlbumYear = resultSet.getString(2);
+            itemAlbumCoverURL = resultSet.getString(3); //+ tokenString;
+
+
+            Toast.makeText(this,itemAlbumCoverURL,Toast.LENGTH_LONG).show();
+            
+            // add to array
+            //itemURL = "http://1.bp.blogspot.com/-7k2Jnvoaigw/T9kzBww-rXI/AAAAAAAAC3M/c0xk-sgU7wM/s1600/The+Beatles+-+Beatles+for+Sale.jpg";
+            //newItem = new CollectionItems("Beatles", "Columbia", "1962", itemURL);
+            newItem = new CollectionItems(itemArtist, itemAlbumLabel, itemAlbumYear, itemAlbumCoverURL);
+            adapter.add(newItem);
+            
+
+            // go to next record
+            resultSet.moveToNext();
+        } // end of whileloop...
+
+
+        // closeDB
+        dbHelper.close();
+
+
+        //Toast.makeText(WantList.this, AddItemToDb("Steve", itemURL, WANT_LIST, "Beatles", "Columbia", "1962"), Toast.LENGTH_SHORT).show();
 
     }
 
@@ -335,12 +456,12 @@ public class WantList extends AppCompatActivity {
                 ItemReaderContract.ItemEntry._ID,
                 ItemReaderContract.ItemEntry.COLUMN_NAME_ARTIST,
                 ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUM,
-                ItemReaderContract.ItemEntry.COLUMN_NAME_YEAR,
+                ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUMYEAR,
                 ItemReaderContract.ItemEntry.COLUMN_NAME_IMAGEURL
         };
 
         // Filter results WHERE "owner" = 'username'
-        String selection = ItemReaderContract.ItemEntry.COLUMN_NAME_OWNER + " = ?";
+        String selection = ItemReaderContract.ItemEntry.COLUMN_NAME_OWNER + " = sawerdeman55";
         String[] selectionArgs = {"All Owner Items"};
 
         // How you want the results sorted in the resulting Cursor
