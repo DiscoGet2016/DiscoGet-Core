@@ -16,15 +16,18 @@
         android:layout_height="200dp"
         android:id="@+id/iv_profile_userPhoto"
         android:clickable="true"
+        android:layout_marginTop="15dp"
         android:layout_marginBottom="10dp"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/user_default"/>
 
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="RecordCollector"
+        android:text=""
+        android:hint="username"
         android:id="@+id/txt_profile_userName"
         android:layout_gravity="center_horizontal"
         android:layout_marginLeft="10dp"
@@ -36,7 +39,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Record Collector"
+        android:text=""
+        android:hint="your full name"
         android:id="@+id/txt_profile_userFullName"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp"
@@ -47,6 +51,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="My name is Adam. I have been collecting for about 8 years. I love all kinds of music,but my passion lately has been digging for early 80&apos;s post disco, the stuff that eventually transitioned into boogie funk."
+        android:hint="your bio here"
         android:id="@+id/txt_profile_userBio"
         android:layout_gravity="center_horizontal"
         android:layout_marginLeft="15dp"

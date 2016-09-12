@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CreateUserAccount">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/iv_discoget_logo"
+        android:src="@drawable/discoget_logo_small"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:id="@+id/tv_createAccount_title"
+        android:text="Create DiscoGet Account"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="15dp"
+        android:textAlignment="center"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:orientation="vertical"
+           android:layout_gravity="center_vertical">
+
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/et_createAccount_username"
+        android:textSize="20dp"
+        android:hint="Discogs Username"
+        android:text="sawerdeman55"
+        android:layout_gravity="center"
+        android:textAlignment="center"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/et_createAccount_password0"
+        android:textSize="20dp"
+        android:hint="local password"
+        android:text="qaz!1234"
+        android:layout_gravity="center"
+        android:textAlignment="center"
+        android:inputType="textPassword" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/et_createAccount_password1"
+        android:textSize="20dp"
+        android:hint="repeat password"
+        android:layout_gravity="center"
+        android:textAlignment="center"
+        android:inputType="textPassword" />
+
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/et_createAccount_userkey"
+        android:textSize="20dp"
+        android:hint="Discogs UserKey"
+        android:layout_gravity="center"
+        android:textAlignment="center"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/et_createAccount_usersecret"
+        android:textSize="20dp"
+        android:hint="Discogs UserSecret"
+        android:layout_gravity="center"
+        android:textAlignment="center"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="or"
+        android:textStyle="bold|italic"
+        android:layout_gravity="center"
+        android:textSize="24dp"
+        android:layout_marginTop="20dp"/>
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/et_createAccount_usertoken"
+        android:textSize="14dp"
+        android:hint="Discogs Token"
+        android:text="PwmXNjrBWHFcWsiqSfLKlouUaCGHPTVWrjZRpGHC"
+        android:layout_gravity="center"
+        android:textAlignment="center"/>
+
+
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_createAccount_save"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:text="Save"
+        android:onClick="saveAccountInfo"/>
+
+       </LinearLayout>
+
+    </ScrollView>
+
+
+</LinearLayout>

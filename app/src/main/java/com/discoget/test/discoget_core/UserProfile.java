@@ -2,6 +2,8 @@ package com.discoget.test.discoget_core;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -31,18 +33,30 @@ public class UserProfile extends AppCompatActivity {
 
 // How to Load Image From URL (Internet) in Android ImageView
 
+    private SQLiteDatabase discogetDB;
+    private MySQLiteHelper dbHelper;
+
+
+
     TextView userName;
     TextView userFullName;
     TextView userBio;
 
-    String username = "";
-    String password = "";
+    String username = "";  // used for info strings...
+    String password = "";  // not needed...
+    String token = "";     // token used to access user info...
+    String userImageUrl = "";  // assigned in JSON search for now...  // TODO store value in DB
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_profile);
+
+        // create database helper object...
+        dbHelper = new MySQLiteHelper(this);
+
 
         // get extras passed from calling page...
         Intent iin= getIntent();
@@ -51,7 +65,7 @@ public class UserProfile extends AppCompatActivity {
         if(b!=null)
         {
             username =(String) b.get("username");
-            password =(String) b.get("password");
+            token =(String) b.get("token");
         }
 
 
@@ -59,8 +73,11 @@ public class UserProfile extends AppCompatActivity {
         // TextView namePassed = (TextView) findViewById(R.id.txt_profile_namePassed);
         // namePassed.setText(username);
 
+        // new code 09/11/16 -- Asumes valid user at this point...
         // verify username in test string list
-        String[] validUsers = {"djens", "mrSangha", "sawerdeman55"};
+        /*
+            String[] validUsers = {"djens", "mrSangha", "sawerdeman55"};
+
 
         if (!(Arrays.asList(validUsers).contains(username))) {
             // Toast.makeText(this, "DiscoGet DB not Found", Toast.LENGTH_SHORT).show();
@@ -71,6 +88,7 @@ public class UserProfile extends AppCompatActivity {
             Intent goToNextScreen = new Intent (UserProfile.this,AccountAccess.class);
             startActivity(goToNextScreen);
         } else {  // do next screen
+          */
 
 
             // add toolbar...
@@ -172,7 +190,7 @@ public class UserProfile extends AppCompatActivity {
                 }
             });
 
-
+        /*
             // Get image from Internet...
             //------------------------------------------------------------------------------
             String gravatarHome = "https://www.gravatar.com/avatar/";
@@ -183,8 +201,7 @@ public class UserProfile extends AppCompatActivity {
                     gravatarHome + "d4cb23b09d74f33ef8ad43fc0e0896f9",         // Enrique
                     gravatarHome + "baf9b97e84ac714acb14a65e9855538d",         // Guru
                     gravatarHome + "956a76b2e3547849f3a62df862865be2",         //Steve
-                    gravatarHome + "205e460b479e2e5b48aec07710c08d50",         //Test dude
-                    defaultAvatar,
+                    "https://secure.gravatar.com/avatar/8f6328a88899ed68d8c913de6a10006d?s=500&r=pg&d=mm",  //swerdeman
                     defaultAvatar};
             //ImageView theImageView = (ImageView) theView.findViewById(R.id.img_friend);
             // We can set a ImageView like this
@@ -196,15 +213,22 @@ public class UserProfile extends AppCompatActivity {
                 e.printStackTrace();
             }
 
+          */
 
-            // Image link from internet
-            new DownloadImageFromInternet((ImageView) findViewById(R.id.iv_profile_userPhoto))
-                    .execute(friendsURLArray[4]);
+           // get data from database
+
+        getProfileDataFromDB (username);
+
+
+        // Image link from internet
+        new DownloadImageFromInternet((ImageView) findViewById(R.id.iv_profile_userPhoto))
+                   .execute(userImageUrl);
+            // .execute(friendsURLArray[3]);
             //.execute("https://pbs.twimg.com/profile_images/630285593268752384/iD1MkFQ0.png");
 
 
             // finish();
-        }  // else...
+        //}  // else...
     }
 
 
@@ -225,7 +249,6 @@ public class UserProfile extends AppCompatActivity {
 
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener(){
             public boolean onMenuItemClick(MenuItem item) {
-
 
                 final int result = 1;
                 Intent goToNextScreen;
@@ -329,7 +352,7 @@ public class UserProfile extends AppCompatActivity {
 
         TextView uid = (TextView) findViewById(R.id.txt_profile_userName);
 
-        //TODO
+        //TODO.....
         // go to list screen....
         Intent goToNextScreen = new Intent(this, WantList.class);
         goToNextScreen.putExtra("username",username );
@@ -369,9 +392,64 @@ public class UserProfile extends AppCompatActivity {
         startActivity(goToNextScreen);
     }
 
+
+    private void getProfileDataFromDB (String username) {
+
+
+
+        // add data to profile info
+        //ImageView userPhoto = (ImageView) findViewById(R.id.img_userPhoto);
+        userName = (TextView) findViewById(R.id.txt_profile_userName);
+        userFullName = (TextView) findViewById(R.id.txt_profile_userFullName);
+        userBio = (TextView) findViewById(R.id.txt_profile_userBio);
+
+
+        // add data to text fields...
+        discogetDB = dbHelper.getWritableDatabase();
+
+        // get user data...
+        /*
+        Cursor resultSet = mydatbase.rawQuery("Select * from TutorialsPoint",null);
+        resultSet.moveToFirst();
+        String username = resultSet.getString(1);
+        String password = resultSet.getString(2);
+         */
+        Cursor resultSet = discogetDB.rawQuery("SELECT uid, password, fullname, userbio, imageURL, discogstoken FROM user", null);
+        resultSet.moveToFirst();
+
+        //uid = resultSet.getString(0);
+        //pw  = resultSet.getString(1);
+        //token  = resultSet.getString(2);
+
+
+
+
+
+        userName.setText(checkForText(resultSet.getString(0)));
+        userFullName.setText(checkForText(resultSet.getString(2)));
+        userBio.setText(checkForText(resultSet.getString(3)));
+
+        userImageUrl = resultSet.getString(4);
+
+    } // end of getProfileDataFromDB
+
+
     private void getJSONdata(String username) throws JSONException {
 
         // Save the results in a String
+        String swerdeman = "{\"profile\": \"\", \"wantlist_url\": \"https://api.discogs.com/users/swerdeman/wants\", " +
+                "\"seller_num_ratings\": 0, \"rank\": 0.0, \"num_pending\": 0, \"id\": 3875072, \"buyer_rating\": 0.0, " +
+                "\"num_for_sale\": 0, \"home_page\": \"\", \"location\": \"\", \"collection_folders_url\":" +
+                " \"https://api.discogs.com/users/swerdeman/collection/folders\", \"email\": \"steve@arrrg.com\", \"username\":" +
+                " \"swerdeman\", \"collection_fields_url\": \"https://api.discogs.com/users/swerdeman/collection/fields\"," +
+                " \"releases_contributed\": 0, \"registered\": \"2016-09-05T19:39:28-07:00\", \"rating_avg\": 0.0," +
+                " \"num_collection\": 0, \"releases_rated\": 0, \"curr_abbr\": \"USD\", \"seller_rating_stars\": 0.0, " +
+                "\"num_lists\": 0, \"name\": \"\", \"buyer_rating_stars\": 0.0, \"num_wantlist\": 0, \"inventory_url\":" +
+                " \"https://api.discogs.com/users/swerdeman/inventory\", \"uri\": \"https://www.discogs.com/user/swerdeman\", " +
+                "\"buyer_num_ratings\": 0, \"avatar_url\": " +
+                "\"https://secure.gravatar.com/avatar/8f6328a88899ed68d8c913de6a10006d?s=500&r=pg&d=mm\", \"resource_url\":" +
+                " \"https://api.discogs.com/users/swerdeman\", \"seller_rating\": 0.0}";
+
         String djens = "{'username': 'djens', 'profile': '', 'num_collection': 242, 'collection_fields_url': 'https://api.discogs.com/users/djens/collection/fields'," +
                 " 'releases_contributed': 0, 'rating_avg': 0.0, 'registered': '2007-12-20T15:27:48-08:00', 'wantlist_url': 'https://api.discogs.com/users/djens/wants'," +
                 " 'seller_num_ratings': 0, 'rank': 1.0, 'releases_rated': 0, 'buyer_rating': 100.0, 'num_pending': 0, 'seller_rating_stars': 0.0," +
@@ -414,6 +492,10 @@ public class UserProfile extends AppCompatActivity {
             jObject = new JSONObject(mrSangha);
         }
 
+        if (username.equals("swerdeman")) {
+            jObject = new JSONObject(swerdeman);
+        }
+
 
         //JSONObject jObject = new JSONObject(sawerdeman55);
 
@@ -444,9 +526,17 @@ public class UserProfile extends AppCompatActivity {
         //       .execute(friendsURLArray[2]); //("https://pbs.twimg.com/profile_images/630285593268752384/iD1MkFQ0.png");
 
         //set text data from JSON object);
-        userName.setText(jObject.optString("username"));
-        userFullName.setText(jObject.optString("name"));
-        userBio.setText(jObject.optString("profile"));
+
+        //if (jObject.optString("username").length() > 0 ) {
+        //    userName.setText(jObject.optString("username"));
+        //} else
+
+        userName.setText(checkForText(jObject.optString("username")));
+        userFullName.setText(checkForText(jObject.optString("name")));
+        userBio.setText(checkForText(jObject.optString("profile")));
+
+        userImageUrl = jObject.optString("avatar_url");
+
 
 
         //now go get user image...
@@ -457,6 +547,18 @@ public class UserProfile extends AppCompatActivity {
         // buildDisplay += "AvatarURL : " + jsonObject.optString("avatar_url").toString()+"\n";
         // buildDisplay += "Location: " + jsonObject.optString("location").toString()+"\n";
 
+    }
+
+    private String checkForText(String textValue) {
+
+        String valueToReturnIfBlank = "";
+
+
+        if (textValue.length() > 0) {
+            return textValue;
+        } else {
+            return valueToReturnIfBlank;
+        }
     }
 
 

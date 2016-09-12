@@ -70,7 +70,7 @@ public class BuildItemList extends Activity{
         values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_WHICHLIST,whichlist);
         values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ARTIST, artist);
         values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUM, album);
-        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_YEAR, year);
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUMYEAR, year);
 
         //values.put(FeedEntry.COLUMN_NAME_SUBTITLE, subtitle);
 

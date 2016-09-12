@@ -18,19 +18,19 @@
         android:background="@drawable/discoget_logo_small" />
 
     <EditText
-            android:id="@+id/etxt_username"
+            android:id="@+id/et_login_username"
             android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-        android:hint="Username"
+            android:hint="Username"
             android:inputType="text"/>
 
     <EditText
-            android:id="@+id/etxt_password"
+            android:id="@+id/et_login_password"
             android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-        android:hint="Password"
+            android:hint="Password"
             android:inputType="textPassword" />
 
     <LinearLayout

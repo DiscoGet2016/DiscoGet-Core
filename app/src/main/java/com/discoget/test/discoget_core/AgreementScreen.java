@@ -88,8 +88,9 @@ public class AgreementScreen extends Activity {
         // goto Account Access Screen
         finish();  // close this activity
 
-        Intent goToNextScreen = new Intent (this, AccountAccess.class);
+        Intent goToNextScreen = new Intent (this, CreateUserAccount.class);
         startActivity(goToNextScreen);
+
     }
 
     public void goCancel (View view) {
@@ -137,19 +138,20 @@ public class AgreementScreen extends Activity {
            // User table  -- store user data and user authication token with Discogs
             discogetDB.execSQL("CREATE TABLE IF NOT EXISTS user " +
                     "(id integer primary key, uid VARCHAR, usertype VARCHAR, username VARCHAR," +
-                    "password VARCHAR, firstname VARCHAR, lastname VARCHAR, emailaddress VARCHAR," +
-                    "mobilenumber VARCHAR, imageurl VARCHAR, discogstoken VARCHAR, discogskey VARCHAR,);");
+                    "password VARCHAR, firstname VARCHAR, lastname VARCHAR, fullname VARCHAR, userbio, VARCHAR, emailaddress VARCHAR," +
+                    "mobilenumber VARCHAR, imageurl VARCHAR, discogstoken VARCHAR, discogskey VARCHAR);");
 
            // Items -- store all items for user and friends
             discogetDB.execSQL("CREATE TABLE IF NOT EXISTS items " +
-                    "(id integer primary key autoincrement , owner VARCHAR, discogsitemurl VARCHAR," +
-                    "imageurl VARCHAR, barcode VARCHAR, shortdescription VARCHAR," +
-                    "whichlist VARCHAR, artist VARCHAR, album VARCHAR, year VARCHAR," +
-                    "catalognumber VARCHAR, deleteflag VARCHAR);");
+                    "(id integer primary key, owner VARCHAR, itemurl VARCHAR, " +
+                    "imageurl VARCHAR, barcode VARCHAR, shortdescription VARCHAR, " +
+                    "whichlist VARCHAR, artist VARCHAR, album VARCHAR, albumyear VARCHAR, " +
+                    "catalogid VARCHAR, deleteflag VARCHAR);");
 
          //   discogetDB.close();
 
-            dbHelper.close();
+           Toast.makeText(this,"Items DB created...",Toast.LENGTH_LONG).show();
+
 
 
             // The database on the file system
@@ -168,7 +170,11 @@ public class AgreementScreen extends Activity {
 
         catch(Exception e){
 
-            Log.e("CONTACTS ERROR", "Error Creating Database");
+            Log.e("DiscoGet Database ERROR", "Error Creating Database");
+
+        } finally {
+
+            dbHelper.close();
 
         }
     } // end of database creation
