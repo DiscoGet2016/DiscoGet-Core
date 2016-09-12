@@ -16,4 +16,5 @@
         <item name="android:popupMenuStyle">@color/colorAppBarText</item>
     </style>
 
+    <string name="scanner_default_text">Nothing to read</string>
 </resources>
