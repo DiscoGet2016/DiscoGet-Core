@@ -179,7 +179,7 @@ public class WantList extends AppCompatActivity {
         // get lists
 
         //makeBasiclist(adapter);
-        readFromDataBase(adapter);
+        readFromDataBase(adapter, listType);
 
         //-------------------------------------------------------------------
         // Attach the adapter to a ListView
@@ -373,7 +373,7 @@ public class WantList extends AppCompatActivity {
 
     }
 
-    public void readFromDataBase(CollectionListAdapter adapter) {
+    public void readFromDataBase(CollectionListAdapter adapter, String listType) {
 
         String itemArtist = ""; // resultSet.getString(0);
         String itemAlbumLabel = ""; //  resultSet.getString(1);
@@ -393,7 +393,9 @@ public class WantList extends AppCompatActivity {
         String username = resultSet.getString(1);
         String password = resultSet.getString(2);
          */
-        Cursor resultSet = discogetDB.rawQuery("SELECT artist, album, albumyear, imageurl FROM items WHERE owner= '" + username +"'", null);
+        Cursor resultSet = discogetDB.rawQuery("SELECT artist, album, albumyear, imageurl FROM items WHERE " +
+                "owner= '" + username +"' AND whichlist= '" + listType + "'", null);
+
         resultSet.moveToFirst();
 
 

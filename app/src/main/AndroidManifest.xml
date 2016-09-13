@@ -82,9 +82,6 @@
         </activity>
 
 
-        <activity android:name=".ScanActivity"></activity>
-        <activity android:name=".LayoutSwitcher"></activity>
-        <activity android:name=".WebAccount"></activity>
 
         <!-- Added by Steve Werdeman 9/11/16 -->
         <activity android:name=".CreateUserAccount">
@@ -92,7 +89,6 @@
             android:theme="@style/AppTheme"
         </activity>
         <!-- Added by Enrique < 8/26/16 -->
-        <activity android:name=".SearchActivity"/>
         <activity android:name=".ScanActivity" />
         <activity android:name=".LayoutSwitcher" />
         <activity android:name=".WebAccount" />

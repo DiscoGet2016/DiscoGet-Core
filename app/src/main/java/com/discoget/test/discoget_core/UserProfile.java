@@ -344,7 +344,7 @@ public class UserProfile extends AppCompatActivity {
 
     public void goCollection(View view) {
 
-        String listType = "Collection";
+        String listType = "collection";
 
         //TODO need to finish
         //String toastString = "go Collection...";
@@ -363,7 +363,7 @@ public class UserProfile extends AppCompatActivity {
 
     public void goWantList(View view) {
 
-        String listType = "Want-List";
+        String listType = "want-list";
         TextView uid = (TextView) findViewById(R.id.txt_profile_userName);
 
         //TODO need to finish
