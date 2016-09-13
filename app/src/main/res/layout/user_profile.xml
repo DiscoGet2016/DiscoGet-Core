@@ -10,61 +10,55 @@
         android:id="@+id/my_toolbar"
         layout="@layout/toolbar" />
 
-
     <ImageView
+        android:id="@+id/iv_profile_userPhoto"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:id="@+id/iv_profile_userPhoto"
-        android:clickable="true"
+        android:layout_gravity="center"
+        android:layout_marginBottom="20dp"
         android:layout_marginTop="15dp"
-        android:layout_marginBottom="10dp"
-        android:layout_gravity="center_horizontal"
-        android:src="@drawable/user_default"/>
-
+        android:clickable="true"
+        android:src="@drawable/user_default" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text=""
-        android:hint="username"
         android:id="@+id/txt_profile_userName"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:textAlignment="center"
-        android:textColor="@color/colorPrimaryText"/>
-
-    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_gravity="center"
+        android:layout_marginBottom="10dp"
+        android:hint="username"
         android:text=""
-        android:hint="your full name"
-        android:id="@+id/txt_profile_userFullName"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"
-        android:textColor="@color/colorPrimaryText"/>
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/colorAccent" />
 
     <TextView
+        android:id="@+id/txt_profile_userFullName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="10dp"
+        android:hint="your full name"
+        android:text=""
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="My name is Adam. I have been collecting for about 8 years. I love all kinds of music,but my passion lately has been digging for early 80&apos;s post disco, the stuff that eventually transitioned into boogie funk."
-        android:hint="your bio here"
+        android:textColor="@color/colorAccent" />
+
+    <TextView
         android:id="@+id/txt_profile_userBio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:textAlignment="center"
-        android:layout_marginTop="20dp"
-        android:textColor="@color/colorPrimaryText"/>
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:hint="your bio here"
+        android:text="My name is Adam. I have been collecting for about 8 years. I love all kinds of music,but my passion lately has been digging for early 80&apos;s post disco, the stuff that eventually transitioned into boogie funk."
+        android:textColor="@color/colorPrimaryText" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="center_vertical">
+        android:layout_gravity="center_vertical"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -72,48 +66,49 @@
             android:gravity="center_horizontal">
 
             <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:id="@+id/btn_profile_viewCollection"
+                style="@style/AppTheme"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginRight="10dp"
+                android:background="@color/colorAccent"
+                android:onClick="goCollection"
+                android:padding="6dp"
                 android:text="View Collection"
-                android:layout_margin="10dp"
-                android:background="#0f5769"
-                android:textColor="#fefcfc"
-                android:textStyle="bold"
-                android:singleLine="false"
-                android:padding="5dp"
-                android:onClick="goCollection"/>
+                android:textColor="@color/colorAppBarText" />
 
             <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:id="@+id/btn_profile_viewWantList"
+                style="@style/AppTheme"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:background="@color/colorAccent"
+                android:onClick="goWantList"
+                android:padding="6dp"
                 android:text="View Want List"
-                android:layout_margin="10dp"
-                android:background="#0f5769"
-                android:textColor="#fefcfc"
-                android:textStyle="bold"
-                android:padding="5dp"
-                android:onClick="goWantList"/>
+                android:textColor="@color/colorAppBarText" />
 
         </LinearLayout>
+
         <Button
-            android:layout_width="272dp"
-            android:layout_height="wrap_content"
-            android:text="Search for Item"
             android:id="@+id/btn_profile_search"
-            android:background="#0f5769"
-            android:textColor="#fefcfc"
-            android:textStyle="bold"
+            style="@style/AppTheme"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:background="@color/colorAccent"
             android:onClick="goSearch"
-            android:layout_gravity="center_horizontal" />
+            android:padding="6dp"
+            android:text="Search for Item"
+            android:textColor="@color/colorAppBarText" />
 
-       <!-- <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/txt_profile_namePassed"/>
-         -->
+        <!-- <TextView
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:id="@+id/txt_profile_namePassed"/>
+          -->
 
     </LinearLayout>
 
-    </LinearLayout>
+</LinearLayout>

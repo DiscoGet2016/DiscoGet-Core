@@ -1,68 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="top|center"
+    android:orientation="vertical"
     tools:context=".AgreementScreen">
 
     <ImageView
-        android:layout_width="wrap_content"
+        android:id="@+id/img_discoGetLogo"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/iv_agreement_logo"
-        android:background="@drawable/discoget_logo_small"
-        android:layout_marginTop="40dp"
-        android:layout_marginBottom="10dp" />
+        android:layout_marginBottom="32dp"
+        android:layout_marginTop="72dp"
+        android:src="@drawable/discoget_logo_small" />
 
     <TextView
+        android:id="@+id/tv_agreement_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tv_agreement_title"
-        android:text="DiscoGet Usage Agreement Screen"
+        android:layout_marginBottom="20dp"
+        android:text="DiscoGet Usage Agreement"
         android:textSize="20sp"
-        android:layout_margin="10dp"
         android:textStyle="bold" />
 
     <ScrollView
+        android:id="@+id/sv_agreement_scrool"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/sv_agreement_scrool"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp">
 
         <TextView
+            android:id="@+id/tv_agreement_agreement"
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            android:id="@+id/tv_agreement_agreement"
             android:text="Agreement info will go here..."
             android:textSize="15sp" />
 
     </ScrollView>
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal">
 
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/btn_agreement_cancel"
-            android:layout_marginRight="10dp"
-            android:text="CANCEL"
-            android:onClick="goCancel"/>
+            style="@style/AppTheme"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_margin="20dp"
+            android:background="@color/colorAccent"
+            android:onClick="goCancel"
+            android:text="Cancel"
+            android:textColor="@color/colorAppBarText" />
 
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/btn_agreement_accept"
-            android:layout_marginLeft="10dp"
-            android:text="I Agree"
-            android:onClick="goSubmit" />
+            style="@style/AppTheme"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_margin="20dp"
+            android:background="@color/colorAccent"
+            android:onClick="goSubmit"
+            android:text="Agree"
+            android:textColor="@color/colorAppBarText" />
     </LinearLayout>
-
 
 </LinearLayout>

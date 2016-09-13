@@ -34,7 +34,8 @@
             android:layout_marginTop="16dp"
             android:layout_gravity="center"
             android:backgroundTint="@color/colorAccent"
-            android:text="@string/btn_text_backToLogin" />
+            android:text="@string/btn_text_backToLogin"
+            android:textColor="@color/colorAppBarText"/>
     </LinearLayout>
 
 </LinearLayout>

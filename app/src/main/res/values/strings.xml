@@ -11,4 +11,5 @@
     <string name="app_label">DiscoGet</string>
     <string name="search_search_hint">Search</string>
     <string name="search_collection_hint">Search Collection</string>
+    <string name="scanner_default_text">Nothing to read</string>
 </resources>

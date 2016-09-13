@@ -16,12 +16,11 @@
             android:orientation="vertical">
 
             <ImageView
-                android:id="@+id/iv_discoget_logo"
-                android:layout_width="wrap_content"
+                android:id="@+id/img_discoGetLogo"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="30dp"
+                android:layout_marginBottom="32dp"
+                android:layout_marginTop="72dp"
                 android:src="@drawable/discoget_logo_small" />
 
             <TextView
@@ -37,52 +36,42 @@
 
             <EditText
                 android:id="@+id/et_createAccount_username"
-                android:layout_width="wrap_content"
+                android:layout_width="220dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:hint="Discogs Username"
-                android:text="sawerdeman55"
-                android:textAlignment="center"
-                android:textSize="20dp" />
+                android:text="sawerdeman55" />
 
             <EditText
                 android:id="@+id/et_createAccount_password0"
-                android:layout_width="wrap_content"
+                android:layout_width="220dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:hint="local password"
                 android:inputType="textPassword"
-                android:text="qaz!1234"
-                android:textAlignment="center"
-                android:textSize="20dp" />
+                android:text="qaz!123" />
 
             <EditText
                 android:id="@+id/et_createAccount_password1"
-                android:layout_width="wrap_content"
+                android:layout_width="220dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:hint="repeat password"
-                android:inputType="textPassword"
-                android:textAlignment="center"
-                android:textSize="20dp" />
+                android:hint="Verify password"
+                android:inputType="textPassword" />
 
             <EditText
                 android:id="@+id/et_createAccount_userkey"
-                android:layout_width="wrap_content"
+                android:layout_width="220dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:hint="Discogs UserKey"
-                android:textAlignment="center"
-                android:textSize="20dp" />
+                android:hint="Discogs UserKey" />
 
             <EditText
                 android:id="@+id/et_createAccount_usersecret"
-                android:layout_width="wrap_content"
+                android:layout_width="220dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:hint="Discogs UserSecret"
-                android:textAlignment="center"
-                android:textSize="20dp" />
+                android:hint="Discogs UserSecret" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -100,7 +89,6 @@
                 android:layout_gravity="center"
                 android:hint="Discogs Token"
                 android:text="PwmXNjrBWHFcWsiqSfLKlouUaCGHPTVWrjZRpGHC"
-                android:textAlignment="center"
                 android:textSize="14dp" />
 
             <Button

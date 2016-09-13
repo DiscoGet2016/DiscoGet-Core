@@ -1,6 +1,5 @@
 package com.discoget.test.discoget_core;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -12,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -23,7 +21,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.InputStream;
-import java.util.Arrays;
 
 
 /**
@@ -92,7 +89,7 @@ public class UserProfile extends AppCompatActivity {
 
 
             // add toolbar...
-            String paneTitle = "My Profile/Home";
+            String paneTitle = "My Profile";
 
             Toolbar my_toolbar = (Toolbar) findViewById(R.id.my_toolbar);
             setSupportActionBar(my_toolbar);
