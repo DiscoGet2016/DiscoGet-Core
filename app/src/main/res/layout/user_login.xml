@@ -10,28 +10,27 @@
 
     <ImageView
         android:id="@+id/img_discoGetLogo"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="20dp"
-        android:layout_marginTop="125dp"
-        android:background="@drawable/discoget_logo_small" />
+        android:layout_marginBottom="32dp"
+        android:layout_marginTop="72dp"
+        android:src="@drawable/discoget_logo_small" />
 
     <EditText
-            android:id="@+id/et_login_username"
-            android:layout_width="220dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:hint="Username"
-            android:inputType="text"/>
+        android:id="@+id/et_login_username"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:hint="Username"
+        android:inputType="text" />
 
     <EditText
-            android:id="@+id/et_login_password"
-            android:layout_width="220dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:hint="Password"
-            android:inputType="textPassword" />
+        android:id="@+id/et_login_password"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:hint="Password"
+        android:inputType="textPassword" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -47,7 +46,8 @@
             android:layout_margin="20dp"
             android:background="@color/colorAccent"
             android:onClick="goRegister"
-            android:text="Register" />
+            android:text="Register"
+            android:textColor="@color/colorAppBarText" />
 
         <Button
             android:id="@+id/btn_signin"
@@ -57,7 +57,8 @@
             android:layout_margin="20dp"
             android:background="@color/colorAccent"
             android:onClick="goLogin"
-            android:text="Sign In" />
+            android:text="Sign In"
+            android:textColor="@color/colorAppBarText" />
 
     </LinearLayout>
 

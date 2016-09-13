@@ -50,10 +50,6 @@
             android:label="Friends"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".Profile"
-            android:label="Profile2"
-            android:theme="@style/AppTheme" />
-        <activity
             android:name=".AccountCreation"
             android:label="Profile2"
             android:theme="@style/AppTheme" />
@@ -75,13 +71,10 @@
             android:theme="@style/AppTheme" />
 
         <!-- Added by Enrique < 8/26/16   -->
-        <activity android:name=".SearchActivity">
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
-        </activity>
-
-
+        <activity android:name=".SearchActivity"/>
+        <activity android:name=".ScanActivity"></activity>
+        <activity android:name=".LayoutSwitcher"></activity>
+        <activity android:name=".WebAccount"></activity>
 
         <!-- Added by Steve Werdeman 9/11/16 -->
         <activity android:name=".CreateUserAccount">
@@ -89,9 +82,6 @@
             android:theme="@style/AppTheme"
         </activity>
         <!-- Added by Enrique < 8/26/16 -->
-        <activity android:name=".ScanActivity" />
-        <activity android:name=".LayoutSwitcher" />
-        <activity android:name=".WebAccount" />
         <activity android:name=".Searchable">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />

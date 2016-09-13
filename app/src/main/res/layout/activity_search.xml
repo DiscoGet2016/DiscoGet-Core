@@ -11,9 +11,9 @@
         layout="@layout/toolbar" />
 
     <ImageView
-        android:id="@+id/discoGetLogo"
+        android:id="@+id/img_discoGetLogo"
         android:layout_width="match_parent"
-        android:layout_height="32dp"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
         android:layout_marginTop="72dp"
         android:src="@drawable/discoget_logo_small" />
@@ -30,10 +30,10 @@
         android:id="@+id/btn_scan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:layout_marginBottom="32dp"
         android:layout_marginTop="32dp"
-        android:background="@drawable/barcode_small"
-        android:layout_gravity="center_horizontal" />
+        android:background="@drawable/barcode_small" />
 
     <TextView
         android:layout_width="match_parent"
@@ -44,10 +44,10 @@
         android:textSize="16sp" />
 
     <TextView
+        android:id="@+id/searchbar_query"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="menu search result"
-        android:id="@+id/searchbar_query"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:text="menu search result" />
 
 </LinearLayout>

@@ -6,8 +6,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -108,7 +108,7 @@ public class CreateUserAccount extends AppCompatActivity {
         dbHelper = new MySQLiteHelper(this);
 
         // display screen and wait for input...
-
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 
     public void saveAccountInfo(View view) {

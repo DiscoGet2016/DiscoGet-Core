@@ -6,7 +6,6 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-
         <item name="android:popupMenuStyle">@style/MyPopUpMenu</item>
     </style>
 
@@ -16,5 +15,4 @@
         <item name="android:popupMenuStyle">@color/colorAppBarText</item>
     </style>
 
-    <string name="scanner_default_text">Nothing to read</string>
 </resources>
