@@ -2,21 +2,27 @@ package com.discoget.test.discoget_core;
 
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-// added for Discogs JSON interface...
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,30 +30,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.concurrent.ExecutionException;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-
-import android.content.Intent;
-
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.app.Activity;
+// added for Discogs JSON interface...
 
 
 /**
  * Created by Steven on 9/11/2016.
  */
 
-public class CreateUserAccount extends AppCompatActivity {
+public class CreateFriendsAccount extends AppCompatActivity {
 
     private SQLiteDatabase discogetDB;
     private MySQLiteHelper dbHelper;
@@ -71,12 +61,12 @@ public class CreateUserAccount extends AppCompatActivity {
     // ---
 
 
-    EditText uid;
+/*    EditText uid;
     EditText uPassword0;
     EditText uPassword1;
 
     EditText uToken;
-
+*/
     // used for JSON object
     String jsonUsername; // = jObject.optString("username");
     String jsonFullName; // = jObject.optString("name");
@@ -84,14 +74,32 @@ public class CreateUserAccount extends AppCompatActivity {
     String jsonUserEmail; // = jObject.optString("email");
     String jsonUserImgUrl; // = jObject.optString("avatar_url");
 
-    Button button; // = (Button) findViewById(R.id.btn_createAccount_save);
+  //  Button button; // = (Button) findViewById(R.id.btn_createAccount_save);
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.create_user_account);
+        //setContentView(R.layout.create_user_account);
 
-        button = (Button) findViewById(R.id.btn_createAccount_save);
+
+
+        String username="";    // =(String) b.get("username");
+        String token ="";       // =(String) b.get("token");
+
+
+        // get extras passed from calling page...
+        Intent iin= getIntent();
+        Bundle b = iin.getExtras();
+
+        if(b!=null)
+        {
+            username =(String) b.get("username");
+            token =(String) b.get("token");
+        }
+
+
+        //button = (Button) findViewById(R.id.btn_createAccount_save);
 
         //---
         // set up http connection...
@@ -102,44 +110,26 @@ public class CreateUserAccount extends AppCompatActivity {
         discogsJSONString = null; // inits string...
 
          // set user fields
-        uid = (EditText) findViewById(R.id.et_createAccount_username);
-        uPassword0 = (EditText) findViewById(R.id.et_createAccount_password0);
-        uPassword1 = (EditText) findViewById(R.id.et_createAccount_password1);
+        //uid = (EditText) findViewById(R.id.et_createAccount_username);
+        //uPassword0 = (EditText) findViewById(R.id.et_createAccount_password0);
+        //uPassword1 = (EditText) findViewById(R.id.et_createAccount_password1);
 
-        uToken = (EditText) findViewById(R.id.et_createAccount_usertoken);
+        //uToken = (EditText) findViewById(R.id.et_createAccount_usertoken);
 
 
         // create database helper object...
         dbHelper = new MySQLiteHelper(this);
 
 
-        button.setClickable(true);
+        //button.setClickable(true);
 
 
         // display screen and wait for input...
-        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-    }
+       // this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
+        //addFriendToDB(username,token);
 
-    public void saveAccountInfo(View view) {
-
-
-        button.setText("processing...");
-        button.setClickable(false);
-
-
-        Toast toast = Toast.makeText(this,"Creating your account...",Toast.LENGTH_LONG);
-        toast.show();
-
-
-
-        TextView tvMessage = (TextView) findViewById(R.id.tv_createAccount_message);
-
-        tvMessage.setText("Creating your account...");
-
-
-
-        processAccountInfo();
+        processAccountInfo(username,token);
 
 
         finish();  // close this activity
@@ -152,7 +142,7 @@ public class CreateUserAccount extends AppCompatActivity {
 
     }
 
-    public void processAccountInfo() {
+    public void processAccountInfo(String userName, String userToken) {
         /*
             This method will get user info from screen, then request profile data from Discogs
             the Discogs JSON will be processed and stored into SQLite data base. - user table.
@@ -161,35 +151,14 @@ public class CreateUserAccount extends AppCompatActivity {
 
 
         // get data from screen
-        String userName = uid.getText().toString();
+        /*String userName = uid.getText().toString();
         String userPass0 = uPassword0.getText().toString();
         String userPass1 = uPassword1.getText().toString();
         String userToken = uToken.getText().toString();
+        */
 
-        if (userPass1.equals(userPass0)) {   // passwords match...
-
-            // send message...
-
-
-            // now do stuff...
-
-            // open DB
-            discogetDB = dbHelper.getWritableDatabase();
-
-        //-------------
-        //https://api.discogs.com/users/mrsangha/collection
-        //String userNameString = "mrSangha";
-
-
-        //String urlBaseString = "https://api.discogs.com/oauth/request_token";
-        //String urlBaseString = "https://api.discogs.com";
-
-        //String urlUsername = "/database/search?barcode=801061939113"; //+ userNameString;
-
-        //String urlSelection = "";
-
-
-        //https://api-img.discogs.com/HC32UPFMHdy4Scd77aPTJvXH0Vs=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-4663501-1371492072-2956.jpeg.jpg&token=PwmXNjrBWHFcWsiqSfLKlouUaCGHPTVWrjZRpGHC
+        // open DB
+        discogetDB = dbHelper.getWritableDatabase();
 
 
         //String userToken = userToken;   //"PwmXNjrBWHFcWsiqSfLKlouUaCGHPTVWrjZRpGHC";
@@ -246,7 +215,7 @@ public class CreateUserAccount extends AppCompatActivity {
                 saveUserLists0(userName,userToken,"want-list",jsonTestString);
 
                 jsonTestString = new HttpAsyncTask().execute(urlCallingStringProfile).get();
-                saveProfileData0(userName, userToken,jsonTestString);
+                saveFriendsProfileData(userName, userToken,jsonTestString);
 
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -293,16 +262,10 @@ public class CreateUserAccount extends AppCompatActivity {
             Toast.makeText(this,"Connection not available",Toast.LENGTH_LONG).show();
            */
         }
-
-
-        } else {
-           // Toast.makeText(this, "Passwords do not match...",Toast.LENGTH_LONG).show();
-        }
-
     }
 
 
-    private void saveProfileData0(String userName, String userToken, String jsonString) {
+    private void saveFriendsProfileData(String userName, String userToken, String jsonString) {
 
         // get JSON string from Discogs - store in userJSONString
 
@@ -318,10 +281,6 @@ public class CreateUserAccount extends AppCompatActivity {
 
 
             jsonUsername = jObject.optString("username");
-            if (!(jsonUsername.equals(uid.getText().toString()))){
-                Toast.makeText(this, "Username does not match JSON file",Toast.LENGTH_LONG).show();
-            }
-
             jsonFullName = jObject.optString("name");
             jsonUserBio  = jObject.optString("profile");
 
@@ -365,10 +324,10 @@ public class CreateUserAccount extends AppCompatActivity {
 
         // create query string
         String queryStrValues =
-                "'" + uid.getText().toString() + "', " +
-                        "'primary', " +
-                        "'" + uPassword0.getText().toString() + "', " +
-                        "'" + uToken.getText().toString() + "', " +
+                "'" + userName + "', " +
+                        "'friend', " +
+                        "'" + "no password" + "', " +
+                        "'" + "no token"  + "', " +
                         "'" + jsonFullName + "', " +
                         "'" + jsonUserBio + "', " +
                         "'" + jsonUserEmail + "', " +
@@ -404,110 +363,6 @@ public class CreateUserAccount extends AppCompatActivity {
 
 
     }
-
-    private void saveProfileData(String userName, String userToken) {
-
-        // get JSON string from Discogs - store in userJSONString
-
-        String userJSONString = getJSONFromDiscogs(userName, userToken);
-
-        try {
-            JSONObject jObject = new JSONObject(userJSONString);
-
-            // now get the profile data needed...
-            // ### we could verify user name here... if we want...
-
-            //if (array.getJSONObject(i).has("link"))
-
-
-            jsonUsername = jObject.optString("username");
-            if (!(jsonUsername.equals(uid.getText().toString()))){
-                Toast.makeText(this, "Username does not match JSON file",Toast.LENGTH_LONG).show();
-            }
-
-            jsonFullName = jObject.optString("name");
-            jsonUserBio  = jObject.optString("profile");
-
-            if (jObject.has("email")) {
-                jsonUserEmail = jObject.optString("email");
-            } else {
-                jsonUserEmail = "";
-            }
-
-            jsonUserImgUrl = jObject.optString("avatar_url");
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
-        // create SQL string
-
-        /* // Create DB tables
-        // Agreement table  -- store agreement info and ...?
-        discogetDB.execSQL("CREATE TABLE IF NOT EXISTS agreement " +
-                "(id integer primary key, approved VARCHAR, agreementdate VARCHAR);");
-
-        // add data to this table
-        discogetDB.execSQL("INSERT INTO agreement (approved, agreementdate) VALUES ('yes!!!', 'today')");
-
-        */
-
-        // User table  -- store user data and user authication token with Discogs
-        /* discogetDB.execSQL("CREATE TABLE IF NOT EXISTS user " +
-                "(id integer primary key, uid VARCHAR, usertype VARCHAR, username VARCHAR," +
-                "password VARCHAR, firstname VARCHAR, lastname VARCHAR, fullname VARCHAR, userbio, VARCHAR, emailaddress VARCHAR," +
-                "mobilenumber VARCHAR, imageurl VARCHAR, discogstoken VARCHAR, discogskey VARCHAR,);");
-        */
-
-        // create temp imageURL string
-        String imageURL = jsonUserImgUrl;    //"https://secure.gravatar.com/avatar/8f6328a88899ed68d8c913de6a10006d?s=500&r=pg&d=mm";
-
-        // add data to this table
-
-        // create query string
-        String queryStrValues =
-                "'" + uid.getText().toString() + "', " +
-                        "'primary', " +
-                        "'" + uPassword0.getText().toString() + "', " +
-                        "'" + uToken.getText().toString() + "', " +
-                        "'" + jsonFullName + "', " +
-                        "'" + jsonUserBio + "', " +
-                        "'" + jsonUserEmail + "', " +
-                        "'" + imageURL + "'";
-
-        /*String queryStrValues =
-               "'" + uid.getText().toString() + "', " +
-               "'primary', " +
-               "'" + Password0.getText().toString() + "', " +
-               "'" + uToken.getText().toString() + "', " +
-               "'" + imageURL + "'";
-
-          */
-
-        //Toast.makeText(this, "Query String = "+ queryStrValues,Toast.LENGTH_LONG).show();
-        // insert data into user table
-        discogetDB.execSQL("INSERT INTO user (uid, usertype, password, discogstoken, fullname, userbio, emailaddress, imageurl ) VALUES (" + queryStrValues + ")");
-
-
-
-        // TODO add other databases later...
-        /*
-        // Items -- store all items for user and friends
-        discogetDB.execSQL("CREATE TABLE IF NOT EXISTS items " +
-                "(id integer primary key autoincrement , owner VARCHAR, discogsitemurl VARCHAR," +
-                "imageurl VARCHAR, barcode VARCHAR, shortdescription VARCHAR," +
-                "whichlist VARCHAR, artist VARCHAR, album VARCHAR, year VARCHAR," +
-                "catalognumber VARCHAR, deleteflag VARCHAR);");
-
-        //   discogetDB.close();
-
-        */
-
-
-    }
-
 
 
     private String getJSONFromDiscogs(String username, String userToken) {
@@ -1234,7 +1089,7 @@ public class CreateUserAccount extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-            message.setText("Creating your account...");
+           // message.setText("Creating your account...");
         }
     }
 

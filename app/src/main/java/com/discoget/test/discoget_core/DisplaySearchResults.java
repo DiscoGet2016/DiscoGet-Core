@@ -5,54 +5,83 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.PopupMenu;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
+
+
+
+
+
+
+
 
 
 //import static com.discoget.test.outtestproject.R.id.the_list_view;
 
 /**
  * Created by steve on 8/17/2016.
+ * ============================================
+ * 9/14/16 - SAW
+ * modified from SearchResults... and WantList classes...
+ *
+ * cleaned up and removed unused options...
+ *
+ * fixed async portion...
+ *
  */
-public class WantList extends AppCompatActivity {
+public class DisplaySearchResults extends AppCompatActivity {
+
+    private static String SEARCH_TYPE_BARCODE = "barcode";
+    private static String SEARCH_TYPE_TITLE = "title";
 
     private boolean debug = false; // use true for testing
 
     private SQLiteDatabase discogetDB;
     private MySQLiteHelper dbHelper;
 
+    private String discogsJSONString;
 
 
-
-    private static final String WANT_LIST = "Want-List";
-    private static final String COLLECTION_LIST = "Collection";
-
-    CollectionItems newItem;   // declsre globally..
+    CollectionItems newItem;   // declare globally..
 
     String username = "";
     String password = "";
     String listType = "";
+    String searchType = "";
+    String searchValue = "";
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.the_list_view2);
-
-
-        // create database helper object...
-        dbHelper = new MySQLiteHelper(this);
 
 
         // get Extra info passed from calling screen
@@ -62,22 +91,25 @@ public class WantList extends AppCompatActivity {
         if (b != null) {
             username = (String) b.get("username");
             password = (String) b.get("password");
-            listType = (String) b.get("listType");
+           //listType = (String) b.get("listType");
+            searchType = (String) b.get("searchType");
+            searchValue = (String) b.get("searchValue");
         }
 
+        // title for toolbar...
+         // WordUtils.capitalize("your string")
+        String searchTitle = "";
 
-        //TextView tvUsername = (TextView) findViewById(R.id.txt_wantlist_username);
-        //TextView tvListtype = (TextView) findViewById(R.id.txt_wantlist_listtype);
+        if (searchType.equals(SEARCH_TYPE_BARCODE)) {
+            searchTitle = "Barcode";
+        } else {
+            searchTitle = "Title";
+        }
 
-        //tvUsername.setText(username+"'s");
-        //tvListtype.setText(listtype);
+        String paneTitle = searchTitle + " search for: " + searchValue;  //username + "'s" + " " + listType;
 
 
         // add toolbar... --------------------------------------------------------------
-
-        String paneTitle = username + "'s" + " " + listType;
-        //String paneTitle = "My collections";
-
         Toolbar my_toolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(my_toolbar);
 
@@ -87,19 +119,15 @@ public class WantList extends AppCompatActivity {
         my_toolbar.findViewById(R.id.my_toolbar).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PopupMenu popup = new PopupMenu(WantList.this, v);
-
+                PopupMenu popup = new PopupMenu(DisplaySearchResults.this, v);
                 // This activity implements OnMenuItemClickListener
-
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
-
                         final int result = 1;
                         Intent goToNextScreen;
-
                         switch (item.getItemId()) {
                             case R.id.menu_profile:
-                                goToNextScreen = new Intent(WantList.this, UserProfile.class);
+                                goToNextScreen = new Intent(DisplaySearchResults.this, UserProfile.class);
                                 goToNextScreen.putExtra("username", username);
                                 goToNextScreen.putExtra("password", password);
 
@@ -107,7 +135,7 @@ public class WantList extends AppCompatActivity {
 
                                 return true;
                             case R.id.menu_search:
-                                goToNextScreen = new Intent(WantList.this, SearchActivity.class);
+                                goToNextScreen = new Intent(DisplaySearchResults.this, SearchActivity.class);
                                 goToNextScreen.putExtra("username", username);
                                 goToNextScreen.putExtra("password", password);
 
@@ -115,7 +143,7 @@ public class WantList extends AppCompatActivity {
 
                                 return true;
                             case R.id.menu_collection:
-                                goToNextScreen = new Intent(WantList.this, WantList.class);
+                                goToNextScreen = new Intent(DisplaySearchResults.this, DisplaySearchResults.class);
                                 goToNextScreen.putExtra("username", username);
                                 goToNextScreen.putExtra("password", password);
                                 goToNextScreen.putExtra("listType", "Collection");
@@ -124,7 +152,7 @@ public class WantList extends AppCompatActivity {
 
                                 return true;
                             case R.id.menu_wantlist:
-                                goToNextScreen = new Intent(WantList.this, WantList.class);
+                                goToNextScreen = new Intent(DisplaySearchResults.this, DisplaySearchResults.class);
                                 goToNextScreen.putExtra("username", username);
                                 goToNextScreen.putExtra("password", password);
                                 goToNextScreen.putExtra("listType", "Want-List");
@@ -132,7 +160,7 @@ public class WantList extends AppCompatActivity {
 
                                 return true;
                             case R.id.menu_friends:
-                                goToNextScreen = new Intent(WantList.this, Friends.class);
+                                goToNextScreen = new Intent(DisplaySearchResults.this, Friends.class);
                                 goToNextScreen.putExtra("username", username);
                                 goToNextScreen.putExtra("password", password);
                                 //goToNextScreen.putExtra("listType","Collection");
@@ -141,7 +169,7 @@ public class WantList extends AppCompatActivity {
 
                                 return true;
                             case R.id.menu_logout:
-                                goToNextScreen = new Intent(WantList.this, AccountAccess.class);
+                                goToNextScreen = new Intent(DisplaySearchResults.this, AccountAccess.class);
                                 startActivity(goToNextScreen);
 
                                 return true;
@@ -159,7 +187,7 @@ public class WantList extends AppCompatActivity {
                                 "Clicked popup menu item " + item.getTitle(),
                                 Toast.LENGTH_SHORT).show();
                        */
-                                goToNextScreen = new Intent(WantList.this, ActivityHome.class);
+                                goToNextScreen = new Intent(DisplaySearchResults.this, ActivityHome.class);
                                 startActivity(goToNextScreen);
 
                                 return false;
@@ -173,48 +201,250 @@ public class WantList extends AppCompatActivity {
 
             }
         });
-        //=======================================================================================
+        //=================== end of tool bar stuff... ==========================================
 
-
+        // build array adapter
         ArrayList<CollectionItems> arrayOfItems = new ArrayList<CollectionItems>();
         final CollectionListAdapter adapter = new CollectionListAdapter(this, arrayOfItems);
-        // get lists
 
-        //makeBasiclist(adapter);
-        readFromDataBase(adapter, listType);
+        // get lists  - Search Discogs for JSON results...
+        //  add list to adapter..
 
-        //-------------------------------------------------------------------
-        // Attach the adapter to a ListView
-        ListView listView = (ListView) findViewById(R.id.list_view2);
-        listView.setAdapter(adapter);
+            getSearchJSONData(adapter);  // gets JSON data from Discogs and add it to the adapter...
 
 
-        //-------------------------------------------------------------------
-        // get list view in xml screen
-        //SAW//ListView theListView = (ListView) findViewById(R.id.list_view2);
-        //SAW//theListView.setAdapter(theAdapter);
+            // Attach the adapter to a ListView
+            ListView listView = (ListView) findViewById(R.id.list_view2);
+            listView.setAdapter(adapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int menuSelected, long l) {
+            // list is displayed and wait for user to select an item...
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int menuSelected, long l) {
 
-                //String menuItemSelected = "Menu item selected was at position: " + menuSelected + "--> " + adapter.getItem(menuSelected).itemArtist;
+                    //String menuItemSelected = "Menu item selected was at position: " + menuSelected + "--> " + adapter.getItem(menuSelected).itemArtist;
 
-                Intent goToNextScreen;
-                // to to selected item screen
-                goToNextScreen = new Intent(WantList.this, ItemScreen.class);
-                goToNextScreen.putExtra("artist", adapter.getItem(menuSelected).itemArtist);
-                goToNextScreen.putExtra("label", adapter.getItem(menuSelected).itemLabel);
-                goToNextScreen.putExtra("year", adapter.getItem(menuSelected).itemYear);
-                goToNextScreen.putExtra("URL", adapter.getItem(menuSelected).itemCoverURL);
-                startActivity(goToNextScreen);
+                    // set intent for Item selectio0n screen...
+                    Intent goToNextScreen;
+                    // to to selected item screen
+                    goToNextScreen = new Intent(DisplaySearchResults.this, ItemScreen.class);
+                    goToNextScreen.putExtra("artist", adapter.getItem(menuSelected).itemArtist);
+                    goToNextScreen.putExtra("label", adapter.getItem(menuSelected).itemLabel);
+                    goToNextScreen.putExtra("year", adapter.getItem(menuSelected).itemYear);
+                    goToNextScreen.putExtra("URL", adapter.getItem(menuSelected).itemCoverURL);
+                    startActivity(goToNextScreen);
 
-                // Toast.makeText(WantList.this,menuItemSelected, Toast.LENGTH_SHORT).show();
-
-            }
-        });
+                    // Toast.makeText(WantList.this,menuItemSelected, Toast.LENGTH_SHORT).show();
+                }
+            });
 
     }
+
+
+
+
+
+
+    private void getSearchJSONData(CollectionListAdapter adapter) {
+
+        String DEFAULT_USER_TOKEN = "PwmXNjrBWHFcWsiqSfLKlouUaCGHPTVWrjZRpGHC";
+
+        // get JSON String  ... need async task
+
+        // parse JSON string
+
+        // add values to adapter...
+
+        // done.
+
+
+        //-------------
+        //https://api.discogs.com/users/mrsangha/collection
+        //String userNameString = "mrSangha";
+
+        /**
+         * Build url search string from Discogs abics and use4r Token
+         *
+         * Discogs basic serach string:  http://api.discogs.com/database/serach?
+         *
+         */
+
+        //String urlBaseString = "https://api.discogs.com/oauth/request_token";
+        String urlBaseString = "https://api.discogs.com/database/search?";
+
+        if (searchType.equals("barcode")) {
+            urlBaseString += "barcode=" + searchValue;
+        } else {
+            urlBaseString += "title=" + searchValue;
+        }
+
+        urlBaseString += "&token=" + DEFAULT_USER_TOKEN;
+
+        // string should look like this...
+        //urlBaseString = "https://api.discogs.com/database/search?barcode=831596202&token=PwmXNjrBWHFcWsiqSfLKlouUaCGHPTVWrjZRpGHC";
+
+        // build urlCalling String...
+        String urlCallingString =  urlBaseString;
+
+        // Show resulting string for testing
+        if (debug) { Toast.makeText(this,urlCallingString,Toast.LENGTH_LONG); }
+
+
+        // establish connection to internet...
+        //-----------------------------------------------------------------------------
+        // check if you are connected or not
+        if(isConnected()){
+            // call AsynTask to perform network operation on separate thread
+            String jsonTestString;   // temp JSON string
+
+            try {
+              // Toast.makeText(this,"Sync Started: Please wait",Toast.LENGTH_LONG).show();
+
+              if (!debug) {
+                  // call async - esle use test data...
+                  jsonTestString = new HttpAsyncTask().execute(urlCallingString).get();
+              } else {
+                  //using test data...
+                  jsonTestString = "{'pagination': {'per_page': 50, 'items': 4, 'page': 1, 'urls': {}, 'pages': 1}, 'results': [{'style': ['Pop Rock', 'Disco'], 'thumb': '', 'format': ['CD', 'Album', 'Reissue'], 'country': 'Germany', 'barcode': ['831 596-2 02 %'], 'uri': '/ABBA-ABBA/release/7528186', 'community': {'have': 1, 'want': 8}, 'label': ['Polydor'], 'catno': '0040 170', 'year': '1992', 'genre': ['Electronic', 'Rock', 'Pop'], 'title': 'ABBA - ABBA', 'resource_url': 'https://api.discogs.com/releases/7528186', 'type': 'release', 'id': 7528186}, {'style': ['Europop'], 'thumb': 'https://api-img.discogs.com/DmeiS2YNs97-061-GiRqsgaDjhQ=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-6295126-1415806005-8529.jpeg.jpg', 'format': ['CD', 'Album'], 'country': 'Europe', 'barcode': ['0 42283 15962 4', 'GEMA', 'LC 0309', 'AAD', '831 596-2 02 %', 'MADE IN GERMANY BY PMDC'], 'uri': '/ABBA-ABBA/release/6295126', 'community': {'have': 9, 'want': 18}, 'label': ['Polydor', 'Polar Music AB', 'Polar Music AB', 'Glenstudio', 'Metronome Studio, Stockholm', 'Metronome Studio, Stockholm', 'Union Songs AB', 'PMDC, Germany'], 'catno': '831 596-2', 'genre': ['Pop'], 'title': 'ABBA - ABBA', 'resource_url': 'https://api.discogs.com/releases/6295126', 'type': 'release', 'id': 6295126}, {'style': ['Pop Rock', 'Disco'], 'thumb': 'https://api-img.discogs.com/Bm7BanmTVA18gcthMbgSQyit0_I=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-7471706-1442158809-4351.jpeg.jpg', 'format': ['CD', 'Album'], 'country': 'Germany', 'barcode': ['831 596-2 02 /', 'BIEM / STEMRA', 'LC 0309', 'AAD', 'Made in Germany by PMDC'], 'uri': '/ABBA-ABBA/release/7471706', 'community': {'have': 1, 'want': 8}, 'label': ['Polydor', 'PMDC, Germany'], 'catno': '521 155-2', 'genre': ['Electronic', 'Rock', 'Pop'], 'title': 'ABBA - ABBA', 'resource_url': 'https://api.discogs.com/releases/7471706', 'type': 'release', 'id': 7471706}, {'style': ['Pop Rock'], 'thumb': 'https://api-img.discogs.com/yr9bbyx1DNql5NRSw4jFOaqEvrc=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-3209742-1320601400.jpeg.jpg', 'format': ['CD', 'Album', 'Reissue'], 'country': 'Germany', 'barcode': ['0 42283 15962 4', '831 596-2 02 %', 'GEMA', 'LC 0309', 'POL 899', 'AAD'], 'uri': '/ABBA-ABBA/release/3209742', 'community': {'have': 15, 'want': 22}, 'label': ['Polydor', 'Polar Music AB', 'Polar Music AB', 'Glenstudio', 'Metronome Studio, Stockholm'], 'catno': '831 596-2', 'year': '1987', 'genre': ['Pop'], 'title': 'ABBA - ABBA', 'resource_url': 'https://api.discogs.com/releases/3209742', 'type': 'release', 'id': 3209742}]}";
+              }
+
+                // assign
+               // Toast.makeText(this,jsonTestString,Toast.LENGTH_LONG);
+
+                addResultsToList(adapter,jsonTestString);
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+        else{
+            Toast.makeText(this,"Connection not available",Toast.LENGTH_LONG).show();
+         }
+     }
+
+
+
+    private void addResultsToList(CollectionListAdapter adapter, String jsonData) {
+
+
+        String searchListToProcess = jsonData;//getJSONStringFromDiscogs(username, userToken, listtype);
+
+        String whichListType = "search";
+
+        String searchItemJSONString = searchListToProcess; // assign value to parse here...
+
+        String jsonListSelector = "results";
+
+        //Toast.makeText(this,"List selector: " + jsonListSelector,Toast.LENGTH_LONG).show();
+
+
+        JSONObject searchItemList;   // generic name...
+
+        try {
+
+            /* basic layout of  List here
+                // TODO need to add layout text here...
+             */
+            searchItemList = new JSONObject(searchItemJSONString);
+
+            // get page info
+            JSONObject page = searchItemList.getJSONObject("pagination");  // same for both
+
+            // set page info
+            String numOfItems = page.getString("items");
+            String numOFPages = page.getString("pages");
+            //String nextPage   = page.getString("nextpage");   // TODO need to verify...
+
+            //String item_ownerid = username;        // username
+
+            // create rest if items...  not all itesm are used at this time...
+            String item_itemurl = "";     // release-basicinfo = "resource_url"
+            String item_imageurl = "";           // release-basicinfo = "thumb"
+            String item_barcode = "";            // ?
+            String item_shortdescription = "";   // ?
+            String item_whichlist = whichListType;  // Collections
+            String item_artist = "";             // release-basicinfo-artist = "name"
+            String item_albumLabel = "";              // release-basicinfo-labels = "name"
+            String item_albumYear = "";               // release-basicinfo = "year"
+            String item_catalognumber = "";      // ?
+            String item_albumTitle = "";
+
+
+
+            // get releases array
+            JSONArray searchResultsArray = searchItemList.getJSONArray(jsonListSelector);  //was "releases"
+
+           // Toast.makeText(this,"made it this far...",Toast.LENGTH_LONG).show();
+
+            // set release array length
+            String arrayLength = Integer.toString(searchResultsArray.length());
+
+
+
+            // loop thru releases (for this page...  // TODO need to process multiple pages...
+            for (int i=0;i < searchResultsArray.length(); i++) {  // loop through array
+
+                // set defaults...
+                item_itemurl = "not found";
+                item_imageurl  =  "not found"; //checkURL(item.getString("thumb"));
+                item_albumYear =  "not found"; //item.getString("year");
+                item_albumTitle =  "not found"; //item.getString("title");
+
+                // get current release array object
+                JSONObject item = searchResultsArray.getJSONObject(i);
+
+                // break it down... Basic INFO
+                //JSONObject basicinfo = item.getJSONObject("basic_information");
+
+                if (item.has("resource_url")) {
+                    item_itemurl = item.getString("resource_url");
+                }
+                if (item.has("thumb")) {
+                    item_imageurl = checkURL(item.getString("thumb"));
+                }
+                if (item.has("year")) {
+                    item_albumYear = item.getString("year");
+                }
+                if (item.has("title")) {
+                    item_albumTitle = item.getString("title");
+                }
+
+                if (item.has("label")) {
+                    JSONArray label = item.getJSONArray("label");
+                    // EXAMPLE... int value=itemArray.getInt(i);
+                    // TODO need to fix this...
+                    item_albumLabel = label.getString(0); //"Album label"; //label1.getString("name");
+                } else {
+                    item_albumLabel = "Album label";
+                }
+
+                // add adapter info
+                //newItem = new CollectionItems("Beatles", "Columbia", "1962", itemImageURL);
+                newItem = new CollectionItems(item_albumTitle, item_albumLabel, item_albumYear, item_imageurl);
+                adapter.add(newItem);
+
+            }   // end of release loop...
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+
+            if (debug) { Toast.makeText(this,"collection list - JSON Error...",Toast.LENGTH_LONG).show(); }
+        }
+    }
+
+    private String checkURL(String thumb) {
+
+        if (thumb.length() < 1) {
+            return "http://images.clipartpanda.com/record-clipart-blue-record-hi.png";
+        }
+
+        return thumb;
+
+    }
+
 
     public void makeBasiclist(CollectionListAdapter adapter) {
 
@@ -541,13 +771,89 @@ public class WantList extends AppCompatActivity {
 
         //TODO need to finish
         String toastString = "go home...";
-        if (debug) {  Toast.makeText(WantList.this,toastString, Toast.LENGTH_SHORT).show(); }
+        if (debug) {  Toast.makeText(DisplaySearchResults.this,toastString, Toast.LENGTH_SHORT).show(); }
 
         //TODO
         // go to list screen....
         Intent goToNextScreen = new Intent (this, AccountAccess.class);
         final int result = 1;
         startActivity(goToNextScreen);
+    }
+
+
+
+
+    private class HttpAsyncTask extends AsyncTask<String, Void, String> {
+
+        //private TextView message = (TextView) findViewById(R.id.tv_createAccount_message);
+
+        @Override
+        protected String doInBackground(String... urls) {
+
+          //  Toast.makeText(getBaseContext(), "starting Get with: " , Toast.LENGTH_SHORT).show();
+            return GET(urls[0]);
+        }
+
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(String result) {
+            if (debug) {  Toast.makeText(getBaseContext(), "Received!", Toast.LENGTH_SHORT).show(); }
+            //etResponse.setText(result);
+            discogsJSONString = result.toString();
+
+            if (debug) { Toast.makeText(getBaseContext(),discogsJSONString,Toast.LENGTH_LONG).show();}
+
+        }
+
+
+    }
+
+    public static String GET(String url){
+        InputStream inputStream = null;
+        String result = "";
+        try {
+
+            // create HttpClient
+            HttpClient httpclient = new DefaultHttpClient();
+
+            // make GET request to the given URL
+            HttpResponse httpResponse = httpclient.execute(new HttpGet(url));
+
+            // receive response as inputStream
+            inputStream = httpResponse.getEntity().getContent();
+
+            // convert inputstream to string
+            if(inputStream != null)
+                result = convertInputStreamToString(inputStream);
+            else
+                result = "Did not work!";
+
+        } catch (Exception e) {
+            Log.d("InputStream", e.getLocalizedMessage());
+        }
+
+        return result;
+    }
+
+    private static String convertInputStreamToString(InputStream inputStream) throws IOException{
+        BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
+        String line = "";
+        String result = "";
+        while((line = bufferedReader.readLine()) != null)
+            result += line;
+
+        inputStream.close();
+        return result;
+
+    }
+
+    public boolean isConnected(){
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(this.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected())
+            return true;
+        else
+            return false;
     }
 
 

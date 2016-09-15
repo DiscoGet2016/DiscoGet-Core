@@ -70,11 +70,27 @@
             android:label="Item Selected"
             android:theme="@style/AppTheme" />
 
+        <!-- added by Steve 091416 -->
+
+        <activity android:name=".DisplaySearchResults"
+            android:label="Item Selected"
+            android:theme="@style/AppTheme" />
+
+        <activity android:name=".DisplayFriendsSearchResults"
+            android:label="Item Selected"
+            android:theme="@style/AppTheme" />
+
+        <activity android:name=".CreateFriendsAccount"
+            android:label="Item Selected"
+            android:theme="@style/AppTheme" />
+
         <!-- Added by Enrique < 8/26/16   -->
         <activity android:name=".SearchActivity"/>
         <activity android:name=".ScanActivity"></activity>
         <activity android:name=".LayoutSwitcher"></activity>
         <activity android:name=".WebAccount"></activity>
+        <activity android:name=".SearchResults"></activity>
+
 
         <!-- Added by Steve Werdeman 9/11/16 -->
         <activity android:name=".CreateUserAccount">

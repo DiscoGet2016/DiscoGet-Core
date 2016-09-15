@@ -39,7 +39,7 @@ public class SearchActivity extends AppCompatActivity {
         {
             username =(String) b.get("username");
             password = (String) b.get("password");
-           // listType =(String) b.get("listType");
+            //listType =(String) b.get("listType");
 
         }
 
@@ -160,13 +160,30 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
 
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == SCAN_BARCODE) {
             if(resultCode == Activity.RESULT_OK) {
                 String result = data.getStringExtra("scanned_barcode");
-                Toast.makeText(SearchActivity.this, result, Toast.LENGTH_SHORT).show();
+                Toast.makeText(SearchActivity.this, "Barcode: " + result, Toast.LENGTH_LONG).show();
+                if (!(result.equals("Nothing to Read")) || result.length() > 1) {
+                    /// do stuff here...
+                    finish();
+
+                    Intent goToNextScreen = new Intent(this, DisplaySearchResults.class);
+
+                    //goToNextScreen.putExtra("username", username.getText().toString());
+                    //goToNextScreen.putExtra("password", password.getText().toString());
+                    goToNextScreen.putExtra("searchType", "barcode");
+                    goToNextScreen.putExtra("searchValue", result);
+
+                    final int a_result = 1;
+                    startActivity(goToNextScreen);
+                }
+
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 String result = "Nothing scanned";
@@ -200,16 +217,44 @@ public class SearchActivity extends AppCompatActivity {
 
                 TextView searched = (TextView) findViewById(R.id.searchbar_query);
                 searched.setText(searchView.getQuery());
+
+                Intent goToNextScreen = new Intent(SearchActivity.this, DisplaySearchResults.class);
+
+                goToNextScreen.putExtra("username", "test"); //username.getText().toString());
+                goToNextScreen.putExtra("password",  "test"); //password.getText().toString());
+                goToNextScreen.putExtra("searchType", "title");
+                goToNextScreen.putExtra("searchValue", query);
+
+                final int a_result = 1;
+                startActivity(goToNextScreen);
+                //Toast.makeText(SearchActivity.this,"search text: " + query ,Toast.LENGTH_SHORT).show();
+
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
+
+
                 return false;
             }
         });
 
 
         return true;
+    }
+
+    public void gotest(View view) {
+
+        // FOR TESTING...
+        Intent goToNextScreen = new Intent(SearchActivity.this, DisplaySearchResults.class);
+
+        goToNextScreen.putExtra("username", "test"); //username.getText().toString());
+        goToNextScreen.putExtra("password",  "test"); //password.getText().toString());
+        goToNextScreen.putExtra("searchType", "barcode");
+        goToNextScreen.putExtra("searchValue", "5413356693324");
+
+        final int a_result = 1;
+        startActivity(goToNextScreen);
     }
 }

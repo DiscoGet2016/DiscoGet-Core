@@ -24,7 +24,7 @@ public class AgreementScreen extends Activity {
 
     private SQLiteDatabase discogetDB;
     private MySQLiteHelper dbHelper;
-    private Boolean debugFlag = true;   // true turns of debug skips and sets...
+    private Boolean debugFlag = false;   // true delete databases...
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,7 +142,7 @@ public class AgreementScreen extends Activity {
 
          //   discogetDB.close();
 
-           Toast.makeText(this,"Items DB created...",Toast.LENGTH_LONG).show();
+           //Toast.makeText(this,"Items DB created...",Toast.LENGTH_LONG).show();
 
 
 

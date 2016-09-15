@@ -55,7 +55,7 @@ public class AccountAccess extends AppCompatActivity {
 
 
 
-        Toast.makeText(this,"USER ID = " + uid + "  " + pw + "  " + token,Toast.LENGTH_LONG).show();
+       if (debugFlag) { Toast.makeText(this,"USER ID = " + uid + "  " + pw + "  " + token,Toast.LENGTH_LONG).show(); }
 
 
 

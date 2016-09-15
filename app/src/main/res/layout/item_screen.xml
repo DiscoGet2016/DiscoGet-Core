@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/iv_item_cover"
         android:layout_gravity="center_horizontal"
-        android:src="@android:mipmap/sym_def_app_icon"
+        android:src="@drawable/blue_record_200"
         android:layout_weight="0.42" />
 
     <TextView

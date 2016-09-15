@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:hint="Discogs Username"
-                android:text="sawerdeman55" />
+                android:text="djens" />
 
             <EditText
                 android:id="@+id/et_createAccount_password0"
@@ -49,7 +49,7 @@
                 android:layout_gravity="center"
                 android:hint="local password"
                 android:inputType="textPassword"
-                android:text="qaz!123" />
+                android:text="qaz!1234" />
 
             <EditText
                 android:id="@+id/et_createAccount_password1"
@@ -57,7 +57,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:hint="Verify password"
-                android:inputType="textPassword" />
+                android:inputType="textPassword"
+                android:text="qaz!1234"/>
 
             <EditText
                 android:id="@+id/et_createAccount_userkey"
@@ -88,7 +89,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:hint="Discogs Token"
-                android:text="PwmXNjrBWHFcWsiqSfLKlouUaCGHPTVWrjZRpGHC"
+                android:text="sMmYoLkNZpHsAyUHkSNuWpNBKxruChAHLRjRlDgv"
                 android:textSize="14dp" />
 
             <Button
@@ -98,9 +99,21 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
                 android:onClick="saveAccountInfo"
+                android:clickable="false"
                 android:text="Save" />
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_createAccount_message"
+                android:textAlignment="center"
+                android:textSize="20sp"
+                android:textColor="@color/wallet_holo_blue_light"/>
+
+
         </LinearLayout>
+
+
 
     </ScrollView>
 

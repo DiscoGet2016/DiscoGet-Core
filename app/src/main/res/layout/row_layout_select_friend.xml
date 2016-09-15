@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="15dp">
+
+    <ImageView
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:id="@+id/img_albumCover"
+        android:src="@drawable/user_default"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_alignParentLeft="true"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_toRightOf="@+id/img_albumCover">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Username"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:id="@+id/txt_artist"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:hint="Full name if available"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:id="@+id/txt_album"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Year"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:hint="for future use"
+            android:id="@+id/txt_year"
+            />
+
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_addNewFriend"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:text="Add"
+        android:background="@color/colorAccent"
+        android:layout_marginRight="10dp"
+        android:layout_alignParentRight="true"
+        android:onClick="addToFriendsDB"/>
+
+</RelativeLayout>

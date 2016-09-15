@@ -10,14 +10,42 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.PopupMenu;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
+
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.concurrent.ExecutionException;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.content.Intent;
+
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.app.Activity;
+
 
 
 //import static com.discoget.test.outtestproject.R.id.the_list_view;
@@ -25,24 +53,26 @@ import java.util.ArrayList;
 /**
  * Created by steve on 8/17/2016.
  */
-public class WantList extends AppCompatActivity {
+public class SearchResults extends AppCompatActivity {
 
     private boolean debug = false; // use true for testing
 
     private SQLiteDatabase discogetDB;
     private MySQLiteHelper dbHelper;
 
-
-
+    private String discogsJSONString;
 
     private static final String WANT_LIST = "Want-List";
     private static final String COLLECTION_LIST = "Collection";
 
-    CollectionItems newItem;   // declsre globally..
+    CollectionItems newItem;   // declear globally..
 
     String username = "";
     String password = "";
     String listType = "";
+    String searchType = "";
+    String searchValue = "";
+
 
 
     @Override
@@ -60,9 +90,11 @@ public class WantList extends AppCompatActivity {
         Bundle b = iin.getExtras();
 
         if (b != null) {
-            username = (String) b.get("username");
-            password = (String) b.get("password");
-            listType = (String) b.get("listType");
+           // username = (String) b.get("username");
+           // password = (String) b.get("password");
+           //listType = (String) b.get("listType");
+            searchType = (String) b.get("searchType");
+            searchValue = (String) b.get("searchValue");
         }
 
 
@@ -72,10 +104,9 @@ public class WantList extends AppCompatActivity {
         //tvUsername.setText(username+"'s");
         //tvListtype.setText(listtype);
 
-
         // add toolbar... --------------------------------------------------------------
 
-        String paneTitle = username + "'s" + " " + listType;
+        String paneTitle = searchType + " search for: " + searchValue;  //username + "'s" + " " + listType;
         //String paneTitle = "My collections";
 
         Toolbar my_toolbar = (Toolbar) findViewById(R.id.my_toolbar);
@@ -87,7 +118,7 @@ public class WantList extends AppCompatActivity {
         my_toolbar.findViewById(R.id.my_toolbar).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PopupMenu popup = new PopupMenu(WantList.this, v);
+                PopupMenu popup = new PopupMenu(SearchResults.this, v);
 
                 // This activity implements OnMenuItemClickListener
 
@@ -99,7 +130,7 @@ public class WantList extends AppCompatActivity {
 
                         switch (item.getItemId()) {
                             case R.id.menu_profile:
-                                goToNextScreen = new Intent(WantList.this, UserProfile.class);
+                                goToNextScreen = new Intent(SearchResults.this, UserProfile.class);
                                 goToNextScreen.putExtra("username", username);
                                 goToNextScreen.putExtra("password", password);
 
@@ -107,7 +138,7 @@ public class WantList extends AppCompatActivity {
 
                                 return true;
                             case R.id.menu_search:
-                                goToNextScreen = new Intent(WantList.this, SearchActivity.class);
+                                goToNextScreen = new Intent(SearchResults.this, SearchActivity.class);
                                 goToNextScreen.putExtra("username", username);
                                 goToNextScreen.putExtra("password", password);
 
@@ -115,7 +146,7 @@ public class WantList extends AppCompatActivity {
 
                                 return true;
                             case R.id.menu_collection:
-                                goToNextScreen = new Intent(WantList.this, WantList.class);
+                                goToNextScreen = new Intent(SearchResults.this, SearchResults.class);
                                 goToNextScreen.putExtra("username", username);
                                 goToNextScreen.putExtra("password", password);
                                 goToNextScreen.putExtra("listType", "Collection");
@@ -124,7 +155,7 @@ public class WantList extends AppCompatActivity {
 
                                 return true;
                             case R.id.menu_wantlist:
-                                goToNextScreen = new Intent(WantList.this, WantList.class);
+                                goToNextScreen = new Intent(SearchResults.this, SearchResults.class);
                                 goToNextScreen.putExtra("username", username);
                                 goToNextScreen.putExtra("password", password);
                                 goToNextScreen.putExtra("listType", "Want-List");
@@ -132,7 +163,7 @@ public class WantList extends AppCompatActivity {
 
                                 return true;
                             case R.id.menu_friends:
-                                goToNextScreen = new Intent(WantList.this, Friends.class);
+                                goToNextScreen = new Intent(SearchResults.this, Friends.class);
                                 goToNextScreen.putExtra("username", username);
                                 goToNextScreen.putExtra("password", password);
                                 //goToNextScreen.putExtra("listType","Collection");
@@ -141,7 +172,7 @@ public class WantList extends AppCompatActivity {
 
                                 return true;
                             case R.id.menu_logout:
-                                goToNextScreen = new Intent(WantList.this, AccountAccess.class);
+                                goToNextScreen = new Intent(SearchResults.this, AccountAccess.class);
                                 startActivity(goToNextScreen);
 
                                 return true;
@@ -159,7 +190,7 @@ public class WantList extends AppCompatActivity {
                                 "Clicked popup menu item " + item.getTitle(),
                                 Toast.LENGTH_SHORT).show();
                        */
-                                goToNextScreen = new Intent(WantList.this, ActivityHome.class);
+                                goToNextScreen = new Intent(SearchResults.this, ActivityHome.class);
                                 startActivity(goToNextScreen);
 
                                 return false;
@@ -181,7 +212,10 @@ public class WantList extends AppCompatActivity {
         // get lists
 
         //makeBasiclist(adapter);
-        readFromDataBase(adapter, listType);
+        //readFromDataBase(adapter, listType);
+
+        getSearchJSONData(adapter);  // gets JSON data from Discogs and add it to the adapter...
+
 
         //-------------------------------------------------------------------
         // Attach the adapter to a ListView
@@ -202,7 +236,7 @@ public class WantList extends AppCompatActivity {
 
                 Intent goToNextScreen;
                 // to to selected item screen
-                goToNextScreen = new Intent(WantList.this, ItemScreen.class);
+                goToNextScreen = new Intent(SearchResults.this, ItemScreen.class);
                 goToNextScreen.putExtra("artist", adapter.getItem(menuSelected).itemArtist);
                 goToNextScreen.putExtra("label", adapter.getItem(menuSelected).itemLabel);
                 goToNextScreen.putExtra("year", adapter.getItem(menuSelected).itemYear);
@@ -215,6 +249,259 @@ public class WantList extends AppCompatActivity {
         });
 
     }
+
+    private void getSearchJSONData(CollectionListAdapter adapter) {
+
+        // get JSON String  ... need async task
+
+        // parse JSON string
+
+        // add values to adapter...
+
+        // done.
+
+
+        //-------------
+        //https://api.discogs.com/users/mrsangha/collection
+        //String userNameString = "mrSangha";
+
+
+        //String urlBaseString = "https://api.discogs.com/oauth/request_token";
+        String urlBaseString = "https://api.discogs.com/database/search?";
+
+        String userToken = "PwmXNjrBWHFcWsiqSfLKlouUaCGHPTVWrjZRpGHC";
+
+        if (searchType.equals("barcode")) {
+
+            urlBaseString += "barcode=" + "831596202"; //searchValue;
+
+        } else {
+            urlBaseString += "title=" + searchValue;
+        }
+
+
+        urlBaseString += "&token=" + userToken;
+
+
+        urlBaseString = "https://api.discogs.com/database/search?barcode=831596202&token=PwmXNjrBWHFcWsiqSfLKlouUaCGHPTVWrjZRpGHC";
+
+
+
+        /*  SAVE - junk...
+        //barcode=801061939113"; //+ userNameString;
+        //String urlSelection = "";
+        //https://api-img.discogs.com/HC32UPFMHdy4Scd77aPTJvXH0Vs=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-4663501-1371492072-2956.jpeg.jpg&token=PwmXNjrBWHFcWsiqSfLKlouUaCGHPTVWrjZRpGHC
+
+        String urlBasicString = "https://api.discogs.com/";
+        String userIDString  = "users/" + userName;
+
+        //String databaseSearch = "database/search";
+        //String urlQuery = "q=Beatles";
+        //String urlCallingString = urlBasic + databaseSearch + "?" + urlQuery + "&token=" + userToken;
+        /* --------------------------------------------------------------------------------------------------------
+            // these work!!!  they get my info!!!
+            String urlCallingStringProfile = "https://api.discogs.com/users/sawerdeman55?" +
+                "token=PwmXNjrBWHFcWsiqSfLKlouUaCGHPTVWrjZRpGHC";
+            String urlCallingStringCollection = "https://api.discogs.com/users/sawerdeman55/collection?" +
+                    "token=PwmXNjrBWHFcWsiqSfLKlouUaCGHPTVWrjZRpGHC";
+            String urlCallingStringWantList = "https://api.discogs.com/users/sawerdeman55/wants?" +
+                    "token=PwmXNjrBWHFcWsiqSfLKlouUaCGHPTVWrjZRpGHC";
+        * ----------------------------------------------------------------------------------------------------------
+        */
+
+        // build account processing strings
+        String urlCallingString =  urlBaseString;
+
+        Toast.makeText(this,urlCallingString,Toast.LENGTH_LONG);
+
+
+        /* more junt to bmremove // TODO -- remove...
+        //steve1; //"https://api.discogs.com/database/search?barcode=801061939113"; //urlBaseString + urlUsername + urlSelection;
+        //"https://api.discogs.com/users/sawerdeman55";
+        // show response on the EditText etResponse
+        //etResponse.setText(GET("http://hmkcode.com/examples/index.php"));
+
+        // get profile info...
+        //new HttpAsyncTask().execute("https://api.discogs.com/users/sawerdeman55");
+        */
+
+
+        // check if you are connected or not
+        if(isConnected()){
+            // call AsynTask to perform network operation on separate thread
+            String jsonTestString;   // temp JSON string
+
+            try {
+               Toast.makeText(this,"Sync Started: Please wait",Toast.LENGTH_LONG).show();
+
+                jsonTestString = new HttpAsyncTask().execute(urlCallingString).get();
+
+                Toast.makeText(this,jsonTestString,Toast.LENGTH_LONG);
+
+                //addResultsToList(adapter,jsonTestString);
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+        else{
+            Toast.makeText(this,"Connection not available",Toast.LENGTH_LONG).show();
+         }
+     }
+
+
+
+    private void addResultsToList(CollectionListAdapter adapter, String jsonData) {
+
+
+        String userLsitToProcess = jsonData;//getJSONStringFromDiscogs(username, userToken, listtype);
+
+        String whichListType = "search";
+
+        String userItemJSONString = userLsitToProcess; // assign value to parse here...
+
+        String jsonListSelector = "";  // used to select releases or wants
+
+        if (whichListType == "collection") {
+            jsonListSelector = "releases";
+        } else if(whichListType == "want-list"){
+            jsonListSelector = "wants";
+        } else { // assume search
+            jsonListSelector = "results";
+        }
+
+
+
+        Toast.makeText(this,"List selector: " + jsonListSelector,Toast.LENGTH_LONG).show();
+
+
+        JSONObject userItemList;   // generic name...
+
+        //  discogetDB = dbHelper.getWritableDatabase();
+
+        try {
+
+            /* basic layout of  List here
+                // TODO need to add layout text here...
+             */
+
+
+            userItemList = new JSONObject(userItemJSONString);
+
+            // get page info
+
+            JSONObject page = userItemList.getJSONObject("pagination");  // same for both
+
+            // set page info
+            String numOfItems = page.getString("items");
+            String numOFPages = page.getString("pages");
+            //String nextPage   = page.getString("nextpage");   // TODO need to verify...
+
+            String item_ownerid = username;        // username
+            String item_itemurl = "";     // release-basicinfo = "resource_url"
+            String item_imageurl = "";           // release-basicinfo = "thumb"
+            String item_barcode = "";            // ?
+            String item_shortdescription = "";   // ?
+            String item_whichlist = whichListType;  // Collections
+            String item_artist = "";             // release-basicinfo-artist = "name"
+            String item_album = "";              // release-basicinfo-labels = "name"
+            String item_albumYear = "";               // release-basicinfo = "year"
+            String item_catalognumber = "";      // ?
+
+
+
+            // get releases array
+            JSONArray releases = userItemList.getJSONArray(jsonListSelector);  //was "releases"
+
+            Toast.makeText(this,"made it this far...",Toast.LENGTH_LONG).show();
+
+            // set release array length
+            String arrayLength = Integer.toString(releases.length());
+
+
+            // loop thru releases (for this page...  // TODO need to process multiple pages...
+
+            /*  // EXAMPLE TABLE LAYOUT...
+                discogetDB.execSQL("CREATE TABLE IF NOT EXISTS items " +
+                    "(id integer primary key autoincrement , owner VARCHAR, itemurl VARCHAR," +
+                    "imageurl VARCHAR, barcode VARCHAR, shortdescription VARCHAR," +
+                    "whichlist VARCHAR, artist VARCHAR, album VARCHAR, albumyear VARCHAR," +
+                    "catalogid VARCHAR, deleteflag VARCHAR);");
+
+            */
+
+            for (int i=0;i < releases.length(); i++) {  // loop through array
+
+                // get current release array object
+                JSONObject item = releases.getJSONObject(i);
+
+                // break it down... Basic INFO
+                JSONObject basicinfo = item.getJSONObject("basic_information");
+
+                item_itemurl = basicinfo.getString("resource_url");
+                item_imageurl = basicinfo.getString("thumb");
+                item_albumYear =  basicinfo.getString("year");
+
+
+               // JSONArray labels = basicinfo.getJSONArray("labels");
+               // JSONObject label1 = labels.getJSONObject(0);
+
+                item_album = "label"; //label1.getString("name");
+
+                JSONArray artist = basicinfo.getJSONArray("artists");
+                JSONObject artist1 = artist.getJSONObject(0);
+
+                item_artist = artist1.getString("name");
+
+                // create query string
+                /*String queryStrValues =
+                        "'" + username + "', " +
+                                "'" + item_itemurl  + "', " +
+                                "'" + item_imageurl + "', " +
+                                "'" + item_barcode + "', " +
+                                "'" + item_shortdescription + "', " +
+                                "'" + item_whichlist + "', " +
+                                "'" + item_artist.replace("'","''") + "', " +
+                                "'" + item_album.replace("'","''") + "', " +   // added .replace -- SAW  09/13/16
+                                "'" + item_albumYear + "', " +
+                                "'" + item_catalognumber + "'";
+                */
+
+                // add adapter info
+                //newItem = new CollectionItems("Beatles", "Columbia", "1962", itemImageURL);
+                newItem = new CollectionItems(item_artist, item_album, item_albumYear, item_imageurl);
+                adapter.add(newItem);
+
+
+               /* if (debug) { Toast.makeText(this, "Query String = " + queryStrValues, Toast.LENGTH_LONG).show(); }
+
+                // insert data into user table
+                discogetDB.execSQL("INSERT INTO items (owner, itemurl, imageurl, barcode, shortdescription, whichlist, artist, album, albumyear, catalogid )" +
+                        " VALUES (" + queryStrValues + ")");
+
+                */
+
+            }   // end of release loop...
+
+            //close DB
+            // dbHelper.close();
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+
+            if (debug) { Toast.makeText(this,"collection list - JSON Error...",Toast.LENGTH_LONG).show(); }
+        }
+    }
+
+
+
+
+
+
+
+
 
     public void makeBasiclist(CollectionListAdapter adapter) {
 
@@ -541,13 +828,89 @@ public class WantList extends AppCompatActivity {
 
         //TODO need to finish
         String toastString = "go home...";
-        if (debug) {  Toast.makeText(WantList.this,toastString, Toast.LENGTH_SHORT).show(); }
+        if (debug) {  Toast.makeText(SearchResults.this,toastString, Toast.LENGTH_SHORT).show(); }
 
         //TODO
         // go to list screen....
         Intent goToNextScreen = new Intent (this, AccountAccess.class);
         final int result = 1;
         startActivity(goToNextScreen);
+    }
+
+
+
+
+    private class HttpAsyncTask extends AsyncTask<String, Void, String> {
+
+        //private TextView message = (TextView) findViewById(R.id.tv_createAccount_message);
+
+        @Override
+        protected String doInBackground(String... urls) {
+
+          //  Toast.makeText(getBaseContext(), "starting Get with: " , Toast.LENGTH_SHORT).show();
+            return GET(urls[0]);
+        }
+
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(String result) {
+            if (debug) {  Toast.makeText(getBaseContext(), "Received!", Toast.LENGTH_SHORT).show(); }
+            //etResponse.setText(result);
+            discogsJSONString = result.toString();
+
+            if (debug) { Toast.makeText(getBaseContext(),discogsJSONString,Toast.LENGTH_LONG).show();}
+
+        }
+
+
+    }
+
+    public static String GET(String url){
+        InputStream inputStream = null;
+        String result = "";
+        try {
+
+            // create HttpClient
+            HttpClient httpclient = new DefaultHttpClient();
+
+            // make GET request to the given URL
+            HttpResponse httpResponse = httpclient.execute(new HttpGet(url));
+
+            // receive response as inputStream
+            inputStream = httpResponse.getEntity().getContent();
+
+            // convert inputstream to string
+            if(inputStream != null)
+                result = convertInputStreamToString(inputStream);
+            else
+                result = "Did not work!";
+
+        } catch (Exception e) {
+            Log.d("InputStream", e.getLocalizedMessage());
+        }
+
+        return result;
+    }
+
+    private static String convertInputStreamToString(InputStream inputStream) throws IOException{
+        BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
+        String line = "";
+        String result = "";
+        while((line = bufferedReader.readLine()) != null)
+            result += line;
+
+        inputStream.close();
+        return result;
+
+    }
+
+    public boolean isConnected(){
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(this.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected())
+            return true;
+        else
+            return false;
     }
 
 

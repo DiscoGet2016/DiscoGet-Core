@@ -3,11 +3,13 @@ package com.discoget.test.discoget_core;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,13 +18,12 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Steven on 8/30/2016.
  */
-public class CollectionListAdapter extends ArrayAdapter<CollectionItems> {
-    public CollectionListAdapter(Context context, ArrayList<CollectionItems> collectionList) {
+public class FriendsListAdapter extends ArrayAdapter<CollectionItems> {
+    public FriendsListAdapter(Context context, ArrayList<CollectionItems> collectionList) {
         super(context, 0, collectionList);
     }
 
@@ -32,7 +33,7 @@ public class CollectionListAdapter extends ArrayAdapter<CollectionItems> {
         CollectionItems collectionItem = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.row_layout_collection, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.row_layout_select_friend, parent, false);
         }
         // Lookup view for data population
         TextView txtArtist = (TextView) convertView.findViewById(R.id.txt_artist);
@@ -42,10 +43,19 @@ public class CollectionListAdapter extends ArrayAdapter<CollectionItems> {
         ImageView imgAlbumCover = (ImageView) convertView.findViewById(R.id.img_albumCover);
 
         // Populate the data into the template view using the data object
-        txtAlbum.setText(collectionItem.itemLabel);
+
         txtArtist.setText(collectionItem.itemArtist);
+        txtAlbum.setText(collectionItem.itemLabel);
         txtYear.setText(collectionItem.itemYear);
         //tvHome.setText(collectionItem.itemCoverURL);
+
+        // add button options
+        Button addButton = (Button) convertView.findViewById(R.id.btn_addNewFriend);
+
+        if (collectionItem.itemLabel.equals("No username match...")) {
+            addButton.setClickable(false);
+            addButton.setBackgroundColor(Color.GRAY);
+        }
 
         String tempURL="http://www.aptitude.co.uk/img/album-covers/The-Beatles-Abbey-road.png";
 

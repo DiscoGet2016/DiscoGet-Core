@@ -50,4 +50,13 @@
         android:layout_gravity="center_horizontal"
         android:text="menu search result" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_test"
+        android:text="test"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="40dp"
+        android:onClick="gotest"  />
+
 </LinearLayout>
