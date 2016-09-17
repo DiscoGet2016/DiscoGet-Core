@@ -58,10 +58,8 @@ public class AccountAccess extends AppCompatActivity {
        if (debugFlag) { Toast.makeText(this,"USER ID = " + uid + "  " + pw + "  " + token,Toast.LENGTH_LONG).show(); }
 
 
-
-
         //ToolBar...
-        String paneTitle = " ";
+        String paneTitle = "  Login";
 
         Toolbar my_toolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(my_toolbar);
@@ -73,7 +71,6 @@ public class AccountAccess extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-            finish();
 
                // Intent goToNextScreen = new Intent(AccountCreation.this, AccountAccess.class);
                // startActivity(goToNextScreen);
@@ -81,9 +78,11 @@ public class AccountAccess extends AppCompatActivity {
         });
 
 
-        EditText tvUserName = (EditText) findViewById(R.id.et_login_username);
+        EditText etUserName = (EditText) findViewById(R.id.et_login_username);
+        EditText etPassword = (EditText) findViewById(R.id.et_login_password);
 
-        tvUserName.setText(uid.toString());
+        etUserName.setText(uid.toString());
+        etPassword.requestFocus();
 
 
        }
@@ -115,6 +114,7 @@ public class AccountAccess extends AppCompatActivity {
             TextView username = (TextView) findViewById(R.id.et_login_username);
             TextView password = (TextView) findViewById(R.id.et_login_password);
 
+
             Intent goToNextScreen = new Intent(this, UserProfile.class);
 
             goToNextScreen.putExtra("username", username.getText().toString());
@@ -135,6 +135,7 @@ public class AccountAccess extends AppCompatActivity {
         //TODO
         String toastString = "go Register...";
         Toast.makeText(AccountAccess.this,toastString, Toast.LENGTH_SHORT).show();
+
 
         Intent goToNextScreen = new Intent (this, WebAccount.class);
 

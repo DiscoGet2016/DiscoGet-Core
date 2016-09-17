@@ -15,6 +15,4 @@
         android:title="Friends" />
     <item android:id="@+id/menu_logout"
         android:title="Logout" />
-    <item android:id="@+id/menu_exit"
-        android:title="Exit App" />
-</menu>
+   </menu>

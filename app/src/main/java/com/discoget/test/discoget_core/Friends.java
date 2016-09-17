@@ -21,11 +21,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.PopupMenu;
 
+import java.util.ArrayList;
+
 /**
  * Created by Steven on 8/19/2016.
  */
 public class Friends extends AppCompatActivity{
     private int msgCounter = 0;
+
+
+    // build database componets
+    SQLiteDatabase discogetDB;
+    MySQLiteHelper dbHelper;
+
 
     String username = "";
     String password = "";
@@ -38,6 +46,10 @@ public class Friends extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.friends);
+
+        // create dbhelper
+        dbHelper = new MySQLiteHelper(this);
+
 
         // get Extra info passed from calling screen
         Intent iin= getIntent();
@@ -73,7 +85,7 @@ public class Friends extends AppCompatActivity{
 
                         final int result = 1;
                         Intent goToNextScreen;
-
+                        finish();
                         switch (item.getItemId()) {
                             case R.id.menu_profile:
                                 goToNextScreen = new Intent (Friends.this,UserProfile.class);
@@ -93,24 +105,20 @@ public class Friends extends AppCompatActivity{
                                 startActivity(goToNextScreen);
 
                                 return true;
-                            case R.id.menu_collection:
-                                goToNextScreen = new Intent (Friends.this,WantList.class);
-                                goToNextScreen.putExtra("username",username);
-                                goToNextScreen.putExtra("password",password);
-                                goToNextScreen.putExtra("listType","Collection");
 
-                                startActivity(goToNextScreen);
+                            //----- changed - SAW  09/16/16 ---
+                            case R.id.menu_collection:
+
+                                goCollectionList();
 
                                 return true;
                             case R.id.menu_wantlist:
-                                goToNextScreen = new Intent (Friends.this,WantList.class);
-                                goToNextScreen.putExtra("username",username);
-                                goToNextScreen.putExtra("password",password);
-                                goToNextScreen.putExtra("listType","Want-List");
 
-                                startActivity(goToNextScreen);
+                                goWantList();
 
                                 return true;
+                            // ---- end of chagne -------------
+
                             case R.id.menu_friends:
                                 goToNextScreen = new Intent (Friends.this,Friends.class);
                                 goToNextScreen.putExtra("username",username);
@@ -121,26 +129,16 @@ public class Friends extends AppCompatActivity{
 
                                 return true;
                             case R.id.menu_logout:
-                                goToNextScreen = new Intent (Friends.this,ActivityHome.class);
-                                startActivity(goToNextScreen);
-
-                                return true;
-                            case R.id.menu_exit:
-                                //goToNextScreen = new Intent (Friends.this,Friends.class);
-                                //startActivity(goToNextScreen);
-
                                 finish();
+                                goToNextScreen = new Intent (Friends.this,AccountAccess.class);
+                                startActivity(goToNextScreen);
 
                                 return true;
 
                             default:
 
-                       /* Toast.makeText(UserProfile.this,
-                                "Clicked popup menu item " + item.getTitle(),
-                                Toast.LENGTH_SHORT).show();
-                       */
-                                goToNextScreen = new Intent (Friends.this,ActivityHome.class);
-                                startActivity(goToNextScreen);
+                                 goToNextScreen = new Intent (Friends.this,UserProfile.class);
+                                 startActivity(goToNextScreen);
 
                                 return false;
                         }
@@ -157,38 +155,91 @@ public class Friends extends AppCompatActivity{
     //---------- end of popup ---------------------------------------------------------------
 
 
+       /* ArrayList<FriendsItems> arrayOfItems = new ArrayList<FriendsItems>();
+        final FriendsListAdapter adapter = new FriendsListAdapter(this, arrayOfItems);
 
         // String array for menu items
-        String [] myListOfFriends =  {"Enrique", "Gursewak", "Steve", "Friend1", "Friend2"};;
-         String [] userID = {username,password};
+        FriendsItems myListOfFriends; // =  {"Enrique", "Gursewak", "Steve", "Friend1", "Friend2"};;
+        String [] userID = {username,password};
         // get list of friends...
 
         myListOfFriends = getListOfFriends();
 
         // create list adapter
         ListAdapter theAdapter = new MyAdapter(this,myListOfFriends,userID);
+        */
+
+
+
+        ArrayList<FriendsItems> arrayOfItems = new ArrayList<FriendsItems>();
+        final FriendsListAdapter adapter = new FriendsListAdapter(this, arrayOfItems);
+
+        readFriendsFromDB(adapter);
 
         // get list view in xml screen
-        ListView myFriendsList = (ListView) findViewById(R.id.my_list_of_friends);
+        ListView myFriendsListView = (ListView) findViewById(R.id.my_list_of_friends);
+        myFriendsListView.setAdapter(adapter);
 
-        myFriendsList.setAdapter(theAdapter);
-
-        myFriendsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        myFriendsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int menuSelected, long l) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                String menuItemSelected = "Menu Selected was" + String.valueOf(adapterView.getItemAtPosition(menuSelected));
+                String friendsUserName = adapter.getItem(position).friendUserName;
 
-                Toast.makeText(Friends.this,menuItemSelected, Toast.LENGTH_SHORT).show();
+               // Toast.makeText(Friends.this," ??? " + adapter.getItem(position).friendUserName, Toast.LENGTH_SHORT).show();
 
-              //  itemSelected = menuItemSelected;
-
-
+                Intent goToNextScreen = new Intent (Friends.this, EditFriendsProflie.class);
+                goToNextScreen.putExtra("friendsUserName",friendsUserName);
+                startActivity(goToNextScreen);
             }
         });
 
 
+
     }
+
+
+
+    public void readFriendsFromDB(FriendsListAdapter adapter) {
+        String friendUserName = "";
+        String friendFullName = "";
+        String friendImageURL = "";
+
+
+
+        FriendsItems myFriend;
+
+
+
+        // get database
+        discogetDB = dbHelper.getWritableDatabase();
+
+       // get start of data stream
+        Cursor resultSet = discogetDB.rawQuery("SELECT uid, fullname, imageURL FROM user WHERE usertype = 'friend'", null);
+        resultSet.moveToFirst();
+
+        // loop through database...
+        while (!resultSet.isAfterLast()) {
+
+            friendUserName = resultSet.getString(0);
+            friendFullName = resultSet.getString(1);
+            friendImageURL = resultSet.getString(2);
+
+           // Toast.makeText(this,"Friend found: "+ resultSet.getString(0),Toast.LENGTH_SHORT).show();
+
+            // add friend to array
+            myFriend = new FriendsItems(friendUserName, friendFullName, friendImageURL);
+            adapter.add(myFriend);
+
+
+            // go to next record
+            resultSet.moveToNext();
+        } // end of whileloop...
+
+
+        // closeDB
+        dbHelper.close();
+     }
 
     private String[] getListOfFriends() {
 
@@ -292,12 +343,6 @@ public class Friends extends AppCompatActivity{
 
 
 
-
-
-
-
-
-
     public void goHome(View view) {
 
         //TODO need to finish
@@ -311,12 +356,21 @@ public class Friends extends AppCompatActivity{
         startActivity(goToNextScreen);
     }
 
-    public void goCollection(View view) {
+
+    public void num_pressed(View view) {
+        String a = (String) view.getTag(); // here will be 8 for button.
+
+       // Toast.makeText(Friends.this,a, Toast.LENGTH_SHORT).show();
+    }
+
+    public void goCollectionBtnCall(View view) {
+
+        //String a = (String) view.getTag(); // here will be 8 for button.
 
         //TODO need to finish
-        String pressed= (String) (view).getTag(); //should do the job.
+        String pressed = (String) (view).getTag(); //should do the job.
 
-        //String toastString = "go Collection..."+ pressed;
+        String toastString = "go Collection..."+ pressed;
 
         //Toast.makeText(Friends.this,toastString, Toast.LENGTH_SHORT).show();
 
@@ -325,11 +379,11 @@ public class Friends extends AppCompatActivity{
 
        //Button theBtn = (Button) findViewById(R.id.tag_collection);
 
-        Intent goToNextScreen = new Intent (this, FriendsWantList.class);
-        goToNextScreen.putExtra("username",pressed);
+        Intent goToNextScreen = new Intent (this, WantList.class);
+        goToNextScreen.putExtra("username",username);
         goToNextScreen.putExtra("password",password);
-        goToNextScreen.putExtra("friendsname",pressed);
-        goToNextScreen.putExtra("listType","Collection");
+        goToNextScreen.putExtra("friendsUserName",pressed);
+        goToNextScreen.putExtra("listType","collection");
 
         final int result = 1;
 
@@ -337,21 +391,22 @@ public class Friends extends AppCompatActivity{
 
     }
 
-    public void goWantList(View view) {
+    public void goWantListBtnCall(View view) {
         //TODO need to finish
-        String toastString = "go Want-List...";
+
 
         String pressed= (String) (view).getTag(); //should do the job.
 
+        String toastString = "go Want-List..."+ pressed;
 
-       // Toast.makeText(Friends.this,toastString, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(Friends.this,toastString, Toast.LENGTH_SHORT).show();
 
         //TODO
-        Intent goToNextScreen = new Intent (this, FriendsWantList.class);
-        goToNextScreen.putExtra("username",pressed);
+        Intent goToNextScreen = new Intent (this, WantList.class);
+        goToNextScreen.putExtra("username",username);
         goToNextScreen.putExtra("password",password);
-        goToNextScreen.putExtra("friendsname",pressed);
-        goToNextScreen.putExtra("listType","Want-List");
+        goToNextScreen.putExtra("friendsUserName",pressed);
+        goToNextScreen.putExtra("listType","want-list");
 
         final int result = 1;
 
@@ -364,13 +419,83 @@ public class Friends extends AppCompatActivity{
         */
     }
 
-    public void deleteFriend(View view) {
+    public void goDeleteFriend(View view) {
         //TODO need to finish
-        String toastString = "delete friend...";
 
-        Toast.makeText(Friends.this,toastString, Toast.LENGTH_SHORT).show();
+        String pressed= (String) (view).getTag(); //should do the job.
+        String friendToDelete = pressed;
 
-        //TODO
+        //TODO  -- now safty here to prevent accidential deletions...
+
+
+        // delete friend
+        // get database
+        discogetDB = dbHelper.getWritableDatabase();
+
+        // get start of data stream
+        discogetDB.execSQL("DELETE FROM user WHERE uid = '"+ friendToDelete + "'"); //, fullname, imageURL FROM user WHERE usertype = 'friend'", null);
+
+        // closeDB
+        dbHelper.close();
+
+        // goback to here to refresh screen...
+
+
+        Intent goToNextScreen = new Intent (this, Friends.class);
+        // put username as pass to screenqaz!1234
+
+        startActivity(goToNextScreen);
+
 
     }
+
+
+    public void goEditFriend(View view) {
+
+        // get friends to edits username
+        String pressed = (String) (view).getTag(); //should do the job.
+
+        Intent goToNextScreen = new Intent (this, EditFriendsProflie.class);
+        goToNextScreen.putExtra("friendsusername",pressed);
+        startActivity(goToNextScreen);
+
+    }
+
+    public void goCollectionList() {
+
+        String listType = "collection";
+
+        //TODO need to finish
+        //String toastString = "go Collection...";
+        //Toast.makeText(UserProfile.this, toastString, Toast.LENGTH_SHORT).show();
+
+        TextView uid = (TextView) findViewById(R.id.txt_profile_userName);
+
+        //TODO.....
+        // go to list screen....
+        Intent goToNextScreen = new Intent(this, WantList.class);
+        goToNextScreen.putExtra("username",username );
+        goToNextScreen.putExtra("listType", listType);
+        final int result = 1;
+        startActivity(goToNextScreen);
+    }
+
+    public void goWantList () {
+        String listType = "want-list";
+        TextView uid = (TextView) findViewById(R.id.txt_profile_userName);
+
+        //TODO need to finish
+        //String toastString = "go Want-List...";
+        //Toast.makeText(UserProfile.this, toastString, Toast.LENGTH_SHORT).show();
+
+        //TODO
+        // go to list screen....
+        Intent goToNextScreen = new Intent(this, WantList.class);
+        final int result = 1;
+        goToNextScreen.putExtra("username", username );
+        goToNextScreen.putExtra("listType", listType);
+        startActivity(goToNextScreen);
+        finish();
+    }
+
 }

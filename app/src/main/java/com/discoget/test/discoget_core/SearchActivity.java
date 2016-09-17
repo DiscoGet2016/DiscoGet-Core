@@ -63,6 +63,7 @@ public class SearchActivity extends AppCompatActivity {
 
                         final int result = 1;
                         Intent goToNextScreen;
+                        finish();
 
                         switch (item.getItemId()) {
                             case R.id.menu_profile:
@@ -82,23 +83,20 @@ public class SearchActivity extends AppCompatActivity {
                                 startActivity(goToNextScreen);
 
                                 return true;
-                            case R.id.menu_collection:
-                                goToNextScreen = new Intent (SearchActivity.this,WantList.class);
-                                goToNextScreen.putExtra("username",username);
-                                goToNextScreen.putExtra("password",password);
-                                goToNextScreen.putExtra("listType","Collection");
 
-                                startActivity(goToNextScreen);
+                            //----- changed - SAW  09/16/16 ---
+                            case R.id.menu_collection:
+
+                                goCollectionList();
 
                                 return true;
                             case R.id.menu_wantlist:
-                                goToNextScreen = new Intent (SearchActivity.this,WantList.class);
-                                goToNextScreen.putExtra("username",username);
-                                goToNextScreen.putExtra("password",password);
-                                goToNextScreen.putExtra("listType","Want-List");
-                                startActivity(goToNextScreen);
+
+                                goWantList();
 
                                 return true;
+                            // ---- end of chagne -------------
+
                             case R.id.menu_friends:
                                 goToNextScreen = new Intent (SearchActivity.this,Friends.class);
                                 goToNextScreen.putExtra("username",username);
@@ -108,26 +106,17 @@ public class SearchActivity extends AppCompatActivity {
 
                                 return true;
                             case R.id.menu_logout:
+                                finish();
                                 goToNextScreen = new Intent (SearchActivity.this,ActivityHome.class);
                                 startActivity(goToNextScreen);
 
                                 return true;
-                            case R.id.menu_exit:
-                                //goToNextScreen = new Intent (SearchActivity.this,Friends.class);
-                                //startActivity(goToNextScreen);
 
-                                finish();
-
-                                return true;
 
                             default:
 
-                       /* Toast.makeText(UserProfile.this,
-                                "Clicked popup menu item " + item.getTitle(),
-                                Toast.LENGTH_SHORT).show();
-                       */
-                                goToNextScreen = new Intent (SearchActivity.this,ActivityHome.class);
-                                startActivity(goToNextScreen);
+                               goToNextScreen = new Intent (SearchActivity.this,UserProfile.class);
+                               startActivity(goToNextScreen);
 
                                 return false;
                         }
@@ -257,4 +246,42 @@ public class SearchActivity extends AppCompatActivity {
         final int a_result = 1;
         startActivity(goToNextScreen);
     }
+
+    public void goCollectionList() {
+
+        String listType = "collection";
+
+        //TODO need to finish
+        //String toastString = "go Collection...";
+        //Toast.makeText(UserProfile.this, toastString, Toast.LENGTH_SHORT).show();
+
+        TextView uid = (TextView) findViewById(R.id.txt_profile_userName);
+
+        //TODO.....
+        // go to list screen....
+        Intent goToNextScreen = new Intent(this, WantList.class);
+        goToNextScreen.putExtra("username",username );
+        goToNextScreen.putExtra("listType", listType);
+        final int result = 1;
+        startActivity(goToNextScreen);
+    }
+
+    public void goWantList () {
+        String listType = "want-list";
+        TextView uid = (TextView) findViewById(R.id.txt_profile_userName);
+
+        //TODO need to finish
+        //String toastString = "go Want-List...";
+        //Toast.makeText(UserProfile.this, toastString, Toast.LENGTH_SHORT).show();
+
+        //TODO
+        // go to list screen....
+        Intent goToNextScreen = new Intent(this, WantList.class);
+        final int result = 1;
+        goToNextScreen.putExtra("username", username );
+        goToNextScreen.putExtra("listType", listType);
+        startActivity(goToNextScreen);
+        finish();
+    }
+
 }

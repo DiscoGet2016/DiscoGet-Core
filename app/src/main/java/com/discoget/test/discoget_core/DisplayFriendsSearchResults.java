@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
@@ -33,13 +34,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
-
-
-
-
-
-
-
 
 
 //import static com.discoget.test.outtestproject.R.id.the_list_view;
@@ -59,9 +53,6 @@ public class DisplayFriendsSearchResults extends AppCompatActivity {
 
     String DEFAULT_USER_TOKEN = "PwmXNjrBWHFcWsiqSfLKlouUaCGHPTVWrjZRpGHC";
 
-    private static String SEARCH_TYPE_BARCODE = "barcode";
-    private static String SEARCH_TYPE_TITLE = "title";
-
     private boolean debug = false; // use true for testing
 
     private SQLiteDatabase discogetDB;
@@ -70,7 +61,7 @@ public class DisplayFriendsSearchResults extends AppCompatActivity {
     private String discogsJSONString;
 
 
-    CollectionItems newItem;   // declare globally..
+    FriendsItems newFriend;   // declare globally..
 
     String username = "";
     String password = "";
@@ -104,15 +95,7 @@ public class DisplayFriendsSearchResults extends AppCompatActivity {
 
         // title for toolbar...
          // WordUtils.capitalize("your string")
-        String searchTitle = "";
-
-        if (searchType.equals(SEARCH_TYPE_BARCODE)) {
-            searchTitle = "Barcode";
-        } else {
-            searchTitle = "Title";
-        }
-
-        searchTitle = searchType;
+        String searchTitle = searchType;
 
         String paneTitle = searchTitle + " search for: " + searchValue;  //username + "'s" + " " + listType;
 
@@ -150,23 +133,20 @@ public class DisplayFriendsSearchResults extends AppCompatActivity {
                                 startActivity(goToNextScreen);
 
                                 return true;
-                            case R.id.menu_collection:
-                                goToNextScreen = new Intent(DisplayFriendsSearchResults.this, DisplayFriendsSearchResults.class);
-                                goToNextScreen.putExtra("username", username);
-                                goToNextScreen.putExtra("password", password);
-                                goToNextScreen.putExtra("listType", "Collection");
 
-                                startActivity(goToNextScreen);
+                            //----- changed - SAW  09/16/16 ---
+                            case R.id.menu_collection:
+
+                                goCollectionList();
 
                                 return true;
                             case R.id.menu_wantlist:
-                                goToNextScreen = new Intent(DisplayFriendsSearchResults.this, DisplayFriendsSearchResults.class);
-                                goToNextScreen.putExtra("username", username);
-                                goToNextScreen.putExtra("password", password);
-                                goToNextScreen.putExtra("listType", "Want-List");
-                                startActivity(goToNextScreen);
+
+                                goWantList();
 
                                 return true;
+                            // ---- end of chagne -------------
+
                             case R.id.menu_friends:
                                 goToNextScreen = new Intent(DisplayFriendsSearchResults.this, Friends.class);
                                 goToNextScreen.putExtra("username", username);
@@ -181,21 +161,9 @@ public class DisplayFriendsSearchResults extends AppCompatActivity {
                                 startActivity(goToNextScreen);
 
                                 return true;
-                            case R.id.menu_exit:
-                                //goToNextScreen = new Intent (WantList.this,Friends.class);
-                                //startActivity(goToNextScreen);
-
-                                finish();
-
-                                return true;
 
                             default:
-
-                       /* Toast.makeText(WantList.this,
-                                "Clicked popup menu item " + item.getTitle(),
-                                Toast.LENGTH_SHORT).show();
-                       */
-                                goToNextScreen = new Intent(DisplayFriendsSearchResults.this, ActivityHome.class);
+                                goToNextScreen = new Intent(DisplayFriendsSearchResults.this, UserProfile.class);
                                 startActivity(goToNextScreen);
 
                                 return false;
@@ -212,8 +180,8 @@ public class DisplayFriendsSearchResults extends AppCompatActivity {
         //=================== end of tool bar stuff... ==========================================
 
         // build array adapter
-        ArrayList<CollectionItems> arrayOfItems = new ArrayList<CollectionItems>();
-        final FriendsListAdapter adapter = new FriendsListAdapter(this, arrayOfItems);
+        ArrayList<FriendsItems> arrayOfItems = new ArrayList<FriendsItems>();
+        final FriendsListAdapter2 adapter = new FriendsListAdapter2(this, arrayOfItems);
 
         // get lists  - Search Discogs for JSON results...
         //  add list to adapter..
@@ -230,7 +198,7 @@ public class DisplayFriendsSearchResults extends AppCompatActivity {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int menuSelected, long l) {
 
-                    String menuItemSelected = "Menu item selected was at position: " + menuSelected + "--> " + adapter.getItem(menuSelected).itemArtist;
+                    String menuItemSelected = "Menu item selected was at position: " + menuSelected + "--> " + adapter.getItem(menuSelected).friendUserName;
 
                    /* // set intent for Item selectio0n screen...
                     Intent goToNextScreen;
@@ -254,7 +222,7 @@ public class DisplayFriendsSearchResults extends AppCompatActivity {
 
 
 
-    private void getSearchJSONData(FriendsListAdapter adapter) {
+    private void getSearchJSONData(FriendsListAdapter2 adapter) {
 
 
 
@@ -332,7 +300,7 @@ public class DisplayFriendsSearchResults extends AppCompatActivity {
 
 
 
-    private void addResultsToList(FriendsListAdapter adapter, String jsonData) {
+    private void addResultsToList(FriendsListAdapter2 adapter, String jsonData) {
 
 
         //String searchListToProcess = jsonData;//getJSONStringFromDiscogs(username, userToken, listtype);
@@ -388,8 +356,8 @@ public class DisplayFriendsSearchResults extends AppCompatActivity {
 
             // add adapter info
             //newItem = new CollectionItems("Beatles", "Columbia", "1962", itemImageURL);
-            newItem = new CollectionItems(jsonUsername, jsonFullName, " ", jsonUserImgUrl);
-                adapter.add(newItem);
+            newFriend = new FriendsItems(jsonUsername, jsonFullName, jsonUserImgUrl);
+                adapter.add(newFriend);
 
 
         } catch (JSONException e) {
@@ -569,77 +537,6 @@ public class DisplayFriendsSearchResults extends AppCompatActivity {
 
     }
 
-    public void readFromDataBase(CollectionListAdapter adapter, String listType) {
-
-        String itemArtist = ""; // resultSet.getString(0);
-        String itemAlbumLabel = ""; //  resultSet.getString(1);
-        String itemAlbumYear = ""; //  resultSet.getString(2);
-        String itemAlbumCoverURL = ""; //  resultSet.getString(3);
-
-        String tokenString = "?token=PwmXNjrBWHFcWsiqSfLKlouUaCGHPTVWrjZRpGHC";
-
-        // open database
-        // add data to text fields...
-        discogetDB = dbHelper.getWritableDatabase();
-
-        // get user data...
-        /*
-        Cursor resultSet = mydatbase.rawQuery("Select * from TutorialsPoint",null);
-        resultSet.moveToFirst();
-        String username = resultSet.getString(1);
-        String password = resultSet.getString(2);
-         */
-        Cursor resultSet = discogetDB.rawQuery("SELECT artist, album, albumyear, imageurl FROM items WHERE " +
-                "owner= '" + username +"' AND whichlist= '" + listType + "'", null);
-
-        resultSet.moveToFirst();
-
-
-        /*  cursor loop example
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            array[i] = cursor.getString(0);
-            i++;
-            cursor.moveToNext();
-
-         */
-
-        //uid = resultSet.getString(0);
-        //pw  = resultSet.getString(1);
-        //token  = resultSet.getString(2);
-
-        // loop through database...
-        while (!resultSet.isAfterLast()) {
-
-            // get files
-            itemArtist = resultSet.getString(0);
-            itemAlbumLabel = resultSet.getString(1);
-            itemAlbumYear = resultSet.getString(2);
-            itemAlbumCoverURL = resultSet.getString(3); //+ tokenString;
-
-
-            if (debug) {  Toast.makeText(this,itemAlbumCoverURL,Toast.LENGTH_LONG).show(); }
-            
-            // add to array
-            //itemURL = "http://1.bp.blogspot.com/-7k2Jnvoaigw/T9kzBww-rXI/AAAAAAAAC3M/c0xk-sgU7wM/s1600/The+Beatles+-+Beatles+for+Sale.jpg";
-            //newItem = new CollectionItems("Beatles", "Columbia", "1962", itemURL);
-            newItem = new CollectionItems(itemArtist, itemAlbumLabel, itemAlbumYear, itemAlbumCoverURL);
-            adapter.add(newItem);
-            
-
-            // go to next record
-            resultSet.moveToNext();
-        } // end of whileloop...
-
-
-        // closeDB
-        dbHelper.close();
-
-
-        //Toast.makeText(WantList.this, AddItemToDb("Steve", itemURL, WANT_LIST, "Beatles", "Columbia", "1962"), Toast.LENGTH_SHORT).show();
-
-    }
-
 
     public String readFromDB() {
 
@@ -749,7 +646,7 @@ public class DisplayFriendsSearchResults extends AppCompatActivity {
         //Toast.makeText(this,"add friend: " + friendsUserName ,Toast.LENGTH_SHORT).show();
         Intent goToNextScreen;
         goToNextScreen = new Intent(this, CreateFriendsAccount.class);
-        goToNextScreen.putExtra("username", friendsUserName);
+        goToNextScreen.putExtra("friendsUserName", friendsUserName);
         goToNextScreen.putExtra("token", DEFAULT_USER_TOKEN);
 
         startActivity(goToNextScreen);
@@ -829,6 +726,43 @@ public class DisplayFriendsSearchResults extends AppCompatActivity {
             return false;
     }
 
+
+    public void goCollectionList() {
+
+        String listType = "collection";
+
+        //TODO need to finish
+        //String toastString = "go Collection...";
+        //Toast.makeText(UserProfile.this, toastString, Toast.LENGTH_SHORT).show();
+
+        TextView uid = (TextView) findViewById(R.id.txt_profile_userName);
+
+        //TODO.....
+        // go to list screen....
+        Intent goToNextScreen = new Intent(this, WantList.class);
+        goToNextScreen.putExtra("username",username );
+        goToNextScreen.putExtra("listType", listType);
+        final int result = 1;
+        startActivity(goToNextScreen);
+    }
+
+    public void goWantList () {
+        String listType = "want-list";
+        TextView uid = (TextView) findViewById(R.id.txt_profile_userName);
+
+        //TODO need to finish
+        //String toastString = "go Want-List...";
+        //Toast.makeText(UserProfile.this, toastString, Toast.LENGTH_SHORT).show();
+
+        //TODO
+        // go to list screen....
+        Intent goToNextScreen = new Intent(this, WantList.class);
+        final int result = 1;
+        goToNextScreen.putExtra("username", username );
+        goToNextScreen.putExtra("listType", listType);
+        startActivity(goToNextScreen);
+        finish();
+    }
 
 }
 

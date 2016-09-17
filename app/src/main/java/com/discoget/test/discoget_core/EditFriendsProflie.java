@@ -26,7 +26,7 @@ import java.io.InputStream;
 /**
  * Created by Steven on 8/26/2016.
  */
-public class UserProfile extends AppCompatActivity {
+public class EditFriendsProflie extends AppCompatActivity {
 
 // How to Load Image From URL (Internet) in Android ImageView
 
@@ -44,12 +44,10 @@ public class UserProfile extends AppCompatActivity {
     String token = "";     // token used to access user info...
     String userImageUrl = "";  // assigned in JSON search for now...  // TODO store value in DB
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.user_profile);
+        setContentView(R.layout.friends_profile);
 
         // create database helper object...
         dbHelper = new MySQLiteHelper(this);
@@ -59,10 +57,13 @@ public class UserProfile extends AppCompatActivity {
         Intent iin= getIntent();
         Bundle b = iin.getExtras();
 
+        String friendsUserName = "";
+
         if(b!=null)
         {
             username =(String) b.get("username");
             token =(String) b.get("token");
+            friendsUserName = (String) b.get("friendsUserName");
         }
 
 
@@ -89,7 +90,7 @@ public class UserProfile extends AppCompatActivity {
 
 
             // add toolbar...
-            String paneTitle = "My Profile";
+            String paneTitle = friendsUserName + "'s Profile";
 
             Toolbar my_toolbar = (Toolbar) findViewById(R.id.my_toolbar);
             setSupportActionBar(my_toolbar);
@@ -97,119 +98,86 @@ public class UserProfile extends AppCompatActivity {
             getSupportActionBar().setTitle(paneTitle);
             getSupportActionBar().setIcon(R.drawable.ic_menu);
 
+            my_toolbar.findViewById(R.id.my_toolbar).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PopupMenu popup = new PopupMenu(EditFriendsProflie.this, v);
 
-        // popup menu here...
-        // complete POPUP menu...
+                    // This activity implements OnMenuItemClickListener
 
-        my_toolbar.findViewById(R.id.my_toolbar).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                PopupMenu popup = new PopupMenu(UserProfile.this, v);
-
-                // This activity implements OnMenuItemClickListener
+                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        public boolean onMenuItemClick(MenuItem item) {
 
 
-                // popup menue... Include -- I hope
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    public boolean onMenuItemClick(MenuItem item) {
+                            final int result = 1;
+                            Intent goToNextScreen;
 
-                        final int result = 1;
-                        Intent goToNextScreen;
+                            switch (item.getItemId()) {
+                                case R.id.menu_profile:
+                                    goToNextScreen = new Intent(EditFriendsProflie.this, EditFriendsProflie.class);
+                                    goToNextScreen.putExtra("username", username);
+                                    goToNextScreen.putExtra("password", password);
 
-                        switch (item.getItemId()) {
-                            case R.id.menu_profile:
-                                goToNextScreen = new Intent(UserProfile.this, UserProfile.class);
-                                goToNextScreen.putExtra("username", username);
-                                goToNextScreen.putExtra("password", password);
+                                    startActivity(goToNextScreen);
 
-                                startActivity(goToNextScreen);
+                                    return true;
+                                case R.id.menu_search:
+                                    goToNextScreen = new Intent(EditFriendsProflie.this, SearchActivity.class);
+                                    goToNextScreen.putExtra("username", username);
+                                    goToNextScreen.putExtra("password", password);
 
-                                return true;
-                            case R.id.menu_search:
-                                goToNextScreen = new Intent(UserProfile.this, SearchActivity.class);
-                                goToNextScreen.putExtra("username", username);
-                                goToNextScreen.putExtra("password", password);
+                                    startActivity(goToNextScreen);
 
-                                startActivity(goToNextScreen);
+                                    return true;
 
-                                return true;
+                                //----- changed - SAW  09/16/16 ---
+                                case R.id.menu_collection:
 
-                            //----- changed - SAW  09/16/16 ---
-                            case R.id.menu_collection:
+                                    goCollectionList();
 
-                                goCollectionList();
+                                    return true;
+                                case R.id.menu_wantlist:
 
-                                return true;
-                            case R.id.menu_wantlist:
+                                    goWantList();
 
-                                goWantList();
+                                    return true;
+                                // ---- end of chagne -------------
 
-                                return true;
-                            // ---- end of chagne -------------
+                                case R.id.menu_friends:
+                                    goToNextScreen = new Intent(EditFriendsProflie.this, Friends.class);
+                                    goToNextScreen.putExtra("username", username);
+                                    goToNextScreen.putExtra("password", password);
 
-                            case R.id.menu_friends:
-                                goToNextScreen = new Intent(UserProfile.this, Friends.class);
-                                goToNextScreen.putExtra("username", username);
-                                goToNextScreen.putExtra("password", password);
+                                    startActivity(goToNextScreen);
 
-                                startActivity(goToNextScreen);
+                                    return true;
+                                case R.id.menu_logout:
+                                    finish();
+                                    goToNextScreen = new Intent(EditFriendsProflie.this, AccountAccess.class);
+                                    startActivity(goToNextScreen);
 
-                                return true;
-                            case R.id.menu_logout:
-                                finish();
-                                goToNextScreen = new Intent(UserProfile.this, AccountAccess.class);
-                                startActivity(goToNextScreen);
+                                    return true;
 
-                                return true;
-
-                            default:
+                                default:
 
 
-                                   goToNextScreen = new Intent(UserProfile.this, UserProfile.class);
-                                   startActivity(goToNextScreen);
+                                    goToNextScreen = new Intent(EditFriendsProflie.this, UserProfile.class);
+                                    startActivity(goToNextScreen);
 
-                                return false;
+                                    return false;
+                            }
+
                         }
+                    });
 
-                    }
-                });
-
-                popup.inflate(R.menu.actions);
-                popup.show();
-            }
-        });
-
-        // END -- complete POPUP menu...
-
-        /*
-            // Get image from Internet...
-            //------------------------------------------------------------------------------
-            String gravatarHome = "https://www.gravatar.com/avatar/";
-            String defaultAvatar = "http://www.digitalqatar.qa/wp-content/uploads/sites/2/2011/12/android.jpg";
-
-            // build friendsDataArray
-            String[] friendsURLArray = {
-                    gravatarHome + "d4cb23b09d74f33ef8ad43fc0e0896f9",         // Enrique
-                    gravatarHome + "baf9b97e84ac714acb14a65e9855538d",         // Guru
-                    gravatarHome + "956a76b2e3547849f3a62df862865be2",         //Steve
-                    "https://secure.gravatar.com/avatar/8f6328a88899ed68d8c913de6a10006d?s=500&r=pg&d=mm",  //swerdeman
-                    defaultAvatar};
-            //ImageView theImageView = (ImageView) theView.findViewById(R.id.img_friend);
-            // We can set a ImageView like this
+                    popup.inflate(R.menu.actions);
+                    popup.show();
+                }
+            });
 
 
-            try {
-                getJSONdata(username);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-          */
-
-           // get data from database
-
-        getProfileDataFromDB (username);
+        // get data from database
+        getProfileDataFromDB (friendsUserName);
 
 
         // Image link from internet
@@ -221,6 +189,8 @@ public class UserProfile extends AppCompatActivity {
 
             // finish();
         //}  // else...
+
+
     }
 
 
@@ -248,41 +218,43 @@ public class UserProfile extends AppCompatActivity {
 
                 switch (item.getItemId()) {
                     case R.id.menu_profile:
-                        goToNextScreen = new Intent (UserProfile.this,UserProfile.class);
+                        goToNextScreen = new Intent (EditFriendsProflie.this,EditFriendsProflie.class);
                         startActivity(goToNextScreen);
 
                         return true;
                     case R.id.menu_search:
-                        goToNextScreen = new Intent (UserProfile.this,SearchActivity.class);
+                        goToNextScreen = new Intent (EditFriendsProflie.this,SearchActivity.class);
                         startActivity(goToNextScreen);
 
                         return true;
                     case R.id.menu_collection:
-                        goToNextScreen = new Intent (UserProfile.this,WantList.class);
+                        goToNextScreen = new Intent (EditFriendsProflie.this,WantList.class);
                         startActivity(goToNextScreen);
 
                         return true;
                     case R.id.menu_wantlist:
-                        goToNextScreen = new Intent (UserProfile.this,WantList.class);
+                        goToNextScreen = new Intent (EditFriendsProflie.this,WantList.class);
                         startActivity(goToNextScreen);
 
                         return true;
                     case R.id.menu_friends:
 
-                        goToNextScreen = new Intent (UserProfile.this,Friends.class);
+                        goToNextScreen = new Intent (EditFriendsProflie.this,Friends.class);
                         startActivity(goToNextScreen);
 
                         return true;
                     case R.id.menu_logout:
                         finish();
-                        goToNextScreen = new Intent (UserProfile.this,ActivityHome.class);
+                        goToNextScreen = new Intent (EditFriendsProflie.this,ActivityHome.class);
                         startActivity(goToNextScreen);
 
                         return true;
 
+
                     default:
 
-                       goToNextScreen = new Intent (UserProfile.this,UserProfile.class);
+
+                       goToNextScreen = new Intent (EditFriendsProflie.this,UserProfile.class);
                        startActivity(goToNextScreen);
 
                        return false;
@@ -296,27 +268,12 @@ public class UserProfile extends AppCompatActivity {
     }
 
 
-  /* @Override
-    public boolean onMenuItemClick(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.archive:
-                archive(item);
-                return true;
-            case R.id.delete:
-                delete(item);
-                return true;
-            default:
-                return false;
-        }
-    }
-*/
-
 
     public void goHome(View view) {
 
         //TODO need to finish
         String toastString = "go home...";
-        Toast.makeText(UserProfile.this, toastString, Toast.LENGTH_SHORT).show();
+        Toast.makeText(EditFriendsProflie.this, toastString, Toast.LENGTH_SHORT).show();
 
         //TODO
         // go to list screen....
@@ -337,7 +294,6 @@ public class UserProfile extends AppCompatActivity {
 
         //TODO.....
         // go to list screen....
-        finish();
         Intent goToNextScreen = new Intent(this, WantList.class);
         goToNextScreen.putExtra("username",username );
         goToNextScreen.putExtra("listType", listType);
@@ -345,46 +301,7 @@ public class UserProfile extends AppCompatActivity {
         startActivity(goToNextScreen);
     }
 
-    public void goCollectionList() {
-
-        String listType = "collection";
-
-        //TODO need to finish
-        //String toastString = "go Collection...";
-        //Toast.makeText(UserProfile.this, toastString, Toast.LENGTH_SHORT).show();
-
-        TextView uid = (TextView) findViewById(R.id.txt_profile_userName);
-
-        //TODO.....
-        // go to list screen....
-        finish();
-        Intent goToNextScreen = new Intent(this, WantList.class);
-        goToNextScreen.putExtra("username",username );
-        goToNextScreen.putExtra("listType", listType);
-        final int result = 1;
-        startActivity(goToNextScreen);
-    }
-
-    public void goWantList () {
-        String listType = "want-list";
-        TextView uid = (TextView) findViewById(R.id.txt_profile_userName);
-
-        //TODO need to finish
-        //String toastString = "go Want-List...";
-        //Toast.makeText(UserProfile.this, toastString, Toast.LENGTH_SHORT).show();
-
-        //TODO
-        // go to list screen....
-        finish();
-        Intent goToNextScreen = new Intent(this, WantList.class);
-        final int result = 1;
-        goToNextScreen.putExtra("username", username );
-        goToNextScreen.putExtra("listType", listType);
-        startActivity(goToNextScreen);
-        finish();
-    }
-
-    public void goWantList2(View view) {
+    public void goWantList(View view) {
 
         String listType = "want-list";
         TextView uid = (TextView) findViewById(R.id.txt_profile_userName);
@@ -395,7 +312,6 @@ public class UserProfile extends AppCompatActivity {
 
         //TODO
         // go to list screen....
-        finish();
         Intent goToNextScreen = new Intent(this, WantList.class);
         final int result = 1;
         goToNextScreen.putExtra("username", username );
@@ -411,16 +327,16 @@ public class UserProfile extends AppCompatActivity {
 
         //TODO
         // go to list screen....
-        finish();
         Intent goToNextScreen = new Intent(this, SearchActivity.class);
         final int result = 1;
         startActivity(goToNextScreen);
     }
 
 
-    private void getProfileDataFromDB (String username) {
+    private void getProfileDataFromDB (String friendsUserName) {
 
 
+       // Toast.makeText(this, "friends username: " + friendsUserName,Toast.LENGTH_LONG).show();
 
         // add data to profile info
         //ImageView userPhoto = (ImageView) findViewById(R.id.img_userPhoto);
@@ -439,22 +355,22 @@ public class UserProfile extends AppCompatActivity {
         String username = resultSet.getString(1);
         String password = resultSet.getString(2);
          */
-        Cursor resultSet = discogetDB.rawQuery("SELECT uid, password, fullname, userbio, imageURL, discogstoken FROM user", null);
+        Cursor resultSet = discogetDB.rawQuery("SELECT uid, password, fullname, userbio, imageURL, discogstoken" +
+                " FROM user WHERE uid = '" + friendsUserName + "'", null);
         resultSet.moveToFirst();
 
         //uid = resultSet.getString(0);
         //pw  = resultSet.getString(1);
         //token  = resultSet.getString(2);
 
+        if (!(resultSet.isNull(0))) {
+            userName.setText(checkForText(resultSet.getString(0)));
+            userFullName.setText(checkForText(resultSet.getString(2)));
+            userBio.setText(checkForText(resultSet.getString(3)));
 
+            userImageUrl = resultSet.getString(4);
 
-
-
-        userName.setText(checkForText(resultSet.getString(0)));
-        userFullName.setText(checkForText(resultSet.getString(2)));
-        userBio.setText(checkForText(resultSet.getString(3)));
-
-        userImageUrl = resultSet.getString(4);
+        }
 
     } // end of getProfileDataFromDB
 
@@ -613,5 +529,45 @@ public class UserProfile extends AppCompatActivity {
             imageView.setImageBitmap(result);
         }
     }
+
+
+    public void goCollectionList() {
+
+        String listType = "collection";
+
+        //TODO need to finish
+        //String toastString = "go Collection...";
+        //Toast.makeText(UserProfile.this, toastString, Toast.LENGTH_SHORT).show();
+
+        TextView uid = (TextView) findViewById(R.id.txt_profile_userName);
+
+        //TODO.....
+        // go to list screen....
+        Intent goToNextScreen = new Intent(this, WantList.class);
+        goToNextScreen.putExtra("username",username );
+        goToNextScreen.putExtra("listType", listType);
+        final int result = 1;
+        startActivity(goToNextScreen);
+    }
+
+    public void goWantList () {
+        String listType = "want-list";
+        TextView uid = (TextView) findViewById(R.id.txt_profile_userName);
+
+        //TODO need to finish
+        //String toastString = "go Want-List...";
+        //Toast.makeText(UserProfile.this, toastString, Toast.LENGTH_SHORT).show();
+
+        //TODO
+        // go to list screen....
+        Intent goToNextScreen = new Intent(this, WantList.class);
+        final int result = 1;
+        goToNextScreen.putExtra("username", username );
+        goToNextScreen.putExtra("listType", listType);
+        startActivity(goToNextScreen);
+        finish();
+    }
+
+
 }
 

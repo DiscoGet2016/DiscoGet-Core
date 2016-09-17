@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:hint="Discogs Username"
-                android:text="djens" />
+                android:text="mrSangha" />
 
             <EditText
                 android:id="@+id/et_createAccount_password0"

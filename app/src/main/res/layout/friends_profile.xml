@@ -18,7 +18,7 @@
         android:layout_marginBottom="20dp"
         android:layout_marginTop="15dp"
         android:clickable="true"
-        android:src="@drawable/discogs_default_user" />
+        android:src="@drawable/user_default" />
 
     <TextView
         android:id="@+id/txt_profile_userName"
@@ -83,7 +83,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="36dp"
                 android:background="@color/colorAccent"
-                android:onClick="goWantList2"
+                android:onClick="goWantList"
                 android:padding="6dp"
                 android:text="View Want List"
                 android:textColor="@color/colorAppBarText" />

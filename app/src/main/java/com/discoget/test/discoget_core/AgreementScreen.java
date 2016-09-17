@@ -24,9 +24,10 @@ public class AgreementScreen extends Activity {
 
     private SQLiteDatabase discogetDB;
     private MySQLiteHelper dbHelper;
-    private Boolean debugFlag = false;   // true delete databases...
+    private Boolean debugFlag = true;   // true delete databases...
 
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 

@@ -43,6 +43,7 @@ public class WantList extends AppCompatActivity {
     String username = "";
     String password = "";
     String listType = "";
+    String friendsUserName = "";   // default
 
 
     @Override
@@ -60,9 +61,24 @@ public class WantList extends AppCompatActivity {
         Bundle b = iin.getExtras();
 
         if (b != null) {
+
             username = (String) b.get("username");
             password = (String) b.get("password");
             listType = (String) b.get("listType");
+            friendsUserName =(String) b.get("friendsUserName");
+        }
+
+        listType.toLowerCase();
+
+
+        // set variable for empty friends name
+        Boolean getFriendsList = false;
+
+        if (!(friendsUserName == null)) {
+
+            if (!(friendsUserName.length() < 1)) {
+                getFriendsList = true;  // friend name was sent...
+            }
         }
 
 
@@ -74,8 +90,15 @@ public class WantList extends AppCompatActivity {
 
 
         // add toolbar... --------------------------------------------------------------
+        String paneTitle = "";
 
-        String paneTitle = username + "'s" + " " + listType;
+        if (!getFriendsList) {
+            paneTitle = username + "'s" + " " + listType;   // get use stuff...
+        } else {
+            paneTitle = friendsUserName + "'s" + " " + listType;  // get friends stuff
+        }
+
+
         //String paneTitle = "My collections";
 
         Toolbar my_toolbar = (Toolbar) findViewById(R.id.my_toolbar);
@@ -94,11 +117,13 @@ public class WantList extends AppCompatActivity {
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
 
+                        //------- from here ---------------------------------------
                         final int result = 1;
                         Intent goToNextScreen;
 
                         switch (item.getItemId()) {
                             case R.id.menu_profile:
+                                finish();
                                 goToNextScreen = new Intent(WantList.this, UserProfile.class);
                                 goToNextScreen.putExtra("username", username);
                                 goToNextScreen.putExtra("password", password);
@@ -107,6 +132,7 @@ public class WantList extends AppCompatActivity {
 
                                 return true;
                             case R.id.menu_search:
+                                finish();
                                 goToNextScreen = new Intent(WantList.this, SearchActivity.class);
                                 goToNextScreen.putExtra("username", username);
                                 goToNextScreen.putExtra("password", password);
@@ -114,24 +140,23 @@ public class WantList extends AppCompatActivity {
                                 startActivity(goToNextScreen);
 
                                 return true;
-                            case R.id.menu_collection:
-                                goToNextScreen = new Intent(WantList.this, WantList.class);
-                                goToNextScreen.putExtra("username", username);
-                                goToNextScreen.putExtra("password", password);
-                                goToNextScreen.putExtra("listType", "Collection");
 
-                                startActivity(goToNextScreen);
+                            //----- changed - SAW  09/16/16 ---
+                            case R.id.menu_collection:
+                                finish();
+                                goCollectionList();
 
                                 return true;
                             case R.id.menu_wantlist:
-                                goToNextScreen = new Intent(WantList.this, WantList.class);
-                                goToNextScreen.putExtra("username", username);
-                                goToNextScreen.putExtra("password", password);
-                                goToNextScreen.putExtra("listType", "Want-List");
-                                startActivity(goToNextScreen);
+
+                                finish();
+                                goWantList();
 
                                 return true;
+                            // ---- end of chagne -------------
+
                             case R.id.menu_friends:
+                                finish();
                                 goToNextScreen = new Intent(WantList.this, Friends.class);
                                 goToNextScreen.putExtra("username", username);
                                 goToNextScreen.putExtra("password", password);
@@ -141,29 +166,21 @@ public class WantList extends AppCompatActivity {
 
                                 return true;
                             case R.id.menu_logout:
+                                finish();
                                 goToNextScreen = new Intent(WantList.this, AccountAccess.class);
                                 startActivity(goToNextScreen);
-
-                                return true;
-                            case R.id.menu_exit:
-                                //goToNextScreen = new Intent (WantList.this,Friends.class);
-                                //startActivity(goToNextScreen);
-
-                                finish();
 
                                 return true;
 
                             default:
 
-                       /* Toast.makeText(WantList.this,
-                                "Clicked popup menu item " + item.getTitle(),
-                                Toast.LENGTH_SHORT).show();
-                       */
-                                goToNextScreen = new Intent(WantList.this, ActivityHome.class);
-                                startActivity(goToNextScreen);
+                               finish();
+                               goToNextScreen = new Intent(WantList.this, UserProfile.class);
+                               startActivity(goToNextScreen);
 
                                 return false;
                         }
+                        //--------------- to here ---------------------------------
 
                     }
                 });
@@ -180,8 +197,18 @@ public class WantList extends AppCompatActivity {
         final CollectionListAdapter adapter = new CollectionListAdapter(this, arrayOfItems);
         // get lists
 
+        //Toast.makeText(this, "User: " + username + "   List: " + listType, Toast.LENGTH_SHORT).show();
+
         //makeBasiclist(adapter);
-        readFromDataBase(adapter, listType);
+
+        if (!getFriendsList) {
+            // get users info
+            readFromDataBase(adapter, listType, username);
+        } else {
+            // get friends info
+            readFromDataBase(adapter, listType, friendsUserName);
+        }
+        //readFromDataBase(adapter, listType);
 
         //-------------------------------------------------------------------
         // Attach the adapter to a ListView
@@ -215,7 +242,6 @@ public class WantList extends AppCompatActivity {
         });
 
     }
-
     public void makeBasiclist(CollectionListAdapter adapter) {
 
         String itemURL = "";
@@ -334,6 +360,10 @@ public class WantList extends AppCompatActivity {
 
     }
 
+    public void goGetCollectionList() {
+
+    }
+
     public String AddItemToDb(String owner, String imageurl, String whichlist, String artist, String album, String year) {
 
         String theResult;
@@ -375,7 +405,7 @@ public class WantList extends AppCompatActivity {
 
     }
 
-    public void readFromDataBase(CollectionListAdapter adapter, String listType) {
+    public void readFromDataBase(CollectionListAdapter adapter, String listType, String userNameToUse) {
 
         String itemArtist = ""; // resultSet.getString(0);
         String itemAlbumLabel = ""; //  resultSet.getString(1);
@@ -396,7 +426,7 @@ public class WantList extends AppCompatActivity {
         String password = resultSet.getString(2);
          */
         Cursor resultSet = discogetDB.rawQuery("SELECT artist, album, albumyear, imageurl FROM items WHERE " +
-                "owner= '" + username +"' AND whichlist= '" + listType + "'", null);
+                "owner= '" + userNameToUse +"' AND whichlist= '" + listType + "'", null);
 
         resultSet.moveToFirst();
 
@@ -550,6 +580,43 @@ public class WantList extends AppCompatActivity {
         startActivity(goToNextScreen);
     }
 
+
+    public void goCollectionList() {
+
+        String listType = "collection";
+
+        //TODO need to finish
+        //String toastString = "go Collection...";
+        //Toast.makeText(UserProfile.this, toastString, Toast.LENGTH_SHORT).show();
+
+        TextView uid = (TextView) findViewById(R.id.txt_profile_userName);
+
+        //TODO.....
+        // go to list screen....
+        Intent goToNextScreen = new Intent(this, WantList.class);
+        goToNextScreen.putExtra("username",username );
+        goToNextScreen.putExtra("listType", listType);
+        final int result = 1;
+        startActivity(goToNextScreen);
+    }
+
+    public void goWantList () {
+        String listType = "want-list";
+        TextView uid = (TextView) findViewById(R.id.txt_profile_userName);
+
+        //TODO need to finish
+        //String toastString = "go Want-List...";
+        //Toast.makeText(UserProfile.this, toastString, Toast.LENGTH_SHORT).show();
+
+        //TODO
+        // go to list screen....
+        Intent goToNextScreen = new Intent(this, WantList.class);
+        final int result = 1;
+        goToNextScreen.putExtra("username", username );
+        goToNextScreen.putExtra("listType", listType);
+        startActivity(goToNextScreen);
+        finish();
+    }
 
 }
 

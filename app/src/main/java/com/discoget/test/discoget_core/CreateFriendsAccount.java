@@ -83,7 +83,7 @@ public class CreateFriendsAccount extends AppCompatActivity {
         //setContentView(R.layout.create_user_account);
 
 
-
+        String friendsUserName = "";
         String username="";    // =(String) b.get("username");
         String token ="";       // =(String) b.get("token");
 
@@ -95,6 +95,7 @@ public class CreateFriendsAccount extends AppCompatActivity {
         if(b!=null)
         {
             username =(String) b.get("username");
+            friendsUserName = (String) b.get("friendsUserName");
             token =(String) b.get("token");
         }
 
@@ -129,20 +130,20 @@ public class CreateFriendsAccount extends AppCompatActivity {
 
         //addFriendToDB(username,token);
 
-        processAccountInfo(username,token);
+        processAccountInfo(friendsUserName,token);
 
 
         finish();  // close this activity
 
-        Intent goToNextScreen = new Intent (this, AccountAccess.class);
-        // put username as pass to screen
+        Intent goToNextScreen = new Intent (this, Friends.class);
+        // put username as pass to screenqaz!1234
 
         startActivity(goToNextScreen);
 
 
     }
 
-    public void processAccountInfo(String userName, String userToken) {
+    public void processAccountInfo(String userNameToUse, String userToken) {
         /*
             This method will get user info from screen, then request profile data from Discogs
             the Discogs JSON will be processed and stored into SQLite data base. - user table.
@@ -163,7 +164,7 @@ public class CreateFriendsAccount extends AppCompatActivity {
 
         //String userToken = userToken;   //"PwmXNjrBWHFcWsiqSfLKlouUaCGHPTVWrjZRpGHC";
         String urlBasicString = "https://api.discogs.com/";
-        String userIDString  = "users/" + userName;
+        String userIDString  = "users/" + userNameToUse;
 
         //String databaseSearch = "database/search";
         //String urlQuery = "q=Beatles";
@@ -209,13 +210,13 @@ public class CreateFriendsAccount extends AppCompatActivity {
                 //Toast.makeText(this,"Sync Started: Please wait",Toast.LENGTH_LONG).show();
 
                 jsonTestString = new HttpAsyncTask().execute(urlCallingStringCollection).get();
-                saveUserLists0(userName,userToken,"collection",jsonTestString);
+                saveUserLists0(userNameToUse,userToken,"collection",jsonTestString);
 
                 jsonTestString = new HttpAsyncTask().execute(urlCallingStringWantList).get();
-                saveUserLists0(userName,userToken,"want-list",jsonTestString);
+                saveUserLists0(userNameToUse,userToken,"want-list",jsonTestString);
 
                 jsonTestString = new HttpAsyncTask().execute(urlCallingStringProfile).get();
-                saveFriendsProfileData(userName, userToken,jsonTestString);
+                saveFriendsProfileData(userNameToUse, userToken,jsonTestString);
 
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -506,8 +507,10 @@ public class CreateFriendsAccount extends AppCompatActivity {
     }
 
 
-    private void saveUserLists0(String username, String userToken, String listtype, String jsonData) {
+    private void saveUserLists0(String usernamepassed, String userToken, String listtype, String jsonData) {
 
+
+        //Toast.makeText(this, "user name passed: " + usernamepassed, Toast.LENGTH_SHORT).show();
 
         String userLsitToProcess = jsonData;//getJSONStringFromDiscogs(username, userToken, listtype);
 
@@ -550,7 +553,7 @@ public class CreateFriendsAccount extends AppCompatActivity {
             String numOFPages = page.getString("pages");
             //String nextPage   = page.getString("nextpage");   // TODO need to verify...
 
-            String item_ownerid = username;        // username
+            String item_ownerid = usernamepassed;        // username
             String item_itemurl = "";     // release-basicinfo = "resource_url"
             String item_imageurl = "";           // release-basicinfo = "thumb"
             String item_barcode = "";            // ?
@@ -606,7 +609,7 @@ public class CreateFriendsAccount extends AppCompatActivity {
 
                 // create query string
                 String queryStrValues =
-                        "'" + username + "', " +
+                        "'" + usernamepassed + "', " +
                                 "'" + item_itemurl  + "', " +
                                 "'" + item_imageurl + "', " +
                                 "'" + item_barcode + "', " +
@@ -618,7 +621,8 @@ public class CreateFriendsAccount extends AppCompatActivity {
                                 "'" + item_catalognumber + "'";
 
 
-                if (debug) { Toast.makeText(this, "Query String = " + queryStrValues, Toast.LENGTH_LONG).show(); }
+                //debug = true;
+                if (debug) { Toast.makeText(this, "Query String for : " + usernamepassed + " \n\n " + queryStrValues, Toast.LENGTH_LONG).show(); }
 
                 // insert data into user table
                 discogetDB.execSQL("INSERT INTO items (owner, itemurl, imageurl, barcode, shortdescription, whichlist, artist, album, albumyear, catalogid )" +

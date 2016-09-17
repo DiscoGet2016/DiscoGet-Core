@@ -3,7 +3,6 @@ package com.discoget.test.discoget_core;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,9 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,49 +21,37 @@ import java.util.ArrayList;
 /**
  * Created by Steven on 8/30/2016.
  */
-public class FriendsListAdapter extends ArrayAdapter<FriendsItems> {
-    public FriendsListAdapter(Context context, ArrayList<FriendsItems> friendsList) {
+public class FriendsListAdapter2 extends ArrayAdapter<FriendsItems> {
+    public FriendsListAdapter2(Context context, ArrayList<FriendsItems> friendsList) {
         super(context, 0, friendsList);
     }
 
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
-
         // Get the data item for this position
         FriendsItems friendsInfo = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.row_layout_friends, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.row_layout_select_friend, parent, false);
         }
 
 
         // Lookup view for data population
-        TextView txtFriendID = (TextView) convertView.findViewById(R.id.txt_friendID);
-        //TextView txtAlbum = (TextView) convertView.findViewById(R.id.txt_album);
+        TextView txtFriendID = (TextView) convertView.findViewById(R.id.txt_friendUserName);
+        TextView txtFriendFullName = (TextView) convertView.findViewById(R.id.txt_friendFullName);
         //TextView txtYear = (TextView) convertView.findViewById(R.id.txt_year);
         //TextView  = (TextView) convertView.findViewById(R.id.tvHome);
         ImageView imgFriend = (ImageView) convertView.findViewById(R.id.img_friend);
 
-        ImageView imgDeleteFriend = (ImageView) convertView.findViewById(R.id.img_btn_deleteFriend);
-        imgDeleteFriend.setTag(friendsInfo.friendUserName);
-
-
-        Button goCollection = (Button) convertView.findViewById(R.id.btn_goCollection);
-        Button goWantList =   (Button) convertView.findViewById(R.id.btn_goWantList);
-        goCollection.setTag(friendsInfo.friendUserName);
-        goWantList.setTag(friendsInfo.friendUserName);
-
         // Populate the data into the template view using the data object
 
         txtFriendID.setText(friendsInfo.friendUserName);
-        //txtAlbum.setText(collectionItem.itemLabel);
+        txtFriendFullName.setText(friendsInfo.friendFullName);
         //txtYear.setText(collectionItem.itemYear);
         //tvHome.setText(collectionItem.itemCoverURL);
 
         // add button options
-        //Button addButton = (Button) convertView.findViewById(R.id.btn_addNewFriend);
+        Button addButton = (Button) convertView.findViewById(R.id.btn_addNewFriend);
 
         //if (collectionItem.itemLabel.equals("No username match...")) {
         //    addButton.setClickable(false);
@@ -104,6 +89,4 @@ public class FriendsListAdapter extends ArrayAdapter<FriendsItems> {
             return null;
         }
     }
-
-
 }

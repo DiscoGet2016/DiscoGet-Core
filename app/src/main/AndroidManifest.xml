@@ -10,7 +10,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/dg_launcher_icon"
+        android:icon="@drawable/discoget_mascot"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -31,7 +31,7 @@
         </activity>
         <activity
             android:name=".AccountAccess"
-            android:label="Account Access"
+            android:label="Login"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".MainActivity"
@@ -84,6 +84,11 @@
             android:label="Item Selected"
             android:theme="@style/AppTheme" />
 
+        <activity android:name=".EditFriendsProflie"
+            android:label="Item Selected"
+            android:theme="@style/AppTheme" />
+
+
         <!-- Added by Enrique < 8/26/16   -->
         <activity android:name=".SearchActivity"/>
         <activity android:name=".ScanActivity"></activity>
@@ -93,10 +98,9 @@
 
 
         <!-- Added by Steve Werdeman 9/11/16 -->
-        <activity android:name=".CreateUserAccount">
+        <activity android:name=".CreateUserAccount"
             android:label="Item Selected"
-            android:theme="@style/AppTheme"
-        </activity>
+            android:theme="@style/AppTheme" />
         <!-- Added by Enrique < 8/26/16 -->
         <activity android:name=".Searchable">
             <intent-filter>

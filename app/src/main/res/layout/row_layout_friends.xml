@@ -1,24 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingTop="15dp">
+    android:layout_height="80dp"
+    android:paddingTop="15dp"
+    android:descendantFocusability="blocksDescendants"
+    android:gravity="center_vertical"
+    >
 
     <ImageView
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="wrap_content"
+        android:layout_weight=".30"
+        android:layout_height="wrap_content"
         android:id="@+id/img_friend"
         android:src="@drawable/user_default"
+        android:layout_marginLeft="5dp"
+        android:layout_gravity="center_vertical"
         />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginLeft="5dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight=".55"
             android:text="MisicLover"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -31,21 +39,55 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/btn_goCollection"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="35dp"
                 android:text="View Collection"
-                android:onClick="goCollection"
-                />
+                android:onClick="goCollectionBtnCall"
+                android:textAlignment="center"
+                android:textSize="13sp"
+                android:tag="delete friend"/>
 
             <Button
+                android:id="@+id/btn_goWantList"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="35dp"
+                android:textAlignment="center"
+                android:textSize="13sp"
                 android:text="View Want-List"
-                android:onClick="goWantList"/>
+                android:onClick="goWantListBtnCall"
+                android:tag="delete friend"/>
 
         </LinearLayout>
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/abc_ic_clear_mtrl_alpha">
+
+        <ImageView
+            android:id="@+id/img_btn_deleteFriend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight=".15"
+            android:background="@android:drawable/ic_delete"
+            android:onClick="goDeleteFriend"
+            android:tag="delete friend"
+            />
+
+        <ImageView
+            android:id="@+id/img_btn_editFriend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/ic_menu_edit"
+
+            android:tag="edit friend"/>
 
     </LinearLayout>
+
+
 
 </LinearLayout>

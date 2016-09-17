@@ -127,6 +127,7 @@ public class SearchResults extends AppCompatActivity {
 
                         final int result = 1;
                         Intent goToNextScreen;
+                        finish();
 
                         switch (item.getItemId()) {
                             case R.id.menu_profile:
@@ -172,25 +173,16 @@ public class SearchResults extends AppCompatActivity {
 
                                 return true;
                             case R.id.menu_logout:
+                                finish();
                                 goToNextScreen = new Intent(SearchResults.this, AccountAccess.class);
                                 startActivity(goToNextScreen);
-
-                                return true;
-                            case R.id.menu_exit:
-                                //goToNextScreen = new Intent (WantList.this,Friends.class);
-                                //startActivity(goToNextScreen);
-
-                                finish();
 
                                 return true;
 
                             default:
 
-                       /* Toast.makeText(WantList.this,
-                                "Clicked popup menu item " + item.getTitle(),
-                                Toast.LENGTH_SHORT).show();
-                       */
-                                goToNextScreen = new Intent(SearchResults.this, ActivityHome.class);
+
+                                goToNextScreen = new Intent(SearchResults.this, UserProfile.class);
                                 startActivity(goToNextScreen);
 
                                 return false;

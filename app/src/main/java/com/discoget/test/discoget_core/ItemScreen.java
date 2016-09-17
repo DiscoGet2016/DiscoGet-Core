@@ -3,8 +3,11 @@ package com.discoget.test.discoget_core;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Created by Steven on 8/30/2016.
@@ -26,6 +29,29 @@ public class ItemScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.item_screen);
+
+        // add tool bar
+        //ToolBar...
+        String paneTitle = "  Item Screen";
+
+        Toolbar my_toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(my_toolbar);
+
+        getSupportActionBar().setTitle(paneTitle);
+        getSupportActionBar().setIcon(R.drawable.back_30x);
+
+        my_toolbar.findViewById(R.id.my_toolbar).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                // Intent goToNextScreen = new Intent(AccountCreation.this, AccountAccess.class);
+                // startActivity(goToNextScreen);
+            }
+        });
+
+        // end of tool bar
+
 
 
         TextView tvArtist = (TextView) findViewById(R.id.tv_item_artist);
@@ -56,5 +82,19 @@ public class ItemScreen extends AppCompatActivity {
 
     }
 
+
+    public void goAddToCollection(View view) {
+        // add item to Collection
+        Toast.makeText(this, itemArtist + "Added to Collection", Toast.LENGTH_SHORT).show();
+        finish();
+    }
+
+    public void goAddToWantList(View view) {
+        // add item to WantList
+        Toast.makeText(this, itemArtist + "Added to Want-List", Toast.LENGTH_SHORT).show();
+        finish();
+
+
+    }
 }
 

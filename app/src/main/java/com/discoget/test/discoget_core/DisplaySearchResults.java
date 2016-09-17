@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
@@ -125,8 +126,10 @@ public class DisplaySearchResults extends AppCompatActivity {
                     public boolean onMenuItemClick(MenuItem item) {
                         final int result = 1;
                         Intent goToNextScreen;
+                        finish();
                         switch (item.getItemId()) {
                             case R.id.menu_profile:
+
                                 goToNextScreen = new Intent(DisplaySearchResults.this, UserProfile.class);
                                 goToNextScreen.putExtra("username", username);
                                 goToNextScreen.putExtra("password", password);
@@ -142,23 +145,20 @@ public class DisplaySearchResults extends AppCompatActivity {
                                 startActivity(goToNextScreen);
 
                                 return true;
-                            case R.id.menu_collection:
-                                goToNextScreen = new Intent(DisplaySearchResults.this, DisplaySearchResults.class);
-                                goToNextScreen.putExtra("username", username);
-                                goToNextScreen.putExtra("password", password);
-                                goToNextScreen.putExtra("listType", "Collection");
 
-                                startActivity(goToNextScreen);
+                            //----- changed - SAW  09/16/16 ---
+                            case R.id.menu_collection:
+
+                                goCollectionList();
 
                                 return true;
                             case R.id.menu_wantlist:
-                                goToNextScreen = new Intent(DisplaySearchResults.this, DisplaySearchResults.class);
-                                goToNextScreen.putExtra("username", username);
-                                goToNextScreen.putExtra("password", password);
-                                goToNextScreen.putExtra("listType", "Want-List");
-                                startActivity(goToNextScreen);
+
+                                goWantList();
 
                                 return true;
+                            // ---- end of chagne -------------
+
                             case R.id.menu_friends:
                                 goToNextScreen = new Intent(DisplaySearchResults.this, Friends.class);
                                 goToNextScreen.putExtra("username", username);
@@ -173,21 +173,8 @@ public class DisplaySearchResults extends AppCompatActivity {
                                 startActivity(goToNextScreen);
 
                                 return true;
-                            case R.id.menu_exit:
-                                //goToNextScreen = new Intent (WantList.this,Friends.class);
-                                //startActivity(goToNextScreen);
-
-                                finish();
-
-                                return true;
-
                             default:
-
-                       /* Toast.makeText(WantList.this,
-                                "Clicked popup menu item " + item.getTitle(),
-                                Toast.LENGTH_SHORT).show();
-                       */
-                                goToNextScreen = new Intent(DisplaySearchResults.this, ActivityHome.class);
+                                goToNextScreen = new Intent(DisplaySearchResults.this, UserProfile.class);
                                 startActivity(goToNextScreen);
 
                                 return false;
@@ -854,6 +841,44 @@ public class DisplaySearchResults extends AppCompatActivity {
             return true;
         else
             return false;
+    }
+
+
+    public void goCollectionList() {
+
+        String listType = "collection";
+
+        //TODO need to finish
+        //String toastString = "go Collection...";
+        //Toast.makeText(UserProfile.this, toastString, Toast.LENGTH_SHORT).show();
+
+        TextView uid = (TextView) findViewById(R.id.txt_profile_userName);
+
+        //TODO.....
+        // go to list screen....
+        Intent goToNextScreen = new Intent(this, WantList.class);
+        goToNextScreen.putExtra("username",username );
+        goToNextScreen.putExtra("listType", listType);
+        final int result = 1;
+        startActivity(goToNextScreen);
+    }
+
+    public void goWantList () {
+        String listType = "want-list";
+        TextView uid = (TextView) findViewById(R.id.txt_profile_userName);
+
+        //TODO need to finish
+        //String toastString = "go Want-List...";
+        //Toast.makeText(UserProfile.this, toastString, Toast.LENGTH_SHORT).show();
+
+        //TODO
+        // go to list screen....
+        Intent goToNextScreen = new Intent(this, WantList.class);
+        final int result = 1;
+        goToNextScreen.putExtra("username", username );
+        goToNextScreen.putExtra("listType", listType);
+        startActivity(goToNextScreen);
+        finish();
     }
 
 
