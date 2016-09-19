@@ -28,6 +28,7 @@
         android:layout_marginBottom="10dp"
         android:hint="username"
         android:text=""
+        android:textAlignment="center"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/colorAccent" />
 
@@ -39,6 +40,7 @@
         android:layout_marginBottom="10dp"
         android:hint="your full name"
         android:text=""
+        android:textAlignment="center"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/colorAccent" />
 
@@ -52,6 +54,7 @@
         android:layout_marginRight="25dp"
         android:hint="your bio here"
         android:text="My name is Adam. I have been collecting for about 8 years. I love all kinds of music,but my passion lately has been digging for early 80&apos;s post disco, the stuff that eventually transitioned into boogie funk."
+        android:textAlignment="center"
         android:textColor="@color/colorPrimaryText" />
 
     <LinearLayout
