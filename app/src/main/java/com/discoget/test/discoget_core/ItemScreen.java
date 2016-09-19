@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ListViewCompat;
 import android.support.v7.widget.Toolbar;
@@ -58,6 +59,7 @@ public class ItemScreen extends AppCompatActivity {
     String itemURL = "";
     String itemID = "";
     String itemList = "";
+    String itemTitle = "";
 
     String tracksStr[] = {"TRack 1   3:09","TRack 2   3:09","TRack 3   3:09","TRack 4   3:09","TRack 5   3:09","TRack 6   3:09" };
 
@@ -70,10 +72,12 @@ public class ItemScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.item_screen);
+       //getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+       // getSupportActionBar().setCustomView(R.layout.abs_layout);
 
         // add tool bar
         //ToolBar...
-        String paneTitle = "  Item Screen";
+        String paneTitle = "";
 
         Toolbar my_toolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(my_toolbar);
@@ -121,6 +125,14 @@ public class ItemScreen extends AppCompatActivity {
             itemURL = (String) b.get("URL");
             itemID = (String) b.get("release_id");
             itemList = (String) b.get("listtype");
+            itemTitle  = (String) b.get("albumtitle");
+
+
+            //getSupportActionBar().setTitle(itemTitle);   // put title in menu bar...
+            TextView toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
+            toolbarTitle.setText(itemTitle);
+
+
 
 
 

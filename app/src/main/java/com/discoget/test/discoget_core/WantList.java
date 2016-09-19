@@ -227,6 +227,7 @@ public class WantList extends AppCompatActivity {
                 goToNextScreen.putExtra("URL", adapter.getItem(menuSelected).itemCoverURL);
                 goToNextScreen.putExtra("release_id", adapter.getItem(menuSelected).itemResourceID);
                 goToNextScreen.putExtra("listtype", adapter.getItem(menuSelected).itemListType);
+                goToNextScreen.putExtra("albumtitle", adapter.getItem(menuSelected).itemTitle);
                 startActivity(goToNextScreen);
 
                 // Toast.makeText(WantList.this,menuItemSelected, Toast.LENGTH_SHORT).show();

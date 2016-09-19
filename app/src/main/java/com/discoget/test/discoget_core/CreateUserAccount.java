@@ -662,9 +662,9 @@ public class CreateUserAccount extends AppCompatActivity {
             String item_barcode = "";            // ?
             String item_shortdescription = "";   // ?
             String item_whichlist = whichListType;  // Collections
-            String item_title = "";
-            String item_artist = "";             // release-basicinfo-artist = "name"
-            String item_album = "";              // release-basicinfo-labels = "name"
+            String item_albumtitle = "";
+            String item_albumartist = "";             // release-basicinfo-artist = "name"
+            String item_albumlabel = "";              // release-basicinfo-labels = "name"
             String item_albumYear = "";               // release-basicinfo = "year"
             String item_catalogid = "";      // ?
             String item_resourceid = "";
@@ -707,26 +707,27 @@ public class CreateUserAccount extends AppCompatActivity {
                 item_itemurl = basicinfo.getString("resource_url");     // not used... 091816
                 item_imageurl = basicinfo.getString("thumb");
                 item_albumYear =  basicinfo.getString("year");
+                item_albumtitle =  basicinfo.getString("title");
 
 
                 JSONArray labels = basicinfo.getJSONArray("labels");
                 JSONObject label1 = labels.getJSONObject(0);
 
-                item_album = label1.getString("name");
+                item_albumlabel = label1.getString("name");
 
                 JSONArray artist = basicinfo.getJSONArray("artists");
                 JSONObject artist1 = artist.getJSONObject(0);
 
-                item_artist = artist1.getString("name");
+                item_albumartist = artist1.getString("name");
 
                 // create query string
                 String queryStrValues =
                         "'" + usernamepassed + "', " +
                                 "'" + item_resourceid  + "', " +
                                 "'" + item_catalogid + "', " +
-                                "'" + item_title.replace("'","''") + "', " +
-                                "'" + item_artist.replace("'","''") + "', " +
-                                "'" + item_album.replace("'","''") + "', " +   // added .replace -- SAW  09/13/16
+                                "'" + item_albumtitle.replace("'","''") + "', " +
+                                "'" + item_albumartist.replace("'","''") + "', " +
+                                "'" + item_albumlabel.replace("'","''") + "', " +   // added .replace -- SAW  09/13/16
                                 "'" + item_albumYear + "', " +
                                 "'" + item_imageurl + "', " +
                                 "'" + item_barcode + "', " +
