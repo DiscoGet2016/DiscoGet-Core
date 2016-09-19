@@ -10,9 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,24 +26,16 @@ import java.util.ArrayList;
  */
 public class WantList extends AppCompatActivity {
 
-    private boolean debug = false; // use true for testing
-
-    private SQLiteDatabase discogetDB;
-    private MySQLiteHelper dbHelper;
-
-
-
-
     private static final String WANT_LIST = "Want-List";
     private static final String COLLECTION_LIST = "Collection";
-
     CollectionItems newItem;   // declsre globally..
-
     String username = "error";
     String password = "";
     String listType = "";
     String friendsUserName = "";   // default
-
+    private boolean debug = false; // use true for testing
+    private SQLiteDatabase discogetDB;
+    private MySQLiteHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -416,6 +407,7 @@ public class WantList extends AppCompatActivity {
         String itemAlbumYear = ""; //  resultSet.getString(2);
         String itemAlbumCoverURL = ""; //  resultSet.getString(3);
         String itemsReleaseID = "";  // Release ID
+        String itemAlbumtitle = "";     // album title
 
         String tokenString = "?token=PwmXNjrBWHFcWsiqSfLKlouUaCGHPTVWrjZRpGHC";
 
@@ -430,7 +422,7 @@ public class WantList extends AppCompatActivity {
         String username = resultSet.getString(1);
         String password = resultSet.getString(2);
          */
-        Cursor resultSet = discogetDB.rawQuery("SELECT albumartist, albumlabel, albumyear, coverurl, resourceid FROM items WHERE " +
+        Cursor resultSet = discogetDB.rawQuery("SELECT albumartist, albumlabel, albumyear, coverurl, resourceid, albumtitle FROM items WHERE " +
                 "owner= '" + userNameToUse +"' AND listtype= '" + listType + "'", null);
 
         resultSet.moveToFirst();
@@ -459,13 +451,14 @@ public class WantList extends AppCompatActivity {
             itemAlbumYear = resultSet.getString(2);
             itemAlbumCoverURL = resultSet.getString(3); //+ tokenString;
             itemsReleaseID = resultSet.getString(4);
+            itemAlbumtitle = resultSet.getString(5);
 
             if (debug) {  Toast.makeText(this,itemAlbumCoverURL,Toast.LENGTH_LONG).show(); }
             
             // add to array
             //itemURL = "http://1.bp.blogspot.com/-7k2Jnvoaigw/T9kzBww-rXI/AAAAAAAAC3M/c0xk-sgU7wM/s1600/The+Beatles+-+Beatles+for+Sale.jpg";
             //newItem = new CollectionItems("Beatles", "Columbia", "1962", itemURL);
-            newItem = new CollectionItems(itemArtist, itemAlbumLabel, itemAlbumYear, itemAlbumCoverURL, itemsReleaseID, listType);
+            newItem = new CollectionItems(itemArtist, itemAlbumLabel, itemAlbumYear, itemAlbumCoverURL, itemsReleaseID, listType, itemAlbumtitle);
             adapter.add(newItem);
             
 

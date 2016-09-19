@@ -11,6 +11,7 @@ public class CollectionItems {
     public String itemCoverURL;     //coverURL
     public String itemResourceID;   //resource id - link to Discogs
     public String itemListType;
+    public String itemTitle;        // album title
     // add more items for later use...
 
     public CollectionItems(String itemArtist, String itemLabel, String itemYear ,String itemCoverURL, String itemResourceID, String itemListType) {
@@ -20,10 +21,21 @@ public class CollectionItems {
             this.itemCoverURL = itemCoverURL;
             this.itemResourceID = itemResourceID;
             this.itemListType = itemListType;
+        this.itemTitle = "";
 
     }
 
+    public CollectionItems(String itemArtist, String itemLabel, String itemYear,
+                           String itemCoverURL, String itemResourceID, String itemListType, String itemTitle) {
+        this.itemArtist = itemArtist;
+        this.itemLabel = itemLabel;
+        this.itemYear = itemYear;
+        this.itemCoverURL = itemCoverURL;
+        this.itemResourceID = itemResourceID;
+        this.itemListType = itemListType;
+        this.itemTitle = itemTitle;
 
+    }
 }
 
 

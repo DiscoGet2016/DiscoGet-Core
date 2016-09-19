@@ -12,7 +12,6 @@
     <style name="MyPopUpMenu"
         parent="@android:style/Widget.Holo.ActionBar.Solid">
         <item name="android:popupBackground">@color/colorPrimary</item>
-        <item name="android:popupMenuStyle">@color/colorAppBarText</item>
     </style>
 
 </resources>

@@ -16,7 +16,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Steven on 8/30/2016.
@@ -24,6 +23,24 @@ import java.util.List;
 public class CollectionListAdapter extends ArrayAdapter<CollectionItems> {
     public CollectionListAdapter(Context context, ArrayList<CollectionItems> collectionList) {
         super(context, 0, collectionList);
+    }
+
+    public static Bitmap getBitmapFromURL(String src) {
+        try {
+            Log.e("src", src);
+            URL url = new URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+            Log.e("Bitmap", "returned");
+            return myBitmap;
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e("Exception", e.getMessage());
+            return null;
+        }
     }
 
     @Override
@@ -36,15 +53,15 @@ public class CollectionListAdapter extends ArrayAdapter<CollectionItems> {
         }
         // Lookup view for data population
         TextView txtArtist = (TextView) convertView.findViewById(R.id.txt_artist);
-        TextView txtAlbum = (TextView) convertView.findViewById(R.id.txt_album);
+        TextView txtAlbumTitle = (TextView) convertView.findViewById(R.id.txt_album_title);
         TextView txtYear = (TextView) convertView.findViewById(R.id.txt_year);
 
         //TextView  = (TextView) convertView.findViewById(R.id.tvHome);
         ImageView imgAlbumCover = (ImageView) convertView.findViewById(R.id.img_albumCover);
 
         // Populate the data into the template view using the data object
-        txtAlbum.setText(collectionItem.itemLabel);
         txtArtist.setText(collectionItem.itemArtist);
+        txtAlbumTitle.setText(collectionItem.itemTitle);
         txtYear.setText(collectionItem.itemYear);
         //tvHome.setText(collectionItem.itemCoverURL);
 
@@ -61,23 +78,5 @@ public class CollectionListAdapter extends ArrayAdapter<CollectionItems> {
 
         // Return the completed view to render on screen
         return convertView;
-    }
-
-    public static Bitmap getBitmapFromURL(String src) {
-        try {
-            Log.e("src",src);
-            URL url = new URL(src);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            Log.e("Bitmap","returned");
-            return myBitmap;
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e("Exception",e.getMessage());
-            return null;
-        }
     }
 }
