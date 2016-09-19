@@ -15,19 +15,22 @@ public final class ItemReaderContract {
     public static class ItemEntry implements BaseColumns {
         public static final String TABLE_NAME = "items";
         public static final String COLUMN_NAME_OWNER = "owner";
-        public static final String COLUMN_NAME_ITEMURL = "itemurl";
-        public static final String COLUMN_NAME_IMAGEURL = "imageurl";
+        public static final String COLUMN_NAME_RESOURCEID = "resourceid";
+        public static final String COLUMN_NAME_CATALOGID = "catalogid";
+        public static final String COLUMN_NAME_ALBUMTITLE = "albumtitle";
+        public static final String COLUMN_NAME_ALBUMARTIST = "albumartist";
+        public static final String COLUMN_NAME_ALBUMLABEL = "albumlabel";
+        public static final String COLUMN_NAME_ALBUMYEAR = "albumyear";
+        public static final String COLUMN_NAME_COVERURL = "coverurl";
         public static final String COLUMN_NAME_BARCODE = "barcode";
         public static final String COLUMN_NAME_SHORT_DESCRIPTION = "shortdescription";
-        public static final String COLUMN_NAME_WHICHLIST = "whichlist";
-        public static final String COLUMN_NAME_ARTIST = "artist";
-        public static final String COLUMN_NAME_ALBUM = "album";
-        public static final String COLUMN_NAME_ALBUMYEAR = "albumyear";
-        public static final String COLUMN_NAME_CATALOGID = "catalogid";
+        public static final String COLUMN_NAME_LISTTYPE = "listtype";
         public static final String COLUMN_NAME_DELETEFLAG = "deleteflag";
 
         /*
-        (owner, itemurl, imageurl, barcode, shortdescription, whichlist, artist, album, albumyear, catalogid )"
+        was -->(owner, itemurl, imageurl, barcode, shortdescription, whichlist, artist, album, albumyear, catalogid )"
+
+        now -->(owner,resourceid,catalogid,albumtilte,albumartist,albumlabel,albumyear,coverurl,barcode,shortdescription,listtype,deleteflag)
 
          */
 
@@ -60,15 +63,16 @@ public final class ItemReaderContract {
             "CREATE TABLE " + ItemEntry.TABLE_NAME + " (" +
                     ItemEntry._ID + " INTEGER PRIMARY KEY," +
                     ItemEntry.COLUMN_NAME_OWNER + VARCHAR_TYPE + COMMA_SEP +
-                    ItemEntry.COLUMN_NAME_ITEMURL + VARCHAR_TYPE + COMMA_SEP +
-                    ItemEntry.COLUMN_NAME_IMAGEURL + VARCHAR_TYPE + COMMA_SEP +
+                    ItemEntry.COLUMN_NAME_RESOURCEID + VARCHAR_TYPE + COMMA_SEP +
+                    ItemEntry.COLUMN_NAME_CATALOGID + VARCHAR_TYPE + COMMA_SEP +
+                    ItemEntry.COLUMN_NAME_ALBUMTITLE + VARCHAR_TYPE + COMMA_SEP +
+                    ItemEntry.COLUMN_NAME_ALBUMARTIST + VARCHAR_TYPE + COMMA_SEP +
+                    ItemEntry.COLUMN_NAME_ALBUMLABEL + VARCHAR_TYPE + COMMA_SEP +
+                    ItemEntry.COLUMN_NAME_ALBUMYEAR + VARCHAR_TYPE + COMMA_SEP +
+                    ItemEntry.COLUMN_NAME_COVERURL + VARCHAR_TYPE + COMMA_SEP +
                     ItemEntry.COLUMN_NAME_BARCODE + VARCHAR_TYPE + COMMA_SEP +
                     ItemEntry.COLUMN_NAME_SHORT_DESCRIPTION + VARCHAR_TYPE + COMMA_SEP +
-                    ItemEntry.COLUMN_NAME_WHICHLIST + VARCHAR_TYPE + COMMA_SEP +
-                    ItemEntry.COLUMN_NAME_ARTIST + VARCHAR_TYPE + COMMA_SEP +
-                    ItemEntry.COLUMN_NAME_ALBUM + VARCHAR_TYPE + COMMA_SEP +
-                    ItemEntry.COLUMN_NAME_ALBUMYEAR + VARCHAR_TYPE + COMMA_SEP +
-                    ItemEntry.COLUMN_NAME_CATALOGID + VARCHAR_TYPE + COMMA_SEP +
+                    ItemEntry.COLUMN_NAME_LISTTYPE+ VARCHAR_TYPE + COMMA_SEP +
                     ItemEntry.COLUMN_NAME_DELETEFLAG + VARCHAR_TYPE +  " )";
 
     public static final String SQL_DELETE_ENTRIES =

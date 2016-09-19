@@ -38,6 +38,7 @@ public class CollectionListAdapter extends ArrayAdapter<CollectionItems> {
         TextView txtArtist = (TextView) convertView.findViewById(R.id.txt_artist);
         TextView txtAlbum = (TextView) convertView.findViewById(R.id.txt_album);
         TextView txtYear = (TextView) convertView.findViewById(R.id.txt_year);
+
         //TextView  = (TextView) convertView.findViewById(R.id.tvHome);
         ImageView imgAlbumCover = (ImageView) convertView.findViewById(R.id.img_albumCover);
 

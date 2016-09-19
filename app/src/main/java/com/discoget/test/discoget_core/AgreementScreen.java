@@ -130,16 +130,16 @@ public class AgreementScreen extends Activity {
 
            // User table  -- store user data and user authication token with Discogs
             discogetDB.execSQL("CREATE TABLE IF NOT EXISTS user " +
-                    "(id integer primary key, uid VARCHAR, usertype VARCHAR, username VARCHAR," +
-                    "password VARCHAR, firstname VARCHAR, lastname VARCHAR, fullname VARCHAR, userbio, VARCHAR, emailaddress VARCHAR," +
-                    "mobilenumber VARCHAR, imageurl VARCHAR, discogstoken VARCHAR, discogskey VARCHAR);");
+                    "(id integer primary key, userid VARCHAR, usertype VARCHAR, " +
+                    "password VARCHAR, passwordhint VARCHAR, " +
+                    "fullname VARCHAR, profile, VARCHAR, emailaddress VARCHAR, mobilenumber VARCHAR, " +
+                    "photourl VARCHAR, discogstoken VARCHAR, discogskey VARCHAR, deleteflag VARCHAR);");
 
            // Items -- store all items for user and friends
             discogetDB.execSQL("CREATE TABLE IF NOT EXISTS items " +
-                    "(id integer primary key, owner VARCHAR, itemurl VARCHAR, " +
-                    "imageurl VARCHAR, barcode VARCHAR, shortdescription VARCHAR, " +
-                    "whichlist VARCHAR, artist VARCHAR, album VARCHAR, albumyear VARCHAR, " +
-                    "catalogid VARCHAR, deleteflag VARCHAR);");
+                    "(id integer primary key, owner VARCHAR,resourceid VARCHAR, catalogid VARCHAR, albumtitle VARCHAR," +
+                    " albumartist VARCHAR, albumlabel VARCHAR, albumyear VARCHAR, coverurl VARCHAR, barcode VARCHAR," +
+                    " shortdescription VARCHAR, listtype VARCHAR, deleteflag VARCHAR);");
 
          //   discogetDB.close();
 

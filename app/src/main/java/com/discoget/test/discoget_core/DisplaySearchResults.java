@@ -357,7 +357,7 @@ public class DisplaySearchResults extends AppCompatActivity {
             String item_albumYear = "";               // release-basicinfo = "year"
             String item_catalognumber = "";      // ?
             String item_albumTitle = "";
-
+            String item_resourceid = "";
 
 
             // get releases array
@@ -378,12 +378,17 @@ public class DisplaySearchResults extends AppCompatActivity {
                 item_imageurl  =  "not found"; //checkURL(item.getString("thumb"));
                 item_albumYear =  "not found"; //item.getString("year");
                 item_albumTitle =  "not found"; //item.getString("title");
+                item_resourceid = "not found";
 
                 // get current release array object
                 JSONObject item = searchResultsArray.getJSONObject(i);
 
                 // break it down... Basic INFO
                 //JSONObject basicinfo = item.getJSONObject("basic_information");
+
+                if (item.has("resource_id")) {
+                    item_itemurl = item.getString("resource_id");
+                }
 
                 if (item.has("resource_url")) {
                     item_itemurl = item.getString("resource_url");
@@ -409,8 +414,12 @@ public class DisplaySearchResults extends AppCompatActivity {
 
                 // add adapter info
                 //newItem = new CollectionItems("Beatles", "Columbia", "1962", itemImageURL);
-                newItem = new CollectionItems(item_albumTitle, item_albumLabel, item_albumYear, item_imageurl);
-                adapter.add(newItem);
+                // old-->newItem = new CollectionItems(item_albumTitle, item_albumLabel, item_albumYear, item_imageurl);
+                // new 091816-SAW
+                newItem = new CollectionItems(item_albumTitle, item_albumLabel, item_albumYear, item_imageurl, item_resourceid, listType);
+
+
+                    adapter.add(newItem);
 
             }   // end of release loop...
 
@@ -468,7 +477,7 @@ public class DisplaySearchResults extends AppCompatActivity {
         // Add item to adapter
         CollectionItems newItem;
 
-        if (listType.equals("Collection")) {
+        /*if (listType.equals("Collection")) {
 
             callGetCollection();
             itemURL = "http://1.bp.blogspot.com/-7k2Jnvoaigw/T9kzBww-rXI/AAAAAAAAC3M/c0xk-sgU7wM/s1600/The+Beatles+-+Beatles+for+Sale.jpg";
@@ -486,6 +495,7 @@ public class DisplaySearchResults extends AppCompatActivity {
             newItem = new CollectionItems("R&B", "Alantic Records", "1972", itemURL);
             adapter.add(newItem);
         }
+        */
 
         /*//-------------------------------------------------------------------
         // Attach the adapter to a ListView
@@ -571,12 +581,12 @@ public class DisplaySearchResults extends AppCompatActivity {
         // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
         values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_OWNER, owner);
-        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ITEMURL, tempURL);
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_RESOURCEID, tempURL);
 
-        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_IMAGEURL, imageurl);
-        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_WHICHLIST, whichlist);
-        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ARTIST, artist);
-        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUM, album);
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_COVERURL, imageurl);
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_LISTTYPE, whichlist);
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUMARTIST, artist);
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUMLABEL, album);
         values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUMYEAR, year);
 
         //values.put(FeedEntry.COLUMN_NAME_SUBTITLE, subtitle);
@@ -646,7 +656,10 @@ public class DisplaySearchResults extends AppCompatActivity {
             // add to array
             //itemURL = "http://1.bp.blogspot.com/-7k2Jnvoaigw/T9kzBww-rXI/AAAAAAAAC3M/c0xk-sgU7wM/s1600/The+Beatles+-+Beatles+for+Sale.jpg";
             //newItem = new CollectionItems("Beatles", "Columbia", "1962", itemURL);
-            newItem = new CollectionItems(itemArtist, itemAlbumLabel, itemAlbumYear, itemAlbumCoverURL);
+            newItem = new CollectionItems(itemArtist, itemAlbumLabel, itemAlbumYear, itemAlbumCoverURL, "", listType); // TODO -error...
+            //newItem = new CollectionItems(item_albumTitle, item_albumLabel, item_albumYear, item_imageurl, item_resourceid);
+
+
             adapter.add(newItem);
             
 
@@ -675,10 +688,10 @@ public class DisplaySearchResults extends AppCompatActivity {
         // you will actually use after this query.
         String[] projection = {
                 ItemReaderContract.ItemEntry._ID,
-                ItemReaderContract.ItemEntry.COLUMN_NAME_ARTIST,
-                ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUM,
+                ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUMARTIST,
+                ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUMLABEL,
                 ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUMYEAR,
-                ItemReaderContract.ItemEntry.COLUMN_NAME_IMAGEURL
+                ItemReaderContract.ItemEntry.COLUMN_NAME_COVERURL
         };
 
         // Filter results WHERE "owner" = 'username'

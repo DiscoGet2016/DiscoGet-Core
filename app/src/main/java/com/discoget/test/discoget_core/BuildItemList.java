@@ -13,9 +13,10 @@ import android.widget.Toast;
 public class BuildItemList extends Activity{
 
     private String owner;
-    private String discogsitemurl;
-    private String imageurl;
-    private String whichlist;
+    private String resourceid;
+    private String coverurl;
+    private String listtype;
+    private String title;
     private String artist;
     private String album;
     private String year;
@@ -37,7 +38,7 @@ public class BuildItemList extends Activity{
 
     }
 
-    public String AddItemToDb(String owner, String imageurl, String whichlist, String artist, String album, String year) {
+    public String AddItemToDb(String owner, String resourceid, String coverurl, String listtype, String title, String artist, String album, String year) {
 
         String theResult;
 
@@ -59,17 +60,17 @@ public class BuildItemList extends Activity{
                     "catalognumber VARCHAR, deleteflag VARCHAR);");
          */
         String tableName = "items";
-        String tempURL = "http://software55.net/images/integrationLogo2.gif";
+        //String tempURL = "http://software55.net/images/integrationLogo2.gif";
 
         // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
         values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_OWNER, owner);
-        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ITEMURL, tempURL);
-
-        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_IMAGEURL,imageurl);
-        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_WHICHLIST,whichlist);
-        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ARTIST, artist);
-        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUM, album);
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_RESOURCEID, resourceid);
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_COVERURL,coverurl);
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_LISTTYPE,listtype);
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUMTITLE,title);
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUMARTIST, artist);
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUMLABEL, album);
         values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUMYEAR, year);
 
         //values.put(FeedEntry.COLUMN_NAME_SUBTITLE, subtitle);

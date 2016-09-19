@@ -57,23 +57,10 @@ public class CreateUserAccount extends AppCompatActivity {
     private String discogsJSONString;
 
 
-    // ---
-    /*
-    String userNameString = "djens";
-    String steve1 = "https://api.discogs.com/database/search?q=Nirvana&token=PwmXNjrBWHFcWsiqSfLKlouUaCGHPTVWrjZRpGHC";
-    String userKey = "";
-    String userSecret = "";
-    String userToken = "PwmXNjrBWHFcWsiqSfLKlouUaCGHPTVWrjZRpGHC";
-    String urlBasic = "https://api.discogs.com/";
-    String databaseSearch = "database/search";
-    String urlQuery = "q=Beatles";
-    */
-    // ---
-
-
-    EditText uid;
+    EditText userid;
     EditText uPassword0;
     EditText uPassword1;
+    EditText uPasswordHint;
 
     EditText uToken;
 
@@ -85,6 +72,7 @@ public class CreateUserAccount extends AppCompatActivity {
     String jsonUserImgUrl; // = jObject.optString("avatar_url");
 
     Button button; // = (Button) findViewById(R.id.btn_createAccount_save);
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -102,12 +90,12 @@ public class CreateUserAccount extends AppCompatActivity {
         discogsJSONString = null; // inits string...
 
          // set user fields
-        uid = (EditText) findViewById(R.id.et_createAccount_username);
+        userid = (EditText) findViewById(R.id.et_createAccount_username);
         uPassword0 = (EditText) findViewById(R.id.et_createAccount_password0);
         uPassword1 = (EditText) findViewById(R.id.et_createAccount_password1);
+        uPasswordHint = (EditText) findViewById(R.id.et_createAccount_passwordhint);
 
         uToken = (EditText) findViewById(R.id.et_createAccount_usertoken);
-
 
         // create database helper object...
         dbHelper = new MySQLiteHelper(this);
@@ -159,37 +147,25 @@ public class CreateUserAccount extends AppCompatActivity {
 
          */
 
+        String userName = ""; //userid.getText().toString();
+        String userPass0 = ""; // uPassword0.getText().toString();
+        String userPass1 = ""; // uPassword1.getText().toString();
+        String userPassHint = ""; // uPasswordHint.getText().toString();
+        String userToken = "";
+
 
         // get data from screen
-        String userName = uid.getText().toString();
-        String userPass0 = uPassword0.getText().toString();
-        String userPass1 = uPassword1.getText().toString();
-        String userToken = uToken.getText().toString();
+        userName = userid.getText().toString();
+        userPass0 = uPassword0.getText().toString();
+        userPass1 = uPassword1.getText().toString();
+        userPassHint = uPasswordHint.getText().toString();
+        userToken = uToken.getText().toString();
+
 
         if (userPass1.equals(userPass0)) {   // passwords match...
-
-            // send message...
-
-
-            // now do stuff...
-
-            // open DB
+          // now do stuff...
+           // open DB
             discogetDB = dbHelper.getWritableDatabase();
-
-        //-------------
-        //https://api.discogs.com/users/mrsangha/collection
-        //String userNameString = "mrSangha";
-
-
-        //String urlBaseString = "https://api.discogs.com/oauth/request_token";
-        //String urlBaseString = "https://api.discogs.com";
-
-        //String urlUsername = "/database/search?barcode=801061939113"; //+ userNameString;
-
-        //String urlSelection = "";
-
-
-        //https://api-img.discogs.com/HC32UPFMHdy4Scd77aPTJvXH0Vs=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-4663501-1371492072-2956.jpeg.jpg&token=PwmXNjrBWHFcWsiqSfLKlouUaCGHPTVWrjZRpGHC
 
 
         //String userToken = userToken;   //"PwmXNjrBWHFcWsiqSfLKlouUaCGHPTVWrjZRpGHC";
@@ -212,8 +188,17 @@ public class CreateUserAccount extends AppCompatActivity {
 
             // build account processing strings
             String urlCallingStringProfile    =  urlBasicString + userIDString + "?token=" + userToken;
+
+          //  Toast.makeText(this, urlCallingStringProfile, Toast.LENGTH_SHORT).show();
+
             String urlCallingStringCollection =  urlBasicString + userIDString + "/collection" + "?token=" + userToken;
+
+          //  Toast.makeText(this, urlCallingStringCollection, Toast.LENGTH_SHORT).show();
+
             String urlCallingStringWantList   =  urlBasicString + userIDString + "/wants" + "?token=" + userToken;
+
+           // Toast.makeText(this, urlCallingStringWantList, Toast.LENGTH_SHORT).show();
+
 
             //steve1; //"https://api.discogs.com/database/search?barcode=801061939113"; //urlBaseString + urlUsername + urlSelection;
 
@@ -239,14 +224,16 @@ public class CreateUserAccount extends AppCompatActivity {
             try {
                 //Toast.makeText(this,"Sync Started: Please wait",Toast.LENGTH_LONG).show();
 
+                jsonTestString = new HttpAsyncTask().execute(urlCallingStringProfile).get();
+                saveProfileData0(userName, userToken,jsonTestString, userPass0, userPassHint);
+
                 jsonTestString = new HttpAsyncTask().execute(urlCallingStringCollection).get();
                 saveUserLists0(userName,userToken,"collection",jsonTestString);
 
                 jsonTestString = new HttpAsyncTask().execute(urlCallingStringWantList).get();
                 saveUserLists0(userName,userToken,"want-list",jsonTestString);
 
-                jsonTestString = new HttpAsyncTask().execute(urlCallingStringProfile).get();
-                saveProfileData0(userName, userToken,jsonTestString);
+
 
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -302,7 +289,7 @@ public class CreateUserAccount extends AppCompatActivity {
     }
 
 
-    private void saveProfileData0(String userName, String userToken, String jsonString) {
+    private void saveProfileData0(String userName, String userToken, String jsonString, String userPassword, String userPasswordHint) {
 
         // get JSON string from Discogs - store in userJSONString
 
@@ -318,7 +305,9 @@ public class CreateUserAccount extends AppCompatActivity {
 
 
             jsonUsername = jObject.optString("username");
-            if (!(jsonUsername.equals(uid.getText().toString()))){
+            Toast.makeText(this, "looking for: " + userName + "  found: " + jsonUsername ,Toast.LENGTH_LONG).show();
+
+            if (!(jsonUsername.equals(userName))){
                 Toast.makeText(this, "Username does not match JSON file",Toast.LENGTH_LONG).show();
             }
 
@@ -339,24 +328,6 @@ public class CreateUserAccount extends AppCompatActivity {
         }
 
 
-        // create SQL string
-
-        /* // Create DB tables
-        // Agreement table  -- store agreement info and ...?
-        discogetDB.execSQL("CREATE TABLE IF NOT EXISTS agreement " +
-                "(id integer primary key, approved VARCHAR, agreementdate VARCHAR);");
-
-        // add data to this table
-        discogetDB.execSQL("INSERT INTO agreement (approved, agreementdate) VALUES ('yes!!!', 'today')");
-
-        */
-
-        // User table  -- store user data and user authication token with Discogs
-        /* discogetDB.execSQL("CREATE TABLE IF NOT EXISTS user " +
-                "(id integer primary key, uid VARCHAR, usertype VARCHAR, username VARCHAR," +
-                "password VARCHAR, firstname VARCHAR, lastname VARCHAR, fullname VARCHAR, userbio, VARCHAR, emailaddress VARCHAR," +
-                "mobilenumber VARCHAR, imageurl VARCHAR, discogstoken VARCHAR, discogskey VARCHAR,);");
-        */
 
         // create temp imageURL string
         String imageURL = jsonUserImgUrl;    //"https://secure.gravatar.com/avatar/8f6328a88899ed68d8c913de6a10006d?s=500&r=pg&d=mm";
@@ -365,27 +336,18 @@ public class CreateUserAccount extends AppCompatActivity {
 
         // create query string
         String queryStrValues =
-                "'" + uid.getText().toString() + "', " +
+                "'" + jsonUsername + "', " +
                         "'primary', " +
-                        "'" + uPassword0.getText().toString() + "', " +
-                        "'" + uToken.getText().toString() + "', " +
+                        "'" + userPassword + "', " +
+                        "'" + userPasswordHint + "', " +
                         "'" + jsonFullName + "', " +
                         "'" + jsonUserBio + "', " +
                         "'" + jsonUserEmail + "', " +
-                        "'" + imageURL + "'";
+                        "'" + imageURL + "', " +
+                        "'" + userToken + "'";
 
-        /*String queryStrValues =
-               "'" + uid.getText().toString() + "', " +
-               "'primary', " +
-               "'" + Password0.getText().toString() + "', " +
-               "'" + uToken.getText().toString() + "', " +
-               "'" + imageURL + "'";
 
-          */
-
-        //Toast.makeText(this, "Query String = "+ queryStrValues,Toast.LENGTH_LONG).show();
-        // insert data into user table
-        discogetDB.execSQL("INSERT INTO user (uid, usertype, password, discogstoken, fullname, userbio, emailaddress, imageurl ) VALUES (" + queryStrValues + ")");
+         discogetDB.execSQL("INSERT INTO user (userid, usertype, password, passwordhint, fullname, profile, emailaddress, photourl,  discogstoken ) VALUES (" + queryStrValues + ")");
 
 
 
@@ -421,7 +383,7 @@ public class CreateUserAccount extends AppCompatActivity {
 
 
             jsonUsername = jObject.optString("username");
-            if (!(jsonUsername.equals(uid.getText().toString()))){
+            if (!(jsonUsername.equals(userid.getText().toString()))){
                 Toast.makeText(this, "Username does not match JSON file",Toast.LENGTH_LONG).show();
             }
 
@@ -468,7 +430,7 @@ public class CreateUserAccount extends AppCompatActivity {
 
         // create query string
         String queryStrValues =
-                "'" + uid.getText().toString() + "', " +
+                "'" + userid.getText().toString() + "', " +
                         "'primary', " +
                         "'" + uPassword0.getText().toString() + "', " +
                         "'" + uToken.getText().toString() + "', " +
@@ -507,7 +469,6 @@ public class CreateUserAccount extends AppCompatActivity {
 
 
     }
-
 
 
     private String getJSONFromDiscogs(String username, String userToken) {
@@ -651,15 +612,15 @@ public class CreateUserAccount extends AppCompatActivity {
     }
 
 
-    private void saveUserLists0(String username, String userToken, String listtype, String jsonData) {
+    private void saveUserLists0(String usernamepassed, String userToken, String listtype, String jsonData) {
 
 
-        String userLsitToProcess = jsonData;//getJSONStringFromDiscogs(username, userToken, listtype);
+        String userListToProcess = jsonData;//getJSONStringFromDiscogs(username, userToken, listtype);
 
 
         String whichListType = listtype;
 
-        String userItemJSONString = userLsitToProcess; // assign value to parse here...
+        String userItemJSONString = userListToProcess; // assign value to parse here...
 
         String jsonListSelector = "";  // used to select releases or wants
 
@@ -670,7 +631,7 @@ public class CreateUserAccount extends AppCompatActivity {
         }
 
 
-       // Toast.makeText(this,"List Type: " + listtype,Toast.LENGTH_LONG).show();
+       //Toast.makeText(this,"List Type: " + listtype,Toast.LENGTH_LONG).show();
 
 
         JSONObject userItemList;   // generic name...
@@ -695,16 +656,18 @@ public class CreateUserAccount extends AppCompatActivity {
             String numOFPages = page.getString("pages");
             //String nextPage   = page.getString("nextpage");   // TODO need to verify...
 
-            String item_ownerid = username;        // username
+            String item_ownerid = usernamepassed;        // username
             String item_itemurl = "";     // release-basicinfo = "resource_url"
             String item_imageurl = "";           // release-basicinfo = "thumb"
             String item_barcode = "";            // ?
             String item_shortdescription = "";   // ?
             String item_whichlist = whichListType;  // Collections
+            String item_title = "";
             String item_artist = "";             // release-basicinfo-artist = "name"
             String item_album = "";              // release-basicinfo-labels = "name"
             String item_albumYear = "";               // release-basicinfo = "year"
-            String item_catalognumber = "";      // ?
+            String item_catalogid = "";      // ?
+            String item_resourceid = "";
 
 
 
@@ -726,6 +689,7 @@ public class CreateUserAccount extends AppCompatActivity {
 
             */
 
+            int count = 0;
             for (int i=0;i < releases.length(); i++) {  // loop through array
 
                 // get current release array object
@@ -734,7 +698,13 @@ public class CreateUserAccount extends AppCompatActivity {
                 // break it down... Basic INFO
                 JSONObject basicinfo = item.getJSONObject("basic_information");
 
-                item_itemurl = basicinfo.getString("resource_url");
+                if (basicinfo.has("id")) {
+                    item_resourceid = basicinfo.getString("id");
+                } else {
+                    item_resourceid ="000000";
+                }
+
+                item_itemurl = basicinfo.getString("resource_url");     // not used... 091816
                 item_imageurl = basicinfo.getString("thumb");
                 item_albumYear =  basicinfo.getString("year");
 
@@ -751,463 +721,45 @@ public class CreateUserAccount extends AppCompatActivity {
 
                 // create query string
                 String queryStrValues =
-                        "'" + username + "', " +
-                                "'" + item_itemurl  + "', " +
-                                "'" + item_imageurl + "', " +
-                                "'" + item_barcode + "', " +
-                                "'" + item_shortdescription + "', " +
-                                "'" + item_whichlist + "', " +
+                        "'" + usernamepassed + "', " +
+                                "'" + item_resourceid  + "', " +
+                                "'" + item_catalogid + "', " +
+                                "'" + item_title.replace("'","''") + "', " +
                                 "'" + item_artist.replace("'","''") + "', " +
                                 "'" + item_album.replace("'","''") + "', " +   // added .replace -- SAW  09/13/16
                                 "'" + item_albumYear + "', " +
-                                "'" + item_catalognumber + "'";
+                                "'" + item_imageurl + "', " +
+                                "'" + item_barcode + "', " +
+                                "'" + item_shortdescription + "', " +
+                                "'" + item_whichlist + "'";
 
 
                 if (debug) { Toast.makeText(this, "Query String = " + queryStrValues, Toast.LENGTH_LONG).show(); }
 
                 // insert data into user table
-                discogetDB.execSQL("INSERT INTO items (owner, itemurl, imageurl, barcode, shortdescription, whichlist, artist, album, albumyear, catalogid )" +
+                 /*  as of 091816
+                   now -->(owner,resourceid,catalogid, albumtitle,albumartist,albumlabel,albumyear, coverurl,barcode,shortdescription,listtype,deleteflag)
+                  */
+                discogetDB.execSQL("INSERT INTO items (owner, resourceid, catalogid, albumtitle, albumartist, albumlabel, albumyear, coverurl, barcode, shortdescription, listtype)" +
                         " VALUES (" + queryStrValues + ")");
 
+                count = i;
             }   // end of release loop...
 
+
+           // Toast.makeText(this, "item count = " + Integer.toString(count) , Toast.LENGTH_SHORT).show();
             //close DB
             // dbHelper.close();
 
         } catch (JSONException e) {
             e.printStackTrace();
 
-            if (debug) { Toast.makeText(this,"collection list - JSON Error...",Toast.LENGTH_LONG).show(); }
+            Toast.makeText(this,"Item list - JSON Error...",Toast.LENGTH_LONG).show();
         }
     }
 
 
-
-    private void saveUserLists(String username, String userToken, String listtype) {
-
-
-        String userLsitToProcess = getJSONStringFromDiscogs(username, userToken, listtype);
-
-
-        String whichListType = listtype;
-
-        String userItemJSONString = userLsitToProcess; // assign value to parse here...
-
-        String jsonListSelector = "";  // used to select releases or wants
-
-        if (listtype == "collection") {
-            jsonListSelector = "releases";
-        } else {
-            jsonListSelector = "wants";
-        }
-
-
-        if (debug) {  Toast.makeText(this,"List Type: " + listtype,Toast.LENGTH_LONG).show(); }
-
-
-        JSONObject userItemList;   // generic name...
-
-        //  discogetDB = dbHelper.getWritableDatabase();
-
-        try {
-
-            /* basic layout of  List here
-                // TODO need to add layout text here...
-             */
-
-
-            userItemList = new JSONObject(userItemJSONString);
-
-            // get page info
-
-            JSONObject page = userItemList.getJSONObject("pagination");  // same for both
-
-            // set page info
-            String numOfItems = page.getString("items");
-            String numOFPages = page.getString("pages");
-            //String nextPage   = page.getString("nextpage");   // TODO need to verify...
-
-            String item_ownerid = username;        // username
-            String item_itemurl = "";     // release-basicinfo = "resource_url"
-            String item_imageurl = "";           // release-basicinfo = "thumb"
-            String item_barcode = "";            // ?
-            String item_shortdescription = "";   // ?
-            String item_whichlist = whichListType;  // Collections
-            String item_artist = "";             // release-basicinfo-artist = "name"
-            String item_album = "";              // release-basicinfo-labels = "name"
-            String item_albumYear = "";               // release-basicinfo = "year"
-            String item_catalognumber = "";      // ?
-
-
-
-            // get releases array
-            JSONArray releases = userItemList.getJSONArray(jsonListSelector);  //was "releases"
-
-            // set release array length
-            String arrayLength = Integer.toString(releases.length());
-
-
-            // loop thru releases (for this page...  // TODO need to process multiple pages...
-
-            /*  // EXAMPLE TABLE LAYOUT...
-                discogetDB.execSQL("CREATE TABLE IF NOT EXISTS items " +
-                    "(id integer primary key autoincrement , owner VARCHAR, itemurl VARCHAR," +
-                    "imageurl VARCHAR, barcode VARCHAR, shortdescription VARCHAR," +
-                    "whichlist VARCHAR, artist VARCHAR, album VARCHAR, albumyear VARCHAR," +
-                    "catalogid VARCHAR, deleteflag VARCHAR);");
-
-            */
-
-            for (int i=0;i < releases.length(); i++) {  // loop through array
-
-                // get current release array object
-                JSONObject item = releases.getJSONObject(i);
-
-                // break it down... Basic INFO
-                JSONObject basicinfo = item.getJSONObject("basic_information");
-
-                item_itemurl = basicinfo.getString("resource_url");
-                item_imageurl = basicinfo.getString("thumb");
-                item_albumYear =  basicinfo.getString("year");
-
-
-                JSONArray labels = basicinfo.getJSONArray("labels");
-                JSONObject label1 = labels.getJSONObject(0);
-
-                item_album = label1.getString("name");
-
-                JSONArray artist = basicinfo.getJSONArray("artists");
-                JSONObject artist1 = artist.getJSONObject(0);
-
-                item_artist = artist1.getString("name");
-
-                // create query string
-                String queryStrValues =
-                        "'" + username + "', " +
-                                "'" + item_itemurl  + "', " +
-                                "'" + item_imageurl + "', " +
-                                "'" + item_barcode + "', " +
-                                "'" + item_shortdescription + "', " +
-                                "'" + item_whichlist + "', " +
-                                "'" + item_artist + "', " +
-                                "'" + item_album + "', " +
-                                "'" + item_albumYear + "', " +
-                                "'" + item_catalognumber + "'";
-
-
-                if (debug) { Toast.makeText(this, "Query String = " + queryStrValues, Toast.LENGTH_LONG).show(); }
-
-                // insert data into user table
-                discogetDB.execSQL("INSERT INTO items (owner, itemurl, imageurl, barcode, shortdescription, whichlist, artist, album, albumyear, catalogid )" +
-                        " VALUES (" + queryStrValues + ")");
-
-            }   // end of release loop...
-
-            //close DB
-            // dbHelper.close();
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-
-            if (debug) { Toast.makeText(this,"collection list - JSON Error...",Toast.LENGTH_LONG).show(); }
-        }
-    }
-
-
-
-    private void saveUserCollection(String username, String userToken) {
-
-
-        String sawerdeman55 = "{\"pagination\": {\"per_page\": 50, \"items\": 2, \"page\": 1, \"urls\": {}, \"pages\": 1}, \"releases\": [{\"collection_id\":" +
-                " 180036148, \"release_id\": 1255951, \"rating\": 0, \"basic_information\": {\"labels\": [{\"name\": \"Capitol Records\", \"entity_type\": \"1\", " +
-                "\"catno\": \"ST 2080\", \"resource_url\": \"https://api.discogs.com/labels/654\", \"id\": 654, \"entity_type_name\": \"Label\"}], \"formats\":" +
-                " [{\"descriptions\": [\"LP\", \"Album\", \"Stereo\"], \"name\": \"Vinyl\", \"qty\": \"1\"}], \"thumb\":" +
-                " \"https://api-img.discogs.com/-MlXhLdgQm1VYztTZQkEEs9Q-IM=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-1255951-1243961962.jpeg.jpg\", " +
-                "\"title\": \"The Beatles' Second Album\", \"artists\": [{\"join\": \",\", \"name\": \"The Beatles\", \"anv\": \"\", \"tracks\": \"\", \"role\": " +
-                "\"\", \"resource_url\": \"https://api.discogs.com/artists/82730\", \"id\": 82730}], \"resource_url\": \"https://api.discogs.com/releases/1255951\"," +
-                " \"year\": 1964, \"id\": 1255951}, \"date_added\": \"2016-07-16T20:03:58-07:00\"}, {\"collection_id\": 179748213, \"release_id\": 4953644, \"rating\":" +
-                " 0, \"basic_information\": {\"labels\": [{\"name\": \"Parlophone\", \"entity_type\": \"1\", \"catno\": \"PMC 1230\", \"resource_url\":" +
-                " \"https://api.discogs.com/labels/2294\", \"id\": 2294, \"entity_type_name\": \"Label\"}], \"formats\": [{\"descriptions\": [\"LP\", \"Album\", " +
-                "\"Mono\"], \"text\": \"Ernest J. Day sleeve\", \"name\": \"Vinyl\", \"qty\": \"1\"}], \"thumb\": " +
-                "\"https://api-img.discogs.com/-6p3iHjKnKRGC5S69ZqHXzwOWvw=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-4953644-1391695856-1514.jpeg.jpg\", " +
-                "\"title\": \"A Hard Day's Night\", \"artists\": [{\"join\": \"\", \"name\": \"The Beatles\", \"anv\": \"\", " +
-                "\"tracks\": \"\", \"role\": \"\", \"resource_url\": \"https://api.discogs.com/artists/82730\", \"id\": 82730}], " +
-                "\"resource_url\": \"https://api.discogs.com/releases/4953644\", \"year\": 1964, \"id\": 4953644}, \"date_added\": \"2016-07-14T13:03:29-07:00\"}]}";
-
-
-
-        String whichListType = "Collection";
-
-        String colletionJSONString = sawerdeman55; // assign value to parse here...
-
-
-        if (debug) {Toast.makeText(this,"collection list",Toast.LENGTH_LONG).show();}
-
-
-        JSONObject collectionList;
-
-      //  discogetDB = dbHelper.getWritableDatabase();
-
-        try {
-
-            /* basic layout of  Collections
-                // TODO need to add layour texxt here...
-             */
-
-
-            collectionList = new JSONObject(colletionJSONString);
-
-            // get page ingo
-
-            JSONObject page = collectionList.getJSONObject("pagination");
-
-            // set page info
-            String numOfItems = page.getString("items");
-            String numOFPages = page.getString("pages");
-            //String nextPage   = page.getString("nextpage");   // TODO need to verify...
-
-            String item_ownerid = username;        // username
-            String item_itemurl = "";     // release-basicinfo = "resource_url"
-            String item_imageurl = "";           // release-basicinfo = "thumb"
-            String item_barcode = "";            // ?
-            String item_shortdescription = "";   // ?
-            String item_whichlist = whichListType;  // Collections
-            String item_artist = "";             // release-basicinfo-artist = "name"
-            String item_album = "";              // release-basicinfo-labels = "name"
-            String item_albumYear = "";               // release-basicinfo = "year"
-            String item_catalognumber = "";      // ?
-
-
-
-            // get releases array
-            JSONArray releases = collectionList.getJSONArray("releases");
-
-            // set release array length
-            String arrayLength = Integer.toString(releases.length());
-
-
-            // loop thru releases (for this page...  // TODO need to process multiple pages...
-
-            /* discogetDB.execSQL("CREATE TABLE IF NOT EXISTS items " +
-                    "(id integer primary key autoincrement , owner VARCHAR, itemurl VARCHAR," +
-                    "imageurl VARCHAR, barcode VARCHAR, shortdescription VARCHAR," +
-                    "whichlist VARCHAR, artist VARCHAR, album VARCHAR, albumyear VARCHAR," +
-                    "catalognumber VARCHAR, deleteflag VARCHAR);");
-
-                */
-
-            for (int i=0;i < releases.length(); i++) {  // loop through array
-
-                // get current release array object
-                JSONObject item = releases.getJSONObject(i);
-
-                // break it down... Basic INFO
-                JSONObject basicinfo = item.getJSONObject("basic_information");
-
-                item_itemurl = basicinfo.getString("resource_url");
-                item_imageurl = basicinfo.getString("thumb");
-                item_albumYear =  basicinfo.getString("year");
-
-
-                JSONArray labels = basicinfo.getJSONArray("labels");
-                JSONObject label1 = labels.getJSONObject(0);
-
-                item_album = label1.getString("name");
-
-                JSONArray artist = basicinfo.getJSONArray("artists");
-                JSONObject artist1 = artist.getJSONObject(0);
-
-                item_artist = artist1.getString("name");
-
-
-                // add item to database...
-
-                // create SQL string
-                // Items -- store all items for user and friends
-                /*  discogetDB.execSQL("CREATE TABLE IF NOT EXISTS items " +
-                        "(id integer primary key autoincrement , ownerid VARCHAR, itemurl VARCHAR," +
-                        "imageurl VARCHAR, barcode VARCHAR, shortdescription VARCHAR," +
-                        "whichlist VARCHAR, artist VARCHAR, album VARCHAR, albumyear VARCHAR," +
-                        "catalognumber VARCHAR, deleteflag VARCHAR);");
-                */
-
-                // create query string
-                String queryStrValues =
-                        "'" + username + "', " +
-                                "'" + item_itemurl  + "', " +
-                                "'" + item_imageurl + "', " +
-                                "'" + item_barcode + "', " +
-                                "'" + item_shortdescription + "', " +
-                                "'" + item_whichlist + "', " +
-                                "'" + item_artist + "', " +
-                                "'" + item_album + "', " +
-                                "'" + item_albumYear + "', " +
-                                "'" + item_catalognumber + "'";
-
-
-                if (debug) {   Toast.makeText(this, "Query String = " + queryStrValues, Toast.LENGTH_LONG).show();}
-                    // insert data into user table
-                    discogetDB.execSQL("INSERT INTO items (owner, itemurl, imageurl, barcode, shortdescription, whichlist, artist, album, albumyear, catalogid )" +
-                            " VALUES (" + queryStrValues + ")");
-
-
-
-
-
-            }   // end of release loop...
-
-            //close DB
-           // dbHelper.close();
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-
-            Toast.makeText(this,"collection list - JSON Error...",Toast.LENGTH_LONG).show();
-
-
-        }
-
-
-
-    }
-
-
-    private void saveUserWants(String username) {
-
-        String sawerdeman55 = "{\"wants\": [{\"rating\": 0, \"basic_information\": {\"labels\": [{\"name\": \"Parlophone\"," +
-                "\"entity_type\": \"1\", \"catno\": \"PMC 1255\", \"resource_url\": \"https://api.discogs.com/labels/2294\", \"id\": 2294," +
-                " \"entity_type_name\": \"Label\"}], \"formats\": [{\"descriptions\": [\"LP\", \"Album\", \"Mono\"], \"name\": \"Vinyl\"," +
-                " \"qty\": \"1\"}], \"thumb\": " +
-                "\"https://api-img.discogs.com/3xWxlNlKCSpisMdSuUr5AiSjK5k=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-735564-1391696740-8760.jpeg.jpg\", " +
-                "\"title\": \"Help!\", \"artists\": [{\"join\": \",\", \"name\": \"The Beatles\", \"anv\": \"\", \"tracks\": \"\", \"role\": \"\", " +
-                "\"resource_url\": \"https://api.discogs.com/artists/82730\", \"id\": 82730}], \"resource_url\": \"https://api.discogs.com/releases/735564\"," +
-                " \"year\": 1965, \"id\": 735564}, \"notes\": \"\", \"date_added\": \"2016-07-14T13:05:15-07:00\", \"resource_url\":" +
-                " \"https://api.discogs.com/users/sawerdeman55/wants/735564\", \"id\": 735564}], \"pagination\": {\"per_page\": 50, \"items\": 1, \"page\": 1, " +
-                "\"urls\": {}, \"pages\": 1}}";
-
-        String whichListType = "Want-list";
-
-        String wantlistJSONString = sawerdeman55; // assign value to parse here...
-
-
-
-        JSONObject collectionList;
-
-        discogetDB = dbHelper.getWritableDatabase();
-
-        try {
-
-            /* basic layout of  Collections
-                // TODO need to add layour texxt here...
-             */
-
-
-            collectionList = new JSONObject(wantlistJSONString);
-
-            // get page ingo
-
-            JSONObject page = collectionList.getJSONObject("pagination");
-
-            // set page info
-            String numOfItems = page.getString("items");
-            String numOFPages = page.getString("pages");
-            String nextPage   = page.getString("nextpage");   // TODO need to verify...
-
-            String item_owner = username;        // username
-            String item_discogsitemurl = "";     // release-basicinfo = "resource_url"
-            String item_imageurl = "";           // release-basicinfo = "thumb"
-            String item_barcode = "";            // ?
-            String item_shortdescription = "";   // ?
-            String item_whichlist = whichListType;  // Collections
-            String item_artist = "";             // release-basicinfo-artist = "name"
-            String item_album = "";              // release-basicinfo-labels = "name"
-            String item_albumYear = "";               // release-basicinfo = "year"
-            String item_catalognumber = "";      // ?
-
-
-
-            // get releases array
-            JSONArray releases = collectionList.getJSONArray("releases");
-
-            // set release array length
-            String arrayLength = Integer.toString(releases.length());
-
-
-            // loop thru releases (for this page...  // TODO need to process multiple pages...
-
-            for (int i=0;i < releases.length(); i++) {  // loop through array
-
-                // get current release array object
-                JSONObject item = releases.getJSONObject(i);
-
-                // break it down... Basic INFO
-                    JSONObject basicinfo = item.getJSONObject("basic_information");
-
-                    item_discogsitemurl = basicinfo.getString("resource_url");
-                    item_imageurl = basicinfo.getString("thumb");
-                    item_albumYear =  basicinfo.getString("year");
-
-
-                    JSONArray labels = basicinfo.getJSONArray("labels");
-                    JSONObject label1 = labels.getJSONObject(0);
-
-                    item_album = label1.getString("name");
-
-                    JSONArray artist = basicinfo.getJSONArray("artists");
-                    JSONObject artist1 = artist.getJSONObject(0);
-
-                    item_artist = artist1.getString("name");
-
-
-                // add item to database...
-
-                // create SQL string
-                // Items -- store all items for user and friends
-                /*  discogetDB.execSQL("CREATE TABLE IF NOT EXISTS items " +
-                        "(id integer primary key autoincrement , owner VARCHAR, discogsitemurl VARCHAR," +
-                        "imageurl VARCHAR, barcode VARCHAR, shortdescription VARCHAR," +
-                        "whichlist VARCHAR, artist VARCHAR, album VARCHAR, year VARCHAR," +
-                        "catalognumber VARCHAR, deleteflag VARCHAR);");
-                */
-
-                // create query string
-                String queryStrValues =
-                        "'" + username + "', " +
-                        "'" + item_discogsitemurl  + "', " +
-                        "'" + item_imageurl + "', " +
-                        "'" + item_barcode + "', " +
-                        "'" + item_shortdescription + "', " +
-                        "'" + item_whichlist + "', " +
-                        "'" + item_artist + "', " +
-                        "'" + item_album + "', " +
-                        "'" + item_albumYear + "', " +
-                        "'" + item_catalognumber + "'";
-
-
-                if (i == 0 ) {
-                    if (debug) { Toast.makeText(this, "Query String = " + queryStrValues, Toast.LENGTH_LONG).show();}
-                    // insert data into user table
-                    discogetDB.execSQL("INSERT INTO items (owner, discogsitemurl, imageurl, barcode, shortdescription, whichlist, artist, album, year, catalognumber )" +
-                            " VALUES (" + queryStrValues + ")");
-
-                }
-                // TODO add other databases later...
-
-
-            }   // end of release loop...
-
-            //close DB
-            dbHelper.close();
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
-
-    } // end of getUserCollection...
+    // code cut from page 091816 - SAW   see savedUseerList-091816-001.txt
 
 
 

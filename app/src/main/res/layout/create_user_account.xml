@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:hint="Discogs Username"
-                android:text="mrSangha" />
+                android:text="MrSangha" />
 
             <EditText
                 android:id="@+id/et_createAccount_password0"
@@ -61,36 +61,14 @@
                 android:text="qaz!1234"/>
 
             <EditText
-                android:id="@+id/et_createAccount_userkey"
+                android:id="@+id/et_createAccount_passwordhint"
                 android:layout_width="220dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:hint="Discogs UserKey" />
+                android:hint="Password Hint"
+                android:inputType="text"
+                android:text="DiscoGet Default"/>
 
-            <EditText
-                android:id="@+id/et_createAccount_usersecret"
-                android:layout_width="220dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:hint="Discogs UserSecret" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="20dp"
-                android:text="or"
-                android:textSize="24dp"
-                android:textStyle="bold|italic" />
-
-            <EditText
-                android:id="@+id/et_createAccount_usertoken"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:hint="Discogs Token"
-                android:text="sMmYoLkNZpHsAyUHkSNuWpNBKxruChAHLRjRlDgv"
-                android:textSize="14dp" />
 
             <Button
                 android:id="@+id/btn_createAccount_save"
@@ -101,6 +79,44 @@
                 android:onClick="saveAccountInfo"
                 android:clickable="false"
                 android:text="Save" />
+
+
+            <EditText
+                android:id="@+id/et_createAccount_userkey"
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:hint="Discogs UserKey"
+                android:visibility="invisible"/>
+
+            <EditText
+                android:id="@+id/et_createAccount_usersecret"
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:hint="Discogs UserSecret"
+                android:visibility="invisible"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:text="or"
+                android:textSize="24dp"
+                android:textStyle="bold|italic"
+                android:visibility="invisible"/>
+
+            <EditText
+                android:id="@+id/et_createAccount_usertoken"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:hint="Discogs Token"
+                android:text="sMmYoLkNZpHsAyUHkSNuWpNBKxruChAHLRjRlDgv"
+                android:textSize="14dp"
+                android:visibility="invisible"/>
+
 
             <TextView
                 android:layout_width="match_parent"

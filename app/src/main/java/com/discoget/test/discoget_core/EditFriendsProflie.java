@@ -355,7 +355,7 @@ public class EditFriendsProflie extends AppCompatActivity {
         String username = resultSet.getString(1);
         String password = resultSet.getString(2);
          */
-        Cursor resultSet = discogetDB.rawQuery("SELECT uid, password, fullname, userbio, imageURL, discogstoken" +
+        Cursor resultSet = discogetDB.rawQuery("SELECT userid, password, fullname, profile, photourl, discogstoken" +
                 " FROM user WHERE uid = '" + friendsUserName + "'", null);
         resultSet.moveToFirst();
 

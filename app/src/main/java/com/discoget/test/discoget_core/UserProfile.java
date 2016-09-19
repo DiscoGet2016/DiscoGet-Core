@@ -66,6 +66,9 @@ public class UserProfile extends AppCompatActivity {
         }
 
 
+       // username = getUserFromDB();  // get the user name from database
+
+
         // for testing...
         // TextView namePassed = (TextView) findViewById(R.id.txt_profile_namePassed);
         // namePassed.setText(username);
@@ -296,20 +299,15 @@ public class UserProfile extends AppCompatActivity {
     }
 
 
-  /* @Override
-    public boolean onMenuItemClick(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.archive:
-                archive(item);
-                return true;
-            case R.id.delete:
-                delete(item);
-                return true;
-            default:
-                return false;
-        }
+    public String getUserFromDB() {
+        //String userFound = "";
+
+        Cursor resultSet = discogetDB.rawQuery("SELECT userid FROM user WHERE usertype = 'primary'", null);
+        resultSet.moveToFirst();
+
+        return resultSet.getString(0);
     }
-*/
+
 
 
     public void goHome(View view) {
@@ -325,11 +323,14 @@ public class UserProfile extends AppCompatActivity {
         startActivity(goToNextScreen);
     }
 
+
+    // called from buttons on screen..
+
     public void goCollection(View view) {
 
         String listType = "collection";
 
-        //TODO need to finish
+       /* //TODO need to finish
         //String toastString = "go Collection...";
         //Toast.makeText(UserProfile.this, toastString, Toast.LENGTH_SHORT).show();
 
@@ -337,7 +338,9 @@ public class UserProfile extends AppCompatActivity {
 
         //TODO.....
         // go to list screen....
-        finish();
+        */
+
+        //finish();
         Intent goToNextScreen = new Intent(this, WantList.class);
         goToNextScreen.putExtra("username",username );
         goToNextScreen.putExtra("listType", listType);
@@ -345,6 +348,31 @@ public class UserProfile extends AppCompatActivity {
         startActivity(goToNextScreen);
     }
 
+
+    // called from buttons on screen..
+
+    public void goWantList2(View view) {
+
+        String listType = "want-list";
+        TextView uid = (TextView) findViewById(R.id.txt_profile_userName);
+
+        //TODO need to finish
+        //String toastString = "go Want-List...";
+        //Toast.makeText(UserProfile.this, toastString, Toast.LENGTH_SHORT).show();
+
+        //TODO
+        // go to list screen....
+        finish();
+        Intent goToNextScreen = new Intent(this, WantList.class);
+        final int result = 1;
+        goToNextScreen.putExtra("username", uid.getText().toString() );
+        goToNextScreen.putExtra("listType", listType);
+        startActivity(goToNextScreen);
+        finish();
+    }
+
+
+    // called from menu...
     public void goCollectionList() {
 
         String listType = "collection";
@@ -384,25 +412,6 @@ public class UserProfile extends AppCompatActivity {
         finish();
     }
 
-    public void goWantList2(View view) {
-
-        String listType = "want-list";
-        TextView uid = (TextView) findViewById(R.id.txt_profile_userName);
-
-        //TODO need to finish
-        //String toastString = "go Want-List...";
-        //Toast.makeText(UserProfile.this, toastString, Toast.LENGTH_SHORT).show();
-
-        //TODO
-        // go to list screen....
-        finish();
-        Intent goToNextScreen = new Intent(this, WantList.class);
-        final int result = 1;
-        goToNextScreen.putExtra("username", username );
-        goToNextScreen.putExtra("listType", listType);
-        startActivity(goToNextScreen);
-        finish();
-    }
 
     public void goSearch(View view) {
         //TODO need to finish
@@ -439,15 +448,15 @@ public class UserProfile extends AppCompatActivity {
         String username = resultSet.getString(1);
         String password = resultSet.getString(2);
          */
-        Cursor resultSet = discogetDB.rawQuery("SELECT uid, password, fullname, userbio, imageURL, discogstoken FROM user", null);
+        Cursor resultSet = discogetDB.rawQuery("SELECT userid, password, fullname, profile, photourl, discogstoken FROM user", null);
         resultSet.moveToFirst();
 
-        //uid = resultSet.getString(0);
-        //pw  = resultSet.getString(1);
-        //token  = resultSet.getString(2);
-
-
-
+        //userid    = resultSet.getString(0);
+        //password  = resultSet.getString(1);
+        //fullname  = resultSet.getString(2);
+        //profile  = resultSet.getString(3);
+        //photourl  = resultSet.getString(4);
+        //discogstoken= resultSet.getString(5);
 
 
         userName.setText(checkForText(resultSet.getString(0)));

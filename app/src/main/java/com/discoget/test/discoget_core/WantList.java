@@ -40,7 +40,7 @@ public class WantList extends AppCompatActivity {
 
     CollectionItems newItem;   // declsre globally..
 
-    String username = "";
+    String username = "error";
     String password = "";
     String listType = "";
     String friendsUserName = "";   // default
@@ -234,6 +234,8 @@ public class WantList extends AppCompatActivity {
                 goToNextScreen.putExtra("label", adapter.getItem(menuSelected).itemLabel);
                 goToNextScreen.putExtra("year", adapter.getItem(menuSelected).itemYear);
                 goToNextScreen.putExtra("URL", adapter.getItem(menuSelected).itemCoverURL);
+                goToNextScreen.putExtra("release_id", adapter.getItem(menuSelected).itemResourceID);
+                goToNextScreen.putExtra("listtype", adapter.getItem(menuSelected).itemListType);
                 startActivity(goToNextScreen);
 
                 // Toast.makeText(WantList.this,menuItemSelected, Toast.LENGTH_SHORT).show();
@@ -277,7 +279,7 @@ public class WantList extends AppCompatActivity {
         // Add item to adapter
         CollectionItems newItem;
 
-        if (listType.equals("Collection")) {
+        /*if (listType.equals("Collection")) {
 
             callGetCollection();
             itemURL = "http://1.bp.blogspot.com/-7k2Jnvoaigw/T9kzBww-rXI/AAAAAAAAC3M/c0xk-sgU7wM/s1600/The+Beatles+-+Beatles+for+Sale.jpg";
@@ -295,6 +297,8 @@ public class WantList extends AppCompatActivity {
             newItem = new CollectionItems("R&B", "Alantic Records", "1972", itemURL);
             adapter.add(newItem);
         }
+
+        */
 
         /*//-------------------------------------------------------------------
         // Attach the adapter to a ListView
@@ -384,12 +388,12 @@ public class WantList extends AppCompatActivity {
         // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
         values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_OWNER, owner);
-        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ITEMURL, tempURL);
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_RESOURCEID, tempURL);
 
-        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_IMAGEURL, imageurl);
-        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_WHICHLIST, whichlist);
-        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ARTIST, artist);
-        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUM, album);
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_COVERURL, imageurl);
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_LISTTYPE, whichlist);
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUMARTIST, artist);
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUMLABEL, album);
         values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUMYEAR, year);
 
         //values.put(FeedEntry.COLUMN_NAME_SUBTITLE, subtitle);
@@ -411,6 +415,7 @@ public class WantList extends AppCompatActivity {
         String itemAlbumLabel = ""; //  resultSet.getString(1);
         String itemAlbumYear = ""; //  resultSet.getString(2);
         String itemAlbumCoverURL = ""; //  resultSet.getString(3);
+        String itemsReleaseID = "";  // Release ID
 
         String tokenString = "?token=PwmXNjrBWHFcWsiqSfLKlouUaCGHPTVWrjZRpGHC";
 
@@ -425,11 +430,12 @@ public class WantList extends AppCompatActivity {
         String username = resultSet.getString(1);
         String password = resultSet.getString(2);
          */
-        Cursor resultSet = discogetDB.rawQuery("SELECT artist, album, albumyear, imageurl FROM items WHERE " +
-                "owner= '" + userNameToUse +"' AND whichlist= '" + listType + "'", null);
+        Cursor resultSet = discogetDB.rawQuery("SELECT albumartist, albumlabel, albumyear, coverurl, resourceid FROM items WHERE " +
+                "owner= '" + userNameToUse +"' AND listtype= '" + listType + "'", null);
 
         resultSet.moveToFirst();
 
+        if ( resultSet.getCount() > 0) {  // ther are rows...
 
         /*  cursor loop example
         cursor.moveToFirst();
@@ -452,14 +458,14 @@ public class WantList extends AppCompatActivity {
             itemAlbumLabel = resultSet.getString(1);
             itemAlbumYear = resultSet.getString(2);
             itemAlbumCoverURL = resultSet.getString(3); //+ tokenString;
-
+            itemsReleaseID = resultSet.getString(4);
 
             if (debug) {  Toast.makeText(this,itemAlbumCoverURL,Toast.LENGTH_LONG).show(); }
             
             // add to array
             //itemURL = "http://1.bp.blogspot.com/-7k2Jnvoaigw/T9kzBww-rXI/AAAAAAAAC3M/c0xk-sgU7wM/s1600/The+Beatles+-+Beatles+for+Sale.jpg";
             //newItem = new CollectionItems("Beatles", "Columbia", "1962", itemURL);
-            newItem = new CollectionItems(itemArtist, itemAlbumLabel, itemAlbumYear, itemAlbumCoverURL);
+            newItem = new CollectionItems(itemArtist, itemAlbumLabel, itemAlbumYear, itemAlbumCoverURL, itemsReleaseID, listType);
             adapter.add(newItem);
             
 
@@ -468,7 +474,18 @@ public class WantList extends AppCompatActivity {
         } // end of whileloop...
 
 
+        } else {
+            // return no rows found...
+            String brokenRecordImalgeURL = "http://1.bp.blogspot.com/_E5tv7Vm0fsY/TLzFjB74OvI/AAAAAAAAATU/LpgJ1s6a0b4/s1600/broken-record-765056.jpg";
+            newItem = new CollectionItems("Your list is empty.", "use search to add items", "",brokenRecordImalgeURL, "", listType);
+            adapter.add(newItem);
+
+        }
+
+
+
         // closeDB
+        resultSet.close();  // close cursor
         dbHelper.close();
 
 
@@ -488,10 +505,10 @@ public class WantList extends AppCompatActivity {
         // you will actually use after this query.
         String[] projection = {
                 ItemReaderContract.ItemEntry._ID,
-                ItemReaderContract.ItemEntry.COLUMN_NAME_ARTIST,
-                ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUM,
+                ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUMARTIST,
+                ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUMLABEL,
                 ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUMYEAR,
-                ItemReaderContract.ItemEntry.COLUMN_NAME_IMAGEURL
+                ItemReaderContract.ItemEntry.COLUMN_NAME_COVERURL
         };
 
         // Filter results WHERE "owner" = 'username'

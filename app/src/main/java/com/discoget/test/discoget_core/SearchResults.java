@@ -402,6 +402,8 @@ public class SearchResults extends AppCompatActivity {
             String item_albumYear = "";               // release-basicinfo = "year"
             String item_catalognumber = "";      // ?
 
+            String  item_resourceid = "";
+
 
 
             // get releases array
@@ -435,6 +437,7 @@ public class SearchResults extends AppCompatActivity {
                 item_itemurl = basicinfo.getString("resource_url");
                 item_imageurl = basicinfo.getString("thumb");
                 item_albumYear =  basicinfo.getString("year");
+                item_resourceid =  basicinfo.getString("resource_id");
 
 
                // JSONArray labels = basicinfo.getJSONArray("labels");
@@ -463,7 +466,7 @@ public class SearchResults extends AppCompatActivity {
 
                 // add adapter info
                 //newItem = new CollectionItems("Beatles", "Columbia", "1962", itemImageURL);
-                newItem = new CollectionItems(item_artist, item_album, item_albumYear, item_imageurl);
+                newItem = new CollectionItems(item_artist, item_album, item_albumYear, item_imageurl, item_resourceid, listType);
                 adapter.add(newItem);
 
 
@@ -530,7 +533,7 @@ public class SearchResults extends AppCompatActivity {
         // Add item to adapter
         CollectionItems newItem;
 
-        if (listType.equals("Collection")) {
+       /* if (listType.equals("Collection")) {
 
             callGetCollection();
             itemURL = "http://1.bp.blogspot.com/-7k2Jnvoaigw/T9kzBww-rXI/AAAAAAAAC3M/c0xk-sgU7wM/s1600/The+Beatles+-+Beatles+for+Sale.jpg";
@@ -549,6 +552,7 @@ public class SearchResults extends AppCompatActivity {
             adapter.add(newItem);
         }
 
+*/
         /*//-------------------------------------------------------------------
         // Attach the adapter to a ListView
         ListView listView = (ListView) findViewById(R.id.list_view2);
@@ -633,12 +637,12 @@ public class SearchResults extends AppCompatActivity {
         // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
         values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_OWNER, owner);
-        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ITEMURL, tempURL);
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_RESOURCEID, tempURL);
 
-        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_IMAGEURL, imageurl);
-        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_WHICHLIST, whichlist);
-        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ARTIST, artist);
-        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUM, album);
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_COVERURL, imageurl);
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_LISTTYPE, whichlist);
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUMARTIST, artist);
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUMLABEL, album);
         values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUMYEAR, year);
 
         //values.put(FeedEntry.COLUMN_NAME_SUBTITLE, subtitle);
@@ -654,166 +658,7 @@ public class SearchResults extends AppCompatActivity {
 
     }
 
-    public void readFromDataBase(CollectionListAdapter adapter, String listType) {
-
-        String itemArtist = ""; // resultSet.getString(0);
-        String itemAlbumLabel = ""; //  resultSet.getString(1);
-        String itemAlbumYear = ""; //  resultSet.getString(2);
-        String itemAlbumCoverURL = ""; //  resultSet.getString(3);
-
-        String tokenString = "?token=PwmXNjrBWHFcWsiqSfLKlouUaCGHPTVWrjZRpGHC";
-
-        // open database
-        // add data to text fields...
-        discogetDB = dbHelper.getWritableDatabase();
-
-        // get user data...
-        /*
-        Cursor resultSet = mydatbase.rawQuery("Select * from TutorialsPoint",null);
-        resultSet.moveToFirst();
-        String username = resultSet.getString(1);
-        String password = resultSet.getString(2);
-         */
-        Cursor resultSet = discogetDB.rawQuery("SELECT artist, album, albumyear, imageurl FROM items WHERE " +
-                "owner= '" + username +"' AND whichlist= '" + listType + "'", null);
-
-        resultSet.moveToFirst();
-
-
-        /*  cursor loop example
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            array[i] = cursor.getString(0);
-            i++;
-            cursor.moveToNext();
-
-         */
-
-        //uid = resultSet.getString(0);
-        //pw  = resultSet.getString(1);
-        //token  = resultSet.getString(2);
-
-        // loop through database...
-        while (!resultSet.isAfterLast()) {
-
-            // get files
-            itemArtist = resultSet.getString(0);
-            itemAlbumLabel = resultSet.getString(1);
-            itemAlbumYear = resultSet.getString(2);
-            itemAlbumCoverURL = resultSet.getString(3); //+ tokenString;
-
-
-            if (debug) {  Toast.makeText(this,itemAlbumCoverURL,Toast.LENGTH_LONG).show(); }
-            
-            // add to array
-            //itemURL = "http://1.bp.blogspot.com/-7k2Jnvoaigw/T9kzBww-rXI/AAAAAAAAC3M/c0xk-sgU7wM/s1600/The+Beatles+-+Beatles+for+Sale.jpg";
-            //newItem = new CollectionItems("Beatles", "Columbia", "1962", itemURL);
-            newItem = new CollectionItems(itemArtist, itemAlbumLabel, itemAlbumYear, itemAlbumCoverURL);
-            adapter.add(newItem);
-            
-
-            // go to next record
-            resultSet.moveToNext();
-        } // end of whileloop...
-
-
-        // closeDB
-        dbHelper.close();
-
-
-        //Toast.makeText(WantList.this, AddItemToDb("Steve", itemURL, WANT_LIST, "Beatles", "Columbia", "1962"), Toast.LENGTH_SHORT).show();
-
-    }
-
-
-    public String readFromDB() {
-
-        //MySQLiteHelper dbHelper;
-        MySQLiteHelper dbHelper = new MySQLiteHelper(getApplicationContext());
-
-        SQLiteDatabase discogetdb = dbHelper.getReadableDatabase();
-
-        // Define a projection that specifies which columns from the database
-        // you will actually use after this query.
-        String[] projection = {
-                ItemReaderContract.ItemEntry._ID,
-                ItemReaderContract.ItemEntry.COLUMN_NAME_ARTIST,
-                ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUM,
-                ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUMYEAR,
-                ItemReaderContract.ItemEntry.COLUMN_NAME_IMAGEURL
-        };
-
-        // Filter results WHERE "owner" = 'username'
-        String selection = ItemReaderContract.ItemEntry.COLUMN_NAME_OWNER + " = sawerdeman55";
-        String[] selectionArgs = {"All Owner Items"};
-
-        // How you want the results sorted in the resulting Cursor
-        String sortOrder =
-                ItemReaderContract.ItemEntry.COLUMN_NAME_OWNER;
-
-        /*Cursor c = discogetdb.query(
-                ItemReaderContract.ItemEntry.TABLE_NAME,                     // The table to query
-                projection,                               // The columns to return
-                selection,                                // The columns for the WHERE clause
-                selectionArgs,                            // The values for the WHERE clause
-                null,                                     // don't group the rows
-                null,                                     // don't filter by row groups
-                sortOrder                                 // The sort order
-        );
-        */
-
-        Cursor cursor = discogetdb.rawQuery("Select * FROM items",null);
-
-        int artistColumn = cursor.getColumnIndex("artist");
-        int albumColummn = cursor.getColumnIndex("album");
-
-        cursor.moveToFirst();
-
-        String dataList = "";
-
-        // check for data
-        if (cursor != null && cursor.getCount() > 0){
-
-            int ctr = 0;
-            do {
-
-                dataList += "row "+ ctr++ + ":  "+ cursor.getString(artistColumn) +" -- " + cursor.getString(albumColummn)+ "\n";
-
-            } while (cursor.moveToNext());
-
-
-
-            cursor.close();
-
-            return dataList;
-
-
-        }
-
-
-
-
-
-       // c.moveToFirst();
-        //long itemId = c.getLong(c.getColumnIndexOrThrow(ItemReaderContract.ItemEntry._ID));
-       // String itemArtist =  c.getString(c.getColumnIndex("artist"));
-        //c.getString(c.getColumnIndexOrThrow(ItemReaderContract.ItemEntry.COLUMN_NAME_ARTIST));
-
-       /* if (cursor.moveToFirst()){
-            Toast.makeText(this,"move to first",Toast.LENGTH_LONG).show();
-            do{
-                String data = c.getString(c.getColumnIndex("data"));
-                // do what ever you want here
-            }while(c.moveToNext());
-        }
-
-        */
-        cursor.close();
-
-        return "hi steve";
-
-    }
-
+    // code removed - 091816 - SAW  -- codeRemoved-002
 
 
     public void goHome(View view) {

@@ -413,7 +413,7 @@ public class DisplayFriendsSearchResults extends AppCompatActivity {
         // Add item to adapter
         CollectionItems newItem;
 
-        if (listType.equals("Collection")) {
+       /* if (listType.equals("Collection")) {
 
             callGetCollection();
             itemURL = "http://1.bp.blogspot.com/-7k2Jnvoaigw/T9kzBww-rXI/AAAAAAAAC3M/c0xk-sgU7wM/s1600/The+Beatles+-+Beatles+for+Sale.jpg";
@@ -431,6 +431,7 @@ public class DisplayFriendsSearchResults extends AppCompatActivity {
             newItem = new CollectionItems("R&B", "Alantic Records", "1972", itemURL);
             adapter.add(newItem);
         }
+        */
 
         /*//-------------------------------------------------------------------
         // Attach the adapter to a ListView
@@ -516,12 +517,12 @@ public class DisplayFriendsSearchResults extends AppCompatActivity {
         // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
         values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_OWNER, owner);
-        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ITEMURL, tempURL);
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_RESOURCEID, tempURL);
 
-        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_IMAGEURL, imageurl);
-        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_WHICHLIST, whichlist);
-        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ARTIST, artist);
-        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUM, album);
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_COVERURL, imageurl);
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_LISTTYPE, whichlist);
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUMARTIST, artist);
+        values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUMLABEL, album);
         values.put(ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUMYEAR, year);
 
         //values.put(FeedEntry.COLUMN_NAME_SUBTITLE, subtitle);
@@ -549,10 +550,10 @@ public class DisplayFriendsSearchResults extends AppCompatActivity {
         // you will actually use after this query.
         String[] projection = {
                 ItemReaderContract.ItemEntry._ID,
-                ItemReaderContract.ItemEntry.COLUMN_NAME_ARTIST,
-                ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUM,
+                ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUMARTIST,
+                ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUMLABEL,
                 ItemReaderContract.ItemEntry.COLUMN_NAME_ALBUMYEAR,
-                ItemReaderContract.ItemEntry.COLUMN_NAME_IMAGEURL
+                ItemReaderContract.ItemEntry.COLUMN_NAME_COVERURL
         };
 
         // Filter results WHERE "owner" = 'username'

@@ -345,7 +345,7 @@ public class CreateFriendsAccount extends AppCompatActivity {
 
         //Toast.makeText(this, "Query String = "+ queryStrValues,Toast.LENGTH_LONG).show();
         // insert data into user table
-        discogetDB.execSQL("INSERT INTO user (uid, usertype, password, discogstoken, fullname, userbio, emailaddress, imageurl ) VALUES (" + queryStrValues + ")");
+        discogetDB.execSQL("INSERT INTO user (userid, usertype, password, discogstoken, fullname, profile, emailaddress, photourl ) VALUES (" + queryStrValues + ")");
 
 
 
@@ -512,12 +512,12 @@ public class CreateFriendsAccount extends AppCompatActivity {
 
         //Toast.makeText(this, "user name passed: " + usernamepassed, Toast.LENGTH_SHORT).show();
 
-        String userLsitToProcess = jsonData;//getJSONStringFromDiscogs(username, userToken, listtype);
+        String userListToProcess = jsonData;//getJSONStringFromDiscogs(username, userToken, listtype);
 
 
         String whichListType = listtype;
 
-        String userItemJSONString = userLsitToProcess; // assign value to parse here...
+        String userItemJSONString = userListToProcess; // assign value to parse here...
 
         String jsonListSelector = "";  // used to select releases or wants
 
@@ -564,6 +564,11 @@ public class CreateFriendsAccount extends AppCompatActivity {
             String item_albumYear = "";               // release-basicinfo = "year"
             String item_catalognumber = "";      // ?
 
+            String item_title = "";
+            String item_catalogid = "";      // ?
+            String item_resourceid = "";
+
+
 
 
             // get releases array
@@ -592,6 +597,12 @@ public class CreateFriendsAccount extends AppCompatActivity {
                 // break it down... Basic INFO
                 JSONObject basicinfo = item.getJSONObject("basic_information");
 
+                if (basicinfo.has("id")) {
+                    item_resourceid = basicinfo.getString("id");
+                } else {
+                    item_resourceid ="000000";
+                }
+
                 item_itemurl = basicinfo.getString("resource_url");
                 item_imageurl = basicinfo.getString("thumb");
                 item_albumYear =  basicinfo.getString("year");
@@ -608,7 +619,7 @@ public class CreateFriendsAccount extends AppCompatActivity {
                 item_artist = artist1.getString("name");
 
                 // create query string
-                String queryStrValues =
+             /*   String queryStrValues =
                         "'" + usernamepassed + "', " +
                                 "'" + item_itemurl  + "', " +
                                 "'" + item_imageurl + "', " +
@@ -619,14 +630,32 @@ public class CreateFriendsAccount extends AppCompatActivity {
                                 "'" + item_album.replace("'","''") + "', " +   // added .replace -- SAW  09/13/16
                                 "'" + item_albumYear + "', " +
                                 "'" + item_catalognumber + "'";
+                */
+                String queryStrValues =
+                        "'" + usernamepassed + "', " +
+                                "'" + item_resourceid  + "', " +
+                                "'" + item_catalogid + "', " +
+                                "'" + item_title.replace("'","''") + "', " +
+                                "'" + item_artist.replace("'","''") + "', " +
+                                "'" + item_album.replace("'","''") + "', " +   // added .replace -- SAW  09/13/16
+                                "'" + item_albumYear + "', " +
+                                "'" + item_imageurl + "', " +
+                                "'" + item_barcode + "', " +
+                                "'" + item_shortdescription + "', " +
+                                "'" + item_whichlist + "'";
+
 
 
                 //debug = true;
                 if (debug) { Toast.makeText(this, "Query String for : " + usernamepassed + " \n\n " + queryStrValues, Toast.LENGTH_LONG).show(); }
 
                 // insert data into user table
-                discogetDB.execSQL("INSERT INTO items (owner, itemurl, imageurl, barcode, shortdescription, whichlist, artist, album, albumyear, catalogid )" +
+            /*    discogetDB.execSQL("INSERT INTO items (owner, itemurl, imageurl, barcode, shortdescription, whichlist, artist, album, albumyear, catalogid )" +
                         " VALUES (" + queryStrValues + ")");
+                        */
+                discogetDB.execSQL("INSERT INTO items (owner, resourceid, catalogid, albumtitle, albumartist, albumlabel, albumyear, coverurl, barcode, shortdescription, listtype)" +
+                        " VALUES (" + queryStrValues + ")");
+
 
             }   // end of release loop...
 

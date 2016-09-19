@@ -47,7 +47,7 @@ public class AccountAccess extends AppCompatActivity {
         String username = resultSet.getString(1);
         String password = resultSet.getString(2);
          */
-        Cursor resultSet = discogetDB.rawQuery("SELECT uid, password, discogstoken FROM user", null);
+        Cursor resultSet = discogetDB.rawQuery("SELECT userid, password, discogstoken FROM user", null);
         resultSet.moveToFirst();
         uid = resultSet.getString(0);
         pw  = resultSet.getString(1);
@@ -65,7 +65,7 @@ public class AccountAccess extends AppCompatActivity {
         setSupportActionBar(my_toolbar);
 
         getSupportActionBar().setTitle(paneTitle);
-        getSupportActionBar().setIcon(R.drawable.ic_exit_icon30x);
+        //getSupportActionBar().setIcon(R.drawable.ic_exit_icon30x);
 
         my_toolbar.findViewById(R.id.my_toolbar).setOnClickListener(new View.OnClickListener() {
             @Override

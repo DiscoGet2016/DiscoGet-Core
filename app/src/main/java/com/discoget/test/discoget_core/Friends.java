@@ -215,7 +215,7 @@ public class Friends extends AppCompatActivity{
         discogetDB = dbHelper.getWritableDatabase();
 
        // get start of data stream
-        Cursor resultSet = discogetDB.rawQuery("SELECT uid, fullname, imageURL FROM user WHERE usertype = 'friend'", null);
+        Cursor resultSet = discogetDB.rawQuery("SELECT userid, fullname, photourl FROM user WHERE usertype = 'friend'", null);
         resultSet.moveToFirst();
 
         // loop through database...
