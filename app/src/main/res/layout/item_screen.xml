@@ -70,7 +70,8 @@
             android:backgroundTint="#4ebdf1"
             android:text="Add to Collection"
             android:textColor="@color/colorAppBarText"
-            android:onClick="goAddToCollection"/>
+            android:onClick="goAddToCollection"
+            android:tag="release_id"/>
 
         <Button
             android:id="@+id/btn_itemscreen_wantlist"
@@ -80,7 +81,8 @@
             android:backgroundTint="@color/colorAccent"
             android:text="Add to Want-List"
             android:textColor="@color/colorAppBarText"
-            android:onClick="goAddToWantList"/>
+            android:onClick="goAddToWantList"
+            android:tag="release_id"/>
 
     </LinearLayout>
 

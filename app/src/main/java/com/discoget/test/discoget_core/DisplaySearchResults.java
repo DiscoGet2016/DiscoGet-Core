@@ -36,13 +36,6 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 
-
-
-
-
-
-
-
 //import static com.discoget.test.outtestproject.R.id.the_list_view;
 
 /**
@@ -219,6 +212,10 @@ public class DisplaySearchResults extends AppCompatActivity {
                     goToNextScreen.putExtra("label", adapter.getItem(menuSelected).itemLabel);
                     goToNextScreen.putExtra("year", adapter.getItem(menuSelected).itemYear);
                     goToNextScreen.putExtra("URL", adapter.getItem(menuSelected).itemCoverURL);
+                    goToNextScreen.putExtra("release_id", adapter.getItem(menuSelected).itemResourceID);
+                    goToNextScreen.putExtra("listtype", adapter.getItem(menuSelected).itemListType);
+                    goToNextScreen.putExtra("albumtitle", adapter.getItem(menuSelected).itemTitle);
+                    goToNextScreen.putExtra("searchType", adapter.getItem(menuSelected).searchType);
                     startActivity(goToNextScreen);
 
                     // Toast.makeText(WantList.this,menuItemSelected, Toast.LENGTH_SHORT).show();
@@ -339,25 +336,28 @@ public class DisplaySearchResults extends AppCompatActivity {
             // get page info
             JSONObject page = searchItemList.getJSONObject("pagination");  // same for both
 
+            String searchType = "title";
+
             // set page info
             String numOfItems = page.getString("items");
             String numOFPages = page.getString("pages");
             //String nextPage   = page.getString("nextpage");   // TODO need to verify...
-
             //String item_ownerid = username;        // username
-
             // create rest if items...  not all itesm are used at this time...
-            String item_itemurl = "";     // release-basicinfo = "resource_url"
-            String item_imageurl = "";           // release-basicinfo = "thumb"
-            String item_barcode = "";            // ?
-            String item_shortdescription = "";   // ?
+            String item_itemurl = "";               // release-basicinfo = "resource_url"
+            String item_imageurl = "";              // release-basicinfo = "thumb"
+            String item_barcode = "";               // ?
+            String item_shortdescription = "";      // ?
             String item_whichlist = whichListType;  // Collections
-            String item_artist = "";             // release-basicinfo-artist = "name"
-            String item_albumLabel = "";              // release-basicinfo-labels = "name"
+            String item_albumtitle = "";
+            String item_albumartist = "";             // release-basicinfo-artist = "name"
+            String item_albumlabel = "";              // release-basicinfo-labels = "name"
             String item_albumYear = "";               // release-basicinfo = "year"
-            String item_catalognumber = "";      // ?
-            String item_albumTitle = "";
-            String item_resourceid = "";
+            String item_catalogid = "";      // ?
+            String item_releaseid = "";
+
+            // for additional parsine and selction
+            String item_type = "";
 
 
             // get releases array
@@ -369,16 +369,24 @@ public class DisplaySearchResults extends AppCompatActivity {
             String arrayLength = Integer.toString(searchResultsArray.length());
 
 
+            // set defaults...
+            item_itemurl    =  "";
+            item_imageurl   =  ""; //checkURL(item.getString("thumb"));
+            item_albumYear  =  ""; //item.getString("year");
+            item_albumtitle =  ""; //item.getString("title");
+            item_releaseid  =  "";
+
 
             // loop thru releases (for this page...  // TODO need to process multiple pages...
             for (int i=0;i < searchResultsArray.length(); i++) {  // loop through array
 
-                // set defaults...
-                item_itemurl = "not found";
-                item_imageurl  =  "not found"; //checkURL(item.getString("thumb"));
-                item_albumYear =  "not found"; //item.getString("year");
-                item_albumTitle =  "not found"; //item.getString("title");
-                item_resourceid = "not found";
+               /* // set defaults...
+                item_itemurl    =  "";
+                item_imageurl   =  ""; //checkURL(item.getString("thumb"));
+                item_albumYear  =  ""; //item.getString("year");
+                item_albumtitle =  ""; //item.getString("title");
+                item_releaseid  =  "";
+                */
 
                 // get current release array object
                 JSONObject item = searchResultsArray.getJSONObject(i);
@@ -386,40 +394,57 @@ public class DisplaySearchResults extends AppCompatActivity {
                 // break it down... Basic INFO
                 //JSONObject basicinfo = item.getJSONObject("basic_information");
 
-                if (item.has("resource_id")) {
-                    item_itemurl = item.getString("resource_id");
-                }
+                item_type = item.getString("type");
 
-                if (item.has("resource_url")) {
-                    item_itemurl = item.getString("resource_url");
-                }
-                if (item.has("thumb")) {
-                    item_imageurl = checkURL(item.getString("thumb"));
-                }
-                if (item.has("year")) {
-                    item_albumYear = item.getString("year");
-                }
-                if (item.has("title")) {
-                    item_albumTitle = item.getString("title");
-                }
+                // for release_id use 'id'
+                String jsonKeyStr = "id";  // or release_id
+                //if (item.has(jsonKeyStr)) {
+                    item_releaseid = item.getString(jsonKeyStr);
+                //}
 
-                if (item.has("label")) {
-                    JSONArray label = item.getJSONArray("label");
-                    // EXAMPLE... int value=itemArray.getInt(i);
-                    // TODO need to fix this...
-                    item_albumLabel = label.getString(0); //"Album label"; //label1.getString("name");
-                } else {
-                    item_albumLabel = "Album label";
-                }
+                if (item_type.equals("release")) {
+                    // get info for this item... else skip
 
-                // add adapter info
-                //newItem = new CollectionItems("Beatles", "Columbia", "1962", itemImageURL);
-                // old-->newItem = new CollectionItems(item_albumTitle, item_albumLabel, item_albumYear, item_imageurl);
-                // new 091816-SAW
-                newItem = new CollectionItems(item_albumTitle, item_albumLabel, item_albumYear, item_imageurl, item_resourceid, listType);
+                    if (item.has("resource_url")) {
+                        item_itemurl = item.getString("resource_url");
+                    }
+                    if (item.has("thumb")) {
+                        item_imageurl = checkURL(item.getString("thumb"));
+                    }
+                    if (item.has("year")) {
+                        item_albumYear = item.getString("year");
+                    }
+                    if (item.has("title")) {
+                        item_albumtitle = item.getString("title");
+                    }
 
+                    if (item.has("label")) {
+                        JSONArray label = item.getJSONArray("label");
+                        // EXAMPLE... int value=itemArray.getInt(i);
+                        // TODO need to fix this...
+                        item_albumlabel = label.getString(0); //"Album label"; //label1.getString("name");
+                    } else {
+                        item_albumlabel = "Album label";
+                    }
+
+                    // add adapter info
+                    //newItem = new CollectionItems("Beatles", "Columbia", "1962", itemImageURL);
+                    // old-->newItem = new CollectionItems(item_albumTitle, item_albumLabel, item_albumYear, item_imageurl);
+                    // new 091816-SAW
+
+                    if (item_releaseid.length() > 1) {
+                        newItem = new CollectionItems(searchType, item_albumartist, item_albumlabel, item_albumYear, item_imageurl, item_releaseid, listType, item_albumtitle);
+                        //public CollectionItems(String itemArtist, String itemLabel, String itemYear,String itemCoverURL, String itemResourceID, String itemListType, String itemTitle) {
+                    } else {
+                        // return no rows found...
+                        String brokenRecordImalgeURL = "http://1.bp.blogspot.com/_E5tv7Vm0fsY/TLzFjB74OvI/AAAAAAAAATU/LpgJ1s6a0b4/s1600/broken-record-765056.jpg";
+                        newItem = new CollectionItems("No search results found: ", "try search again", "", brokenRecordImalgeURL, "", "", "");
+                        adapter.add(newItem);
+
+                    }
 
                     adapter.add(newItem);
+                }
 
             }   // end of release loop...
 
@@ -430,6 +455,7 @@ public class DisplaySearchResults extends AppCompatActivity {
             if (debug) { Toast.makeText(this,"collection list - JSON Error...",Toast.LENGTH_LONG).show(); }
         }
     }
+
 
     private String checkURL(String thumb) {
 

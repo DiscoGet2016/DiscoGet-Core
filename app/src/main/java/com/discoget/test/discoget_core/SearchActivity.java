@@ -160,7 +160,7 @@ public class SearchActivity extends AppCompatActivity {
                 Toast.makeText(SearchActivity.this, "Barcode: " + result, Toast.LENGTH_LONG).show();
                 if (!(result.equals("Nothing to Read")) || result.length() > 1) {
                     /// do stuff here...
-                    finish();
+                    //finish();
 
                     Intent goToNextScreen = new Intent(this, DisplaySearchResults.class);
 

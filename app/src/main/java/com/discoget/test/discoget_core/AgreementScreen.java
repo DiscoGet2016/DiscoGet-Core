@@ -24,7 +24,7 @@ public class AgreementScreen extends Activity {
 
     private SQLiteDatabase discogetDB;
     private MySQLiteHelper dbHelper;
-    private Boolean debugFlag = true;   // true delete databases...
+    private Boolean debugFlag = false;   // true delete databases...
 
     @Override
 

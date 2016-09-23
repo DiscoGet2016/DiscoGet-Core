@@ -423,8 +423,8 @@ public class WantList extends AppCompatActivity {
         String username = resultSet.getString(1);
         String password = resultSet.getString(2);
          */
-        Cursor resultSet = discogetDB.rawQuery("SELECT albumartist, albumlabel, albumyear, coverurl, resourceid, albumtitle FROM items WHERE " +
-                "owner= '" + userNameToUse +"' AND listtype= '" + listType + "'", null);
+        Cursor resultSet = discogetDB.rawQuery("SELECT albumartist, albumlabel, albumyear, coverurl, resourceid, albumtitle " +
+                "FROM items WHERE owner= '" + userNameToUse +"' AND listtype= '" + listType + "' ORDER BY albumartist", null);
 
         resultSet.moveToFirst();
 

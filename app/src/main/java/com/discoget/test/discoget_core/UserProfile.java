@@ -247,7 +247,7 @@ public class UserProfile extends AppCompatActivity {
 
                 final int result = 1;
                 Intent goToNextScreen;
-                finish();
+                //finish();
 
                 switch (item.getItemId()) {
                     case R.id.menu_profile:
@@ -362,13 +362,13 @@ public class UserProfile extends AppCompatActivity {
 
         //TODO
         // go to list screen....
-        finish();
+        //finish();
         Intent goToNextScreen = new Intent(this, WantList.class);
         final int result = 1;
         goToNextScreen.putExtra("username", uid.getText().toString() );
         goToNextScreen.putExtra("listType", listType);
         startActivity(goToNextScreen);
-        finish();
+        //finish();
     }
 
 
@@ -385,7 +385,7 @@ public class UserProfile extends AppCompatActivity {
 
         //TODO.....
         // go to list screen....
-        finish();
+        //finish();
         Intent goToNextScreen = new Intent(this, WantList.class);
         goToNextScreen.putExtra("username",username );
         goToNextScreen.putExtra("listType", listType);
@@ -403,13 +403,13 @@ public class UserProfile extends AppCompatActivity {
 
         //TODO
         // go to list screen....
-        finish();
+        //finish();
         Intent goToNextScreen = new Intent(this, WantList.class);
         final int result = 1;
         goToNextScreen.putExtra("username", username );
         goToNextScreen.putExtra("listType", listType);
         startActivity(goToNextScreen);
-        finish();
+        //finish();
     }
 
 
@@ -420,7 +420,7 @@ public class UserProfile extends AppCompatActivity {
 
         //TODO
         // go to list screen....
-        finish();
+       // finish();
         Intent goToNextScreen = new Intent(this, SearchActivity.class);
         final int result = 1;
         startActivity(goToNextScreen);

@@ -5,6 +5,7 @@ package com.discoget.test.discoget_core;
  */
 public class CollectionItems {
 
+    public String searchType;
     public String itemArtist;       //Artist
     public String itemLabel;        //Label / Album
     public String itemYear;         //year
@@ -15,18 +16,33 @@ public class CollectionItems {
     // add more items for later use...
 
     public CollectionItems(String itemArtist, String itemLabel, String itemYear ,String itemCoverURL, String itemResourceID, String itemListType) {
+            this.searchType = "none";
             this.itemArtist = itemArtist;
             this.itemLabel = itemLabel;
             this.itemYear = itemYear;
             this.itemCoverURL = itemCoverURL;
             this.itemResourceID = itemResourceID;
             this.itemListType = itemListType;
-        this.itemTitle = "";
+            this.itemTitle = "";
 
     }
 
     public CollectionItems(String itemArtist, String itemLabel, String itemYear,
                            String itemCoverURL, String itemResourceID, String itemListType, String itemTitle) {
+        this.searchType = "none";
+        this.itemArtist = itemArtist;
+        this.itemLabel = itemLabel;
+        this.itemYear = itemYear;
+        this.itemCoverURL = itemCoverURL;
+        this.itemResourceID = itemResourceID;
+        this.itemListType = itemListType;
+        this.itemTitle = itemTitle;
+
+    }
+
+    public CollectionItems(String searchType, String itemArtist, String itemLabel, String itemYear,
+                           String itemCoverURL, String itemResourceID, String itemListType, String itemTitle) {
+        this.searchType = searchType;
         this.itemArtist = itemArtist;
         this.itemLabel = itemLabel;
         this.itemYear = itemYear;

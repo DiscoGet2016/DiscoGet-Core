@@ -53,11 +53,12 @@ public class ItemScreen extends AppCompatActivity {
     String username = "";
     String password = "";
 
+    String searchType = "";
     String itemArtist = "";
     String itemLabel = "";
     String itemYear = "";
     String itemURL = "";
-    String itemID = "";
+    String itemReleaseID = "";
     String itemList = "";
     String itemTitle = "";
 
@@ -97,17 +98,15 @@ public class ItemScreen extends AppCompatActivity {
 
         // end of tool bar
 
-
-        TextView tvArtist = (TextView) findViewById(R.id.tv_item_artist);
-        TextView tvLabel = (TextView) findViewById(R.id.tv_item_label);
-
-        TextView tvYear = (TextView) findViewById(R.id.tv_item_year);
+        TextView tvRowOne = (TextView) findViewById(R.id.tv_item_artist);
+        TextView tvRowTwo = (TextView) findViewById(R.id.tv_item_label);
+        TextView tvRowThree = (TextView) findViewById(R.id.tv_item_year);
 
         Button btnCollection = (Button) findViewById(R.id.btn_itemscreen_collection);
         Button btnWantList = (Button) findViewById(R.id.btn_itemscreen_wantlist);
 
-
         ImageView ivAlbumCover = (ImageView) findViewById(R.id.iv_item_cover);
+
         ListView tracksListView = (ListView) findViewById(R.id.trackslistView);
 
 
@@ -123,9 +122,11 @@ public class ItemScreen extends AppCompatActivity {
             itemLabel = (String) b.get("label");
             itemYear = (String) b.get("year");
             itemURL = (String) b.get("URL");
-            itemID = (String) b.get("release_id");
+            itemReleaseID = (String) b.get("release_id");
             itemList = (String) b.get("listtype");
             itemTitle  = (String) b.get("albumtitle");
+            searchType = (String) b.get("searchType");
+
 
 
             //getSupportActionBar().setTitle(itemTitle);   // put title in menu bar...
@@ -134,11 +135,27 @@ public class ItemScreen extends AppCompatActivity {
 
 
 
+            if ((!(searchType == null)) && searchType.equals("title")) {
+
+                    tvRowOne.setText(itemTitle);    // title
+                    tvRowTwo.setText(itemLabel);    // label
+                    tvRowThree.setText(itemYear + "  [" + itemReleaseID + "]");     // year  [release_id]
 
 
-            tvArtist.setText(itemArtist);
-            tvLabel.setText(itemLabel);
-            tvYear.setText(itemID);
+            } else {
+
+                tvRowOne.setText(itemArtist);
+                tvRowTwo.setText(itemLabel);
+                tvRowThree.setText(itemYear + "  [" + itemReleaseID + "]");
+            }
+
+
+
+            btnCollection.setTag(itemReleaseID);
+            btnWantList.setTag(itemReleaseID);
+
+
+
 
 
             // set status of buttons...
@@ -158,11 +175,12 @@ public class ItemScreen extends AppCompatActivity {
             new ImageLoadTask(itemURL, ivAlbumCover).execute();
 
 
+            // -- Get and Display Tracks info...
             ArrayList<Tracks> listOfTracks = new ArrayList<Tracks>();
             TracksAdapter trackAdapter = new TracksAdapter(this, listOfTracks);
             // add items to track
 
-            getItemTracks(trackAdapter, itemID);
+            getItemTracks(trackAdapter, itemReleaseID);
 
            /* Tracks newTrack;
             for (int i = 1; i < 16; i++) {
@@ -333,13 +351,23 @@ public class ItemScreen extends AppCompatActivity {
     public void goAddToCollection(View view) {
         // add item to Collection
         Toast.makeText(this, itemArtist + "Added to Collection", Toast.LENGTH_SHORT).show();
-        finish();
+        Button thisButton = (Button) findViewById(R.id.btn_itemscreen_collection);
+        addThisItemTo("collection",thisButton.getTag().toString());
+        //finish();
     }
+
+    private void addThisItemTo(String listType, String s) {
+        // add item base on releasee data...
+        Toast.makeText(this,"Item " + s + " Added to :" +listType, Toast.LENGTH_SHORT).show();
+    }
+
 
     public void goAddToWantList(View view) {
         // add item to WantList
         Toast.makeText(this, itemArtist + "Added to Want-List", Toast.LENGTH_SHORT).show();
-        finish();
+        Button thisButton = (Button) findViewById(R.id.btn_itemscreen_collection);
+        addThisItemTo("collection",thisButton.getTag().toString());
+        //finish();
 
 
     }

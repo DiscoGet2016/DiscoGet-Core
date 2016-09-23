@@ -56,6 +56,10 @@ public class CreateUserAccount extends AppCompatActivity {
 
     private String discogsJSONString;
 
+    private String sawerdeman55Token = "PwmXNjrBWHFcWsiqSfLKlouUaCGHPTVWrjZRpGHC";
+    private String MrSanghaToken = "";
+    private String djensToken = "sMmYoLkNZpHsAyUHkSNuWpNBKxruChAHLRjRlDgv";
+
 
     EditText userid;
     EditText uPassword0;
@@ -72,6 +76,8 @@ public class CreateUserAccount extends AppCompatActivity {
     String jsonUserImgUrl; // = jObject.optString("avatar_url");
 
     Button button; // = (Button) findViewById(R.id.btn_createAccount_save);
+
+    Integer numberOfPages;
 
 
     @Override
@@ -221,14 +227,31 @@ public class CreateUserAccount extends AppCompatActivity {
             String jsonTestString;
 
 
+            numberOfPages = 0;   // declared globally
+            Integer pageNumber = 0;
+            String nextPageURL="";
+            int ctr = 0;
+
             try {
                 //Toast.makeText(this,"Sync Started: Please wait",Toast.LENGTH_LONG).show();
 
                 jsonTestString = new HttpAsyncTask().execute(urlCallingStringProfile).get();
                 saveProfileData0(userName, userToken,jsonTestString, userPass0, userPassHint);
 
-                jsonTestString = new HttpAsyncTask().execute(urlCallingStringCollection).get();
-                saveUserLists0(userName,userToken,"collection",jsonTestString);
+                do {
+                    ctr ++;
+                    pageNumber ++;
+
+                    //urlCallingStringCollection = "&page=" + Integer.toString(pageNumber);
+                //    Toast.makeText(this,"url string: "+ urlCallingStringCollection+"&page=" + Integer.toString(pageNumber),Toast.LENGTH_LONG).show();
+
+                    jsonTestString = new HttpAsyncTask().execute(urlCallingStringCollection+"&page=" + Integer.toString(pageNumber)).get();
+                    saveUserLists0(userName, userToken, "collection", jsonTestString);
+
+                    if (ctr > 6) { break; }// exit while loop in emergency...
+                } while (pageNumber < numberOfPages) ;  // should loop only once
+
+              //  Toast.makeText(this,"ctr =  [" + Integer.toString(ctr) + "]",Toast.LENGTH_SHORT).show();
 
                 jsonTestString = new HttpAsyncTask().execute(urlCallingStringWantList).get();
                 saveUserLists0(userName,userToken,"want-list",jsonTestString);
@@ -654,7 +677,12 @@ public class CreateUserAccount extends AppCompatActivity {
             // set page info
             String numOfItems = page.getString("items");
             String numOFPages = page.getString("pages");
+
+            // set master number Of Pages
+            numberOfPages = Integer.parseInt(numOFPages);
             //String nextPage   = page.getString("nextpage");   // TODO need to verify...
+
+           // Toast.makeText(this,"numberofpages =  [" + Integer.toString(numberOfPages) + "]",Toast.LENGTH_LONG).show();
 
             String item_ownerid = usernamepassed;        // username
             String item_itemurl = "";     // release-basicinfo = "resource_url"
